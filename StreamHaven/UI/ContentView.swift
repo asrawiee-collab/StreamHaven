@@ -9,14 +9,14 @@ struct ContentView: View {
     }
 
     var body: some View {
-        if let profile = profileManager.currentProfile {
-            HomeView(profileManager: profileManager)
-                .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
-                .environmentObject(profileManager)
-        } else {
-            ProfileSelectionView(profileManager: profileManager)
-                .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
-                .environmentObject(profileManager)
+        Group {
+            if profileManager.currentProfile != nil {
+                MainView(profileManager: profileManager)
+            } else {
+                ProfileSelectionView(profileManager: profileManager)
+            }
         }
+        .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
+        .environmentObject(profileManager)
     }
 }

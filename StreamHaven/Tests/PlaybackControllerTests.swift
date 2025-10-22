@@ -68,7 +68,7 @@ class PlaybackControllerTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Playback state updates to paused")
 
         playbackController.$playbackState
-            .dropFirst() // Ignore the initial state
+            .dropFirst()
             .sink { state in
                 if case .paused = state {
                     expectation.fulfill()

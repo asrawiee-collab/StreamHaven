@@ -31,7 +31,6 @@ class PlaylistCacheManager {
         let fetchRequest: NSFetchRequest<PlaylistCache> = PlaylistCache.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "url == %@", url.absoluteString)
 
-        // Cache is valid for 24 hours
         let twentyFourHoursAgo = Date().addingTimeInterval(-24 * 60 * 60)
         fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             fetchRequest.predicate!,

@@ -8,8 +8,6 @@ class AudioSubtitleManager {
         self.player = player
     }
 
-    // MARK: - Audio Tracks
-
     func getAvailableAudioTracks() -> [AVMediaSelectionOption] {
         guard let playerItem = player?.currentItem,
               let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .audible) else {
@@ -33,8 +31,6 @@ class AudioSubtitleManager {
         }
         return playerItem.selectedMediaOption(in: group)
     }
-
-    // MARK: - Subtitle Tracks
 
     func getAvailableSubtitleTracks() -> [AVMediaSelectionOption] {
         guard let playerItem = player?.currentItem,

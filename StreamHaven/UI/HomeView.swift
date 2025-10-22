@@ -5,11 +5,37 @@ struct HomeView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @ObservedObject var profileManager: ProfileManager
 
-    @State private var movies: [Movie] = []
-    @State private var series: [Series] = []
-    @State private var channels: [Channel] = []
+    @FetchRequest var movies: FetchedResults<Movie>
+    @FetchRequest var series: FetchedResults<Series>
+    @FetchRequest var channels: FetchedResults<Channel>
 
     @State private var showingAddPlaylist = false
+
+    init(profileManager: ProfileManager) {
+        self.profileManager = profileManager
+
+        var moviePredicate = NSPredicate(value: true)
+        var seriesPredicate = NSPredicate(value: true)
+        if let profile = profileManager.currentProfile, !profile.isAdult {
+            let allowedRatings = [Rating.g.rawValue, Rating.pg.rawValue, Rating.pg13.rawValue, Rating.unrated.rawValue]
+            moviePredicate = NSPredicate(format: "rating IN %@", allowedRatings)
+            seriesPredicate = NSPredicate(format: "rating IN %@", allowedRatings)
+        }
+
+        _movies = FetchRequest<Movie>(
+            sortDescriptors: [NSSortDescriptor(keyPath: \Movie.releaseDate, ascending: false)],
+            predicate: moviePredicate,
+            animation: .default)
+
+        _series = FetchRequest<Series>(
+            sortDescriptors: [NSSortDescriptor(keyPath: \Series.releaseDate, ascending: false)],
+            predicate: seriesPredicate,
+            animation: .default)
+
+        _channels = FetchRequest<Channel>(
+            sortDescriptors: [NSSortDescriptor(keyPath: \Channel.name, ascending: true)],
+            animation: .default)
+    }
 
     var body: some View {
         NavigationView {
@@ -23,7 +49,7 @@ struct HomeView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 20) {
                             ForEach(movies) { movie in
-                                NavigationLink(destination: MovieDetailView(movie: movie).environmentObject(profileManager)) {
+                                NavigationLink(destination: MovieDetailView(movie: movie)) {
                                     CardView(url: URL(string: movie.posterURL ?? ""), title: movie.title ?? "No Title")
                                 }
                                 .buttonStyle(PlainButtonStyle())
@@ -39,7 +65,7 @@ struct HomeView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 20) {
                             ForEach(series) { seriesItem in
-                                NavigationLink(destination: SeriesDetailView(series: seriesItem).environmentObject(profileManager)) {
+                                NavigationLink(destination: SeriesDetailView(series: seriesItem)) {
                                     CardView(url: URL(string: seriesItem.posterURL ?? ""), title: seriesItem.title ?? "No Title")
                                 }
                                 .buttonStyle(PlainButtonStyle())
@@ -77,57 +103,7 @@ struct HomeView: View {
             }
             .sheet(isPresented: $showingAddPlaylist) {
                 AddPlaylistView()
-                    .environment(\.managedObjectContext, self.viewContext)
             }
-            .onAppear(perform: fetchContent)
-        }
-    }
-
-    private func fetchContent() {
-        fetchMovies()
-        fetchSeries()
-        fetchChannels()
-    }
-
-    private func fetchMovies() {
-        let request: NSFetchRequest<Movie> = Movie.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \Movie.releaseDate, ascending: false)]
-
-        if let profile = profileManager.currentProfile, !profile.isAdult {
-            let allowedRatings = [Rating.g.rawValue, Rating.pg.rawValue, Rating.pg13.rawValue, Rating.unrated.rawValue]
-            request.predicate = NSPredicate(format: "rating IN %@", allowedRatings)
-        }
-
-        do {
-            movies = try viewContext.fetch(request)
-        } catch {
-            print("Failed to fetch movies: \\(error)")
-        }
-    }
-
-    private func fetchSeries() {
-        let request: NSFetchRequest<Series> = Series.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \Series.releaseDate, ascending: false)]
-
-        if let profile = profileManager.currentProfile, !profile.isAdult {
-            let allowedRatings = [Rating.g.rawValue, Rating.pg.rawValue, Rating.pg13.rawValue, Rating.unrated.rawValue]
-            request.predicate = NSPredicate(format: "rating IN %@", allowedRatings)
-        }
-
-        do {
-            series = try viewContext.fetch(request)
-        } catch {
-            print("Failed to fetch series: \\(error)")
-        }
-    }
-
-    private func fetchChannels() {
-        let request: NSFetchRequest<Channel> = Channel.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \Channel.name, ascending: true)]
-        do {
-            channels = try viewContext.fetch(request)
-        } catch {
-            print("Failed to fetch channels: \\(error)")
         }
     }
 }

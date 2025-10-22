@@ -15,7 +15,6 @@ struct ProfileSelectionView: View {
                         profileManager.selectProfile(profile)
                     }) {
                         VStack {
-                            // Placeholder for profile image
                             Circle()
                                 .frame(width: 150, height: 150)
                                 .foregroundColor(.gray)

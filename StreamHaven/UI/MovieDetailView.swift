@@ -5,14 +5,9 @@ struct MovieDetailView: View {
 
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var profileManager: ProfileManager
-    @StateObject private var playbackController: PlaybackController
+    @EnvironmentObject var playbackController: PlaybackController
 
     @State private var showingPlayer = false
-
-    init(movie: Movie) {
-        self.movie = movie
-        _playbackController = StateObject(wrappedValue: PlaybackController(context: PersistenceController.shared.container.viewContext))
-    }
 
     var body: some View {
         ScrollView {

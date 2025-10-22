@@ -4,7 +4,6 @@ import Combine
 
 class PlaybackController: ObservableObject {
 
-    // Published properties to be observed by the UI
     @Published var player: AVPlayer?
     @Published var isPlaying: Bool = false
     @Published var playbackState: PlaybackState = .stopped
@@ -27,8 +26,6 @@ class PlaybackController: ObservableObject {
         self.context = context
     }
 
-    // MARK: - Media Loading
-
     func loadMedia(for item: NSManagedObject, profile: Profile) {
         guard let streamURLString = getStreamURL(for: item),
               let streamURL = URL(string: streamURLString) else {
@@ -44,7 +41,6 @@ class PlaybackController: ObservableObject {
 
         setupPlayerObservers()
 
-        // Auto-resume logic
         if let history = findWatchHistory(for: item, profile: profile) {
             let resumeTime = CMTime(seconds: Double(history.progress), preferredTimescale: 1)
             player?.seek(to: resumeTime)
@@ -63,8 +59,6 @@ class PlaybackController: ObservableObject {
         }
         return nil
     }
-
-    // MARK: - Playback Controls
 
     func play() {
         player?.play()
@@ -92,8 +86,6 @@ class PlaybackController: ObservableObject {
         cancellables.removeAll()
     }
 
-    // MARK: - Watch History
-
     private func findWatchHistory(for item: NSManagedObject, profile: Profile) -> WatchHistory? {
         let request: NSFetchRequest<WatchHistory> = WatchHistory.fetchRequest()
 
@@ -116,8 +108,6 @@ class PlaybackController: ObservableObject {
             return nil
         }
     }
-
-    // MARK: - Observers
 
     private func setupPlayerObservers() {
         guard let player = player else { return }

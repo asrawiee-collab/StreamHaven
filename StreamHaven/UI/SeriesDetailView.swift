@@ -4,15 +4,10 @@ struct SeriesDetailView: View {
     let series: Series
 
     @EnvironmentObject var profileManager: ProfileManager
-    @StateObject private var playbackController: PlaybackController
+    @EnvironmentObject var playbackController: PlaybackController
 
     @State private var showingPlayer = false
     @State private var selectedEpisode: Episode?
-
-    init(series: Series) {
-        self.series = series
-        _playbackController = StateObject(wrappedValue: PlaybackController(context: PersistenceController.shared.container.viewContext))
-    }
 
     private var seasons: [Season] {
         let set = series.seasons as? Set<Season> ?? []

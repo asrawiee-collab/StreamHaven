@@ -38,10 +38,10 @@ class FranchiseGroupingManager {
 
     private static func detectFranchiseName(from title: String) -> String {
         let patterns = [
-            ":\\s.*",      // Everything after a colon
-            "\\s\\d+$",    // A number at the end
-            "\\sPart\\s\\w+", // " Part II"
-            "\\s(I|V|X)+$", // Roman numerals
+            ":\\s.*",
+            "\\s\\d+$",
+            "\\sPart\\s\\w+",
+            "\\s(I|V|X)+$",
         ]
 
         var franchiseName = title

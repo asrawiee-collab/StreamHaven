@@ -23,12 +23,9 @@ class PlaybackProgressTracker {
         stopTracking()
     }
 
-    // MARK: - Progress Tracking
-
     private func setupProgressObserver() {
         guard let player = player else { return }
 
-        // Update progress every 15 seconds
         let interval = CMTime(seconds: 15, preferredTimescale: 1)
 
         timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
@@ -42,8 +39,6 @@ class PlaybackProgressTracker {
             timeObserver = nil
         }
     }
-
-    // MARK: - Core Data Interaction
 
     private func updateWatchHistory(with time: CMTime) {
         guard let item = currentItem, let profile = currentProfile else { return }
@@ -84,7 +79,6 @@ class PlaybackProgressTracker {
             print("Failed to fetch watch history: \\(error)")
         }
 
-        // Create a new entry if one doesn't exist
         let newHistory = WatchHistory(context: context)
         newHistory.profile = profile
 

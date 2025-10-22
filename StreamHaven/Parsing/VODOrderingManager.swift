@@ -16,8 +16,6 @@ class VODOrderingManager {
                 return date1 < date2
             }
         case .chronological:
-            // This would require more complex logic to understand in-universe chronology
-            // For now, we'll just sort by release date as a fallback.
             return movies.sorted {
                 guard let date1 = $0.releaseDate else { return false }
                 guard let date2 = $1.releaseDate else { return true }

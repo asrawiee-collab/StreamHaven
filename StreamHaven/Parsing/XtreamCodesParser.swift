@@ -47,11 +47,6 @@ class XtreamCodesParser {
                 continue
             }
 
-            // The action needs to be part of the path, not a query parameter for the API endpoint.
-            var pathComponents = components.path.split(separator: "/").map(String.init)
-            if pathComponents.last == "player_api.php" {
-                 // Correctly replace player_api.php with the action
-            }
             components.path = "/player_api.php"
 
             var queryItems = components.queryItems ?? []
@@ -162,7 +157,7 @@ class XtreamCodesParser {
                 let channel = Channel(context: context)
                 channel.name = live.name
                 channel.logoURL = live.streamIcon
-                // Live stream URL construction is different, requires a variant
+
                 let variant = ChannelVariant(context: context)
                 variant.name = live.name
                 variant.streamURL = buildStreamURL(for: "live", baseURL: baseURL, id: live.streamId, ext: "m3u8")
@@ -180,13 +175,11 @@ class XtreamCodesParser {
             return nil
         }
 
-        // Remove existing query and action path
         components.query = nil
         components.path = ""
 
         guard let baseURL = components.url else { return nil }
 
-        // http://server:port/{type}/{username}/{password}/{id}.{ext}
         return "\\(baseURL)\\(type)/\\(username)/\\(password)/\\(id).\\(ext)"
     }
 }
