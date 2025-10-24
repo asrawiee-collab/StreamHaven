@@ -1,31 +1,10 @@
 import Foundation
 import CoreData
 
-enum XtreamCodesParserError: Error, LocalizedError {
-    case invalidURL
-    case networkError(Error)
-    case noDataReceived
-    case jsonDecodingError(Error)
-    case coreDataSaveFailed(Error)
-
-    var errorDescription: String? {
-        switch self {
-        case .invalidURL:
-            return NSLocalizedString("The provided URL is invalid.", comment: "Xtream Codes parser error for invalid URL")
-        case .networkError(let underlyingError):
-            return NSLocalizedString("A network error occurred: \(underlyingError.localizedDescription)", comment: "Xtream Codes parser error for network issues")
-        case .noDataReceived:
-            return NSLocalizedString("No data was received from the server.", comment: "Xtream Codes parser error for empty response")
-        case .jsonDecodingError:
-            return NSLocalizedString("Failed to decode the server's response. The playlist format may be incorrect.", comment: "Xtream Codes parser error for JSON decoding failure")
-        case .coreDataSaveFailed(let underlyingError):
-            return NSLocalizedString("Failed to save playlist data: \(underlyingError.localizedDescription)", comment: "Xtream Codes parser error for Core Data save failure")
-        }
-    }
-}
-
+/// A parser for processing Xtream Codes playlists and importing their content into Core Data.
 class XtreamCodesParser {
 
+    /// A struct representing a single VOD (Video on Demand) item from an Xtream Codes API response.
     struct XtreamCodesVOD: Decodable {
         let name: String
         let streamId: Int
@@ -35,6 +14,7 @@ class XtreamCodesParser {
         let containerExtension: String?
     }
 
+    /// A struct representing a single series from an Xtream Codes API response.
     struct XtreamCodesSeries: Decodable {
         let name: String
         let seriesId: Int
@@ -48,6 +28,7 @@ class XtreamCodesParser {
         let categoryId: Int?
     }
 
+    /// A struct representing a single live stream channel from an Xtream Codes API response.
     struct XtreamCodesLive: Decodable {
         let name: String
         let streamId: Int
@@ -55,12 +36,18 @@ class XtreamCodesParser {
         let categoryId: Int?
     }
 
+    /// Fetches and parses all content types (VOD, series, live streams) from an Xtream Codes playlist URL.
+    ///
+    /// - Parameters:
+    ///   - url: The base URL of the Xtream Codes playlist.
+    ///   - context: The `NSManagedObjectContext` to perform the import on.
+    /// - Throws: A `PlaylistImportError` if the URL is invalid, a network request fails, or parsing fails.
     static func parse(url: URL, context: NSManagedObjectContext) async throws {
         let actions = ["get_vod_streams", "get_series", "get_live_streams"]
 
         for action in actions {
             guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
-                throw XtreamCodesParserError.invalidURL
+                throw PlaylistImportError.invalidURL
             }
 
             components.path = "/player_api.php"
@@ -70,7 +57,7 @@ class XtreamCodesParser {
             components.queryItems = queryItems
 
             guard let actionURL = components.url else {
-                throw XtreamCodesParserError.invalidURL
+                throw PlaylistImportError.invalidURL
             }
 
             do {
@@ -94,9 +81,9 @@ class XtreamCodesParser {
                     }
                 }
             } catch let error as URLError {
-                throw XtreamCodesParserError.networkError(error)
+                throw PlaylistImportError.networkError(error)
             } catch {
-                throw XtreamCodesParserError.jsonDecodingError(error)
+                throw PlaylistImportError.parsingFailed(error)
             }
         }
 
@@ -105,7 +92,7 @@ class XtreamCodesParser {
                 try context.save()
             }
         } catch {
-            throw XtreamCodesParserError.coreDataSaveFailed(error)
+            throw PlaylistImportError.saveDataFailed(error)
         }
     }
 

@@ -125,6 +125,7 @@ struct SeriesDetailView: View {
 #if os(tvOS)
             Image(systemName: isFavorite ? "heart.fill" : "heart")
             Text(isFavorite ? NSLocalizedString("Favorited", comment: "Button title for favorited item") : NSLocalizedString("Add to Favorites", comment: "Button title to add an item to favorites"))
+                .accessibilityLabel(isFavorite ? Text(NSLocalizedString("Remove from favorites", comment: "Accessibility label for favorited item")) : Text(NSLocalizedString("Add to favorites", comment: "Accessibility label for add to favorites button")))
 #else
             Image(systemName: isFavorite ? "heart.fill" : "heart")
                 .font(.title)
@@ -155,7 +156,6 @@ struct SeriesDetailView: View {
         self.selectedEpisode = episode
         guard let profile = profileManager.currentProfile else { return }
         playbackManager.loadMedia(for: episode, profile: profile)
-        let _ = PlaybackProgressTracker(player: playbackManager.player, item: episode, watchHistoryManager: watchHistoryManager)
         showingPlayer = true
     }
 }

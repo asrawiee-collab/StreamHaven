@@ -27,12 +27,19 @@ struct FavoritesView: View {
     }
 
     var body: some View {
-        ScrollView {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 150))]) {
-                ForEach(favorites) { favorite in
-                    if let movie = favorite.movie {
-                        Button(action: { handleSelection(.movieDetail(movie)) }) {
-                            CardView(url: URL(string: movie.posterURL ?? ""), title: movie.title ?? "No Title")
+        Group {
+            if favorites.isEmpty {
+                EmptyStateView(
+                    title: NSLocalizedString("No Favorites Yet", comment: "Empty state title for favorites"),
+                    message: NSLocalizedString("Tap the heart icon on any movie or series to add it to your favorites.", comment: "Empty state message for favorites")
+                )
+            } else {
+                ScrollView {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 150))]) {
+                        ForEach(favorites) { favorite in
+                            if let movie = favorite.movie {
+                                Button(action: { handleSelection(.movieDetail(movie)) }) {
+                                    CardView(url: URL(string: movie.posterURL ?? ""), title: movie.title ?? "No Title")
                         }
                         .buttonStyle(PlainButtonStyle())
                     } else if let series = favorite.series {
@@ -47,6 +54,8 @@ struct FavoritesView: View {
             }
             .padding()
         }
+    }
+}
         .navigationTitle(NSLocalizedString("Favorites", comment: "Favorites view navigation title"))
     }
 

@@ -114,6 +114,7 @@ struct MovieDetailView: View {
                         Button(action: playMovie) {
                             Text(NSLocalizedString("Play", comment: "Button title to play a movie"))
                         }
+                        .accessibilityLabel(Text(NSLocalizedString("Play", comment: "Accessibility label for play button")))
 
                         Button(action: {
                             favoritesManager.toggleFavorite(for: movie)
@@ -122,6 +123,7 @@ struct MovieDetailView: View {
                             Image(systemName: isFavorite ? "heart.fill" : "heart")
                             Text(isFavorite ? NSLocalizedString("Favorited", comment: "Button title for favorited item") : NSLocalizedString("Add to Favorites", comment: "Button title to add an item to favorites"))
                         }
+                        .accessibilityLabel(isFavorite ? Text(NSLocalizedString("Remove from favorites", comment: "Accessibility label for favorited item")) : Text(NSLocalizedString("Add to favorites", comment: "Accessibility label for add to favorites button")))
                     }
 
                     Spacer()
@@ -147,7 +149,6 @@ struct MovieDetailView: View {
     private func playMovie() {
         guard let profile = profileManager.currentProfile else { return }
         playbackManager.loadMedia(for: movie, profile: profile)
-        let _ = PlaybackProgressTracker(player: playbackManager.player, item: movie, watchHistoryManager: watchHistoryManager)
         showingPlayer = true
     }
 

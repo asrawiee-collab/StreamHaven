@@ -12,6 +12,7 @@ struct CardView: View {
         VStack {
             AsyncImage(url: url) { image in
                 image
+                    .accessibilityLabel(Text(title))
                     .resizable()
                     .aspectRatio(contentMode: .fill)
             } placeholder: {

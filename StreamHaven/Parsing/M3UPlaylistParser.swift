@@ -1,22 +1,10 @@
 import Foundation
 import CoreData
 
-enum M3UParserError: Error, LocalizedError {
-    case invalidDataEncoding
-    case coreDataSaveFailed(Error)
-
-    var errorDescription: String? {
-        switch self {
-        case .invalidDataEncoding:
-            return NSLocalizedString("The playlist file could not be read. Please ensure it's a valid UTF-8 encoded file.", comment: "M3U parser error for invalid encoding")
-        case .coreDataSaveFailed(let underlyingError):
-            return NSLocalizedString("Failed to save playlist data: \(underlyingError.localizedDescription)", comment: "M3U parser error for Core Data save failure")
-        }
-    }
-}
-
+/// A parser for processing M3U playlists and importing their content into Core Data.
 class M3UPlaylistParser {
 
+    /// A struct representing a single channel parsed from an M3U playlist.
     struct M3UChannel {
         let title: String
         let logoURL: String?
@@ -33,9 +21,15 @@ class M3UPlaylistParser {
         }
     }()
 
+    /// Parses the content of an M3U playlist and saves the channels and movies to Core Data.
+    ///
+    /// - Parameters:
+    ///   - data: The raw `Data` of the M3U playlist file.
+    ///   - context: The `NSManagedObjectContext` to perform the import on.
+    /// - Throws: An error if the data cannot be decoded or if there is a problem saving to Core Data.
     static func parse(data: Data, context: NSManagedObjectContext) throws {
         guard let content = String(data: data, encoding: .utf8) else {
-            throw M3UParserError.invalidDataEncoding
+            throw PlaylistImportError.parsingFailed(NSError(domain: "M3UParser", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid data encoding"]))
         }
 
         let lines = content.components(separatedBy: .newlines)
@@ -97,7 +91,7 @@ class M3UPlaylistParser {
             try context.save()
             print("Successfully saved \(channels.count) channels from M3U playlist.")
         } catch {
-            throw M3UParserError.coreDataSaveFailed(error)
+            throw PlaylistImportError.saveDataFailed(error)
         }
     }
 

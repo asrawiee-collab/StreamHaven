@@ -63,11 +63,21 @@ struct HomeView: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading) {
-
-                if !watchHistory.isEmpty {
-                    Text(NSLocalizedString("Resume Watching", comment: "Home view section title"))
+        Group {
+            if movies.isEmpty && series.isEmpty && channels.isEmpty {
+                EmptyStateView(
+                    title: NSLocalizedString("Your Library is Empty", comment: "Empty state title"),
+                    message: NSLocalizedString("Add a playlist to get started.", comment: "Empty state message"),
+                    actionTitle: NSLocalizedString("Add Playlist", comment: "Empty state action button title"),
+                    action: {
+                        showingAddPlaylist = true
+                    }
+                )
+            } else {
+                ScrollView {
+                    VStack(alignment: .leading) {
+                        if !watchHistory.isEmpty {
+                            Text(NSLocalizedString("Resume Watching", comment: "Home view section title"))
                         .font(.title)
                         .padding()
 
@@ -155,6 +165,8 @@ struct HomeView: View {
                 }
             }
         }
+    }
+}
         .navigationTitle(NSLocalizedString("Home", comment: "Home view navigation title"))
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
