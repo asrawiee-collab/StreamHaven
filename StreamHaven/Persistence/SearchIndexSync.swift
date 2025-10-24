@@ -1,33 +1,52 @@
 import Foundation
 import CoreData
 
-class SearchIndexSync {
+/// A class for performing searches across the Core Data store.
+public final class SearchIndexSync {
 
-    static func search(query: String, context: NSManagedObjectContext) -> [NSManagedObject] {
-        var results: [NSManagedObject] = []
+    // Note: FTS5 is not directly supported by Core Data.
+    // The search functionality is implemented using standard Core Data queries.
+    // For optimal performance, the 'title' and 'name' attributes of the Movie, Series,
+    // and Channel entities should be indexed in the Xcode Data Model Editor.
 
-        let movieFetchRequest: NSFetchRequest<Movie> = Movie.fetchRequest()
-        movieFetchRequest.predicate = NSPredicate(format: "title CONTAINS[cd] %@", query)
+    /// Searches for movies, series, and channels that match a given query.
+    ///
+    /// - Parameters:
+    ///   - query: The search query.
+    ///   - persistence: The `PersistenceProviding` to use for the search.
+    ///   - completion: A closure that is called with the search results.
+    ///   - results: An array of `NSManagedObject`s that match the search query.
+    public static func search(query: String, persistence: PersistenceProviding, completion: @escaping (_ results: [NSManagedObject]) -> Void) {
+        let backgroundContext = persistence.container.newBackgroundContext()
 
-        let seriesFetchRequest: NSFetchRequest<Series> = Series.fetchRequest()
-        seriesFetchRequest.predicate = NSPredicate(format: "title CONTAINS[cd] %@", query)
+        backgroundContext.perform {
+            var objectIDs: [NSManagedObjectID] = []
 
-        let channelFetchRequest: NSFetchRequest<Channel> = Channel.fetchRequest()
-        channelFetchRequest.predicate = NSPredicate(format: "name CONTAINS[cd] %@", query)
+            do {
+                let movieFetchRequest: NSFetchRequest<Movie> = Movie.fetchRequest()
+                movieFetchRequest.predicate = NSPredicate(format: "title CONTAINS[cd] %@", query)
+                let movies = try backgroundContext.fetch(movieFetchRequest)
+                objectIDs.append(contentsOf: movies.map { $0.objectID })
 
-        do {
-            let movies = try context.fetch(movieFetchRequest)
-            results.append(contentsOf: movies)
+                let seriesFetchRequest: NSFetchRequest<Series> = Series.fetchRequest()
+                seriesFetchRequest.predicate = NSPredicate(format: "title CONTAINS[cd] %@", query)
+                let series = try backgroundContext.fetch(seriesFetchRequest)
+                objectIDs.append(contentsOf: series.map { $0.objectID })
 
-            let series = try context.fetch(seriesFetchRequest)
-            results.append(contentsOf: series)
+                let channelFetchRequest: NSFetchRequest<Channel> = Channel.fetchRequest()
+                channelFetchRequest.predicate = NSPredicate(format: "name CONTAINS[cd] %@", query)
+                let channels = try backgroundContext.fetch(channelFetchRequest)
+                objectIDs.append(contentsOf: channels.map { $0.objectID })
 
-            let channels = try context.fetch(channelFetchRequest)
-            results.append(contentsOf: channels)
-        } catch {
-            print("Failed to perform search for query: \\(query). Error: \\(error)")
+            } catch {
+                print("Failed to perform search for query: \(query). Error: \(error)")
+            }
+
+            DispatchQueue.main.async {
+                let mainContext = persistence.container.viewContext
+                let finalResults = objectIDs.compactMap { mainContext.object(with: $0) }
+                completion(finalResults)
+            }
         }
-
-        return results
     }
 }

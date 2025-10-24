@@ -1,9 +1,13 @@
 import Foundation
 import CoreData
 
-class FranchiseGroupingManager {
+/// A utility class for grouping movies into franchises.
+public final class FranchiseGroupingManager {
 
-    static func groupFranchises(movies: [Movie]) -> [String: [Movie]] {
+    /// Groups an array of movies into franchises based on their titles.
+    /// - Parameter movies: An array of `Movie` objects to group.
+    /// - Returns: A dictionary where the keys are franchise names and the values are arrays of movies belonging to that franchise.
+    public static func groupFranchises(movies: [Movie]) -> [String: [Movie]] {
         var franchiseGroups: [String: [Movie]] = [:]
         var processedMovies: Set<NSManagedObjectID> = []
 
@@ -36,12 +40,15 @@ class FranchiseGroupingManager {
         return franchiseGroups
     }
 
+    /// Detects the franchise name from a movie title.
+    /// - Parameter title: The title of the movie.
+    /// - Returns: The detected franchise name.
     private static func detectFranchiseName(from title: String) -> String {
         let patterns = [
-            ":\\s.*",      // Everything after a colon
-            "\\s\\d+$",    // A number at the end
-            "\\sPart\\s\\w+", // " Part II"
-            "\\s(I|V|X)+$", // Roman numerals
+            ":\\s.*",
+            "\\s\\d+$",
+            "\\sPart\\s\\w+",
+            "\\s(I|V|X)+$",
         ]
 
         var franchiseName = title

@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model lastSavedToolsVersion="16700" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" minimumToolsVersion="1.0">
+<model lastSavedToolsVersion="16700" userDefinedModelVersionIdentifier="v2_denormalization" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" minimumToolsVersion="1.0">
     <entity name="Channel" representedClassName="Channel" syncable="YES">
         <attribute name="logoURL" type="String"/>
         <attribute name="name" type="String" userInfo="spotlight=true"/>
+        <attribute name="tvgID" optional="YES" attributeType="String"/>
+            <attribute name="variantCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+            <attribute name="hasEPG" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+            <attribute name="currentProgramTitle" optional="YES" attributeType="String"/>
+            <attribute name="epgLastUpdated" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="variants" toMany="YES" destination="ChannelVariant" inverseName="channel"/>
         <relationship name="favorite" toMany="NO" toOne="YES" destination="Favorite" inverseName="channel"/>
+        <relationship name="epgEntries" optional="YES" toMany="YES" deletionRule="Cascade" destination="EPGEntry" inverseName="channel"/>
     </entity>
     <entity name="ChannelVariant" representedClassName="ChannelVariant" syncable="YES">
         <attribute name="name" type="String"/>
@@ -27,16 +33,31 @@
         <relationship name="channel" toMany="NO" toOne="YES" destination="Channel" inverseName="favorite"/>
     </entity>
     <entity name="Movie" representedClassName="Movie" syncable="YES">
+        <attribute name="imdbID" optional="YES" attributeType="String"/>
         <attribute name="posterURL" type="String"/>
         <attribute name="rating" type="String"/>
         <attribute name="releaseDate" type="Date"/>
         <attribute name="summary" type="String"/>
+        <attribute name="streamURL" type="String"/>
         <attribute name="title" type="String" userInfo="spotlight=true"/>
+            <attribute name="hasBeenWatched" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+            <attribute name="watchProgressPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+            <attribute name="isFavorite" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+            <attribute name="lastWatchedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="watchHistory" toMany="NO" toOne="YES" destination="WatchHistory" inverseName="movie"/>
         <relationship name="favorite" toMany="NO" toOne="YES" destination="Favorite" inverseName="movie"/>
     </entity>
+    <entity name="EPGEntry" representedClassName="EPGEntry" syncable="YES">
+        <attribute name="category" optional="YES" attributeType="String"/>
+        <attribute name="descriptionText" optional="YES" attributeType="String"/>
+        <attribute name="endTime" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="startTime" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="title" attributeType="String"/>
+        <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destination="Channel" inverseName="epgEntries"/>
+    </entity>
     <entity name="PlaylistCache" representedClassName="PlaylistCache" syncable="YES">
-        <attribute name="data" type="Binary Data" allowsExternalBinaryDataStorage="YES"/>
+        <attribute name="epgURL" optional="YES" attributeType="String"/>
+        <attribute name="filePath" type="String"/>
         <attribute name="lastRefreshed" type="Date"/>
         <attribute name="url" type="String"/>
     </entity>
@@ -58,6 +79,10 @@
         <attribute name="releaseDate" type="Date"/>
         <attribute name="summary" type="String"/>
         <attribute name="title" type="String" userInfo="spotlight=true"/>
+            <attribute name="totalEpisodeCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+            <attribute name="seasonCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+            <attribute name="isFavorite" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+            <attribute name="unwatchedEpisodeCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="seasons" toMany="YES" destination="Season" inverseName="series"/>
         <relationship name="favorite" toMany="NO" toOne="YES" destination="Favorite" inverseName="series"/>
     </entity>

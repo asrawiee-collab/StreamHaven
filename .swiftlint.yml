@@ -1,0 +1,66 @@
+#############################################
+# SwiftLint configuration for StreamHaven   #
+# Docs: https://realm.github.io/SwiftLint/  #
+#############################################
+
+included:
+  - StreamHaven
+
+excluded:
+  - Carthage
+  - Pods
+  - SourcePackages
+  - StreamHaven/Resources/Media.xcassets
+  - StreamHaven/Resources/StreamHaven.xcdatamodeld
+
+# Reasonable defaults for an iOS/tvOS SwiftUI project
+line_length:
+  warning: 140
+  error: 200
+  ignores_comments: true
+  ignores_urls: true
+  ignores_function_declarations: true
+
+file_length:
+  warning: 1200
+  error: 2000
+
+type_body_length:
+  warning: 400
+  error: 800
+
+function_body_length:
+  warning: 80
+  error: 200
+
+cyclomatic_complexity:
+  warning: 12
+  error: 20
+
+identifier_name:
+  min_length: 2
+  excluded: [ id, tvgID, url, os, x, y ]
+
+# Opt-in rules that add value without being too noisy
+opt_in_rules:
+  - empty_count
+  - fatal_error_message
+  - force_unwrapping
+  - implicit_getter
+  - joined_default_parameter
+  - literal_expression_end_indentation
+  - multiline_arguments
+  - multiline_parameters
+  - operator_usage_whitespace
+  - redundant_nil_coalescing
+  - sorted_imports
+  - unused_import
+
+# Some rules are too noisy for now (can tighten later)
+disabled_rules:
+  - todo
+  - trailing_whitespace
+  - large_tuple
+  - function_parameter_count
+
+reporter: "github-actions-logging"

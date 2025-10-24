@@ -1,161 +1,256 @@
 import Foundation
 import CoreData
 
-class XtreamCodesParser {
+/// A parser for processing Xtream Codes playlists and importing their content into Core Data.
+public final class XtreamCodesParser {
+    /// Dependency-injected URL loading for testability.
+    public static var urlSession: URLSession = .shared
 
-    struct XtreamCodesVOD: Decodable {
+    /// A struct representing a single VOD (Video on Demand) item from an Xtream Codes API response.
+    public struct XtreamCodesVOD: Decodable {
+        /// The name of the VOD item.
         let name: String
+        /// The stream ID of the VOD item.
         let streamId: Int
+        /// The URL of the VOD item's icon.
         let streamIcon: String?
+        /// The rating of the VOD item.
         let rating: String?
+        /// The category ID of the VOD item.
         let categoryId: Int?
+        /// The container extension of the VOD item (e.g., "mp4", "mkv").
+        let containerExtension: String?
     }
 
-    struct XtreamCodesSeries: Decodable {
+    /// A struct representing a single series from an Xtream Codes API response.
+    public struct XtreamCodesSeries: Decodable {
+        /// The name of the series.
         let name: String
+        /// The series ID.
         let seriesId: Int
+        /// The URL of the series' cover art.
         let cover: String?
+        /// A summary of the series' plot.
         let plot: String?
+        /// The cast of the series.
         let cast: String?
+        /// The director of the series.
         let director: String?
+        /// The genre of the series.
         let genre: String?
+        /// The release date of the series.
         let releaseDate: String?
+        /// The rating of the series.
         let rating: String?
+        /// The category ID of the series.
         let categoryId: Int?
     }
 
-    struct XtreamCodesLive: Decodable {
+    /// A struct representing a single live stream channel from an Xtream Codes API response.
+    public struct XtreamCodesLive: Decodable {
+        /// The name of the live stream.
         let name: String
+        /// The stream ID of the live stream.
         let streamId: Int
+        /// The URL of the live stream's icon.
         let streamIcon: String?
+        /// The category ID of the live stream.
         let categoryId: Int?
     }
 
-    static func parse(url: URL, context: NSManagedObjectContext, completion: @escaping (Error?) -> Void) {
-        let group = DispatchGroup()
-        var lastError: Error?
-
+    /// Fetches and parses all content types (VOD, series, live streams) from an Xtream Codes playlist URL.
+    ///
+    /// - Parameters:
+    ///   - url: The base URL of the Xtream Codes playlist.
+    ///   - context: The `NSManagedObjectContext` to perform the import on.
+    /// - Throws: A `PlaylistImportError` if the URL is invalid, a network request fails, or parsing fails.
+    public static func parse(url: URL, username: String, password: String, context: NSManagedObjectContext) async throws {
         let actions = ["get_vod_streams", "get_series", "get_live_streams"]
 
         for action in actions {
-            group.enter()
-
             guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
-                lastError = NSError(domain: "XtreamCodesParser", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])
-                group.leave()
-                continue
+                throw PlaylistImportError.invalidURL
             }
 
-            var queryItems = components.queryItems ?? []
-            queryItems.append(URLQueryItem(name: "action", value: action))
-            components.queryItems = queryItems
+            components.path = "/player_api.php"
+            components.queryItems = [
+                URLQueryItem(name: "username", value: username),
+                URLQueryItem(name: "password", value: password),
+                URLQueryItem(name: "action", value: action)
+            ]
 
             guard let actionURL = components.url else {
-                lastError = NSError(domain: "XtreamCodesParser", code: 2, userInfo: [NSLocalizedDescriptionKey: "Failed to construct URL for action: \\(action)"])
-                group.leave()
-                continue
+                throw PlaylistImportError.invalidURL
             }
 
-            let task = URLSession.shared.dataTask(with: actionURL) { data, response, error in
-                defer { group.leave() }
+            do {
+                let (data, _) = try await urlSession.data(from: actionURL)
+                let decoder = JSONDecoder()
+                decoder.keyDecodingStrategy = .convertFromSnakeCase
 
-                if let error = error {
-                    lastError = error
-                    return
-                }
-
-                guard let data = data else {
-                    lastError = NSError(domain: "XtreamCodesParser", code: 3, userInfo: [NSLocalizedDescriptionKey: "No data received for action: \\(action)"])
-                    return
-                }
-
-                do {
-                    let decoder = JSONDecoder()
-                    decoder.keyDecodingStrategy = .convertFromSnakeCase
-
-                    context.performAndWait {
-                        do {
-                            switch action {
-                            case "get_vod_streams":
-                                let items = try decoder.decode([XtreamCodesVOD].self, from: data)
-                                items.forEach { self.saveVOD(from: $0, context: context) }
-                            case "get_series":
-                                let items = try decoder.decode([XtreamCodesSeries].self, from: data)
-                                items.forEach { self.saveSeries(from: $0, context: context) }
-                            case "get_live_streams":
-                                let items = try decoder.decode([XtreamCodesLive].self, from: data)
-                                items.forEach { self.saveLiveStream(from: $0, context: context) }
-                            default:
-                                break
-                            }
-                            try context.save()
-                        } catch {
-                            lastError = error
-                        }
+                try await context.perform {
+                    switch action {
+                    case "get_vod_streams":
+                        let items = try decoder.decode([XtreamCodesVOD].self, from: data)
+                        try self.batchInsertVOD(items: items, baseURL: url, username: username, password: password, context: context)
+                    case "get_series":
+                        let items = try decoder.decode([XtreamCodesSeries].self, from: data)
+                        try self.batchInsertSeries(items: items, baseURL: url, context: context)
+                    case "get_live_streams":
+                        let items = try decoder.decode([XtreamCodesLive].self, from: data)
+                        try self.importLiveStreams(items: items, baseURL: url, username: username, password: password, context: context)
+                    default:
+                        break
                     }
-                } catch {
-                    lastError = error
+                }
+            } catch let error as URLError {
+                throw PlaylistImportError.networkError(error)
+            } catch {
+                throw PlaylistImportError.parsingFailed(error)
+            }
+        }
+    }
+
+    private static func batchInsertVOD(items: [XtreamCodesVOD], baseURL: URL, username: String, password: String, context: NSManagedObjectContext) throws {
+        guard !items.isEmpty else { return }
+
+        let existingTitles: Set<String> = try {
+            let fetchRequest: NSFetchRequest<Movie> = Movie.fetchRequest()
+            fetchRequest.propertiesToFetch = ["title"]
+            return Set(try context.fetch(fetchRequest).compactMap { $0.title })
+        }()
+
+        let uniqueItems = items.filter { !existingTitles.contains($0.name) }
+        guard !uniqueItems.isEmpty else { return }
+
+        let batchInsert = NSBatchInsertRequest(entityName: "Movie", objects: uniqueItems.map {
+            let streamURL = buildStreamURL(baseURL: baseURL, type: "movie", username: username, password: password, id: $0.streamId, ext: $0.containerExtension ?? "mp4")
+            return [
+                "title": $0.name,
+                "posterURL": $0.streamIcon ?? "",
+                "rating": $0.rating ?? "",
+                "streamURL": streamURL
+            ]
+        })
+
+        try context.execute(batchInsert)
+    }
+
+    private static func batchInsertSeries(items: [XtreamCodesSeries], baseURL: URL, context: NSManagedObjectContext) throws {
+        guard !items.isEmpty else { return }
+
+        let existingTitles: Set<String> = try {
+            let fetchRequest: NSFetchRequest<Series> = Series.fetchRequest()
+            fetchRequest.propertiesToFetch = ["title"]
+            return Set(try context.fetch(fetchRequest).compactMap { $0.title })
+        }()
+
+        let uniqueItems = items.filter { !existingTitles.contains($0.name) }
+        guard !uniqueItems.isEmpty else { return }
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+
+        let batchInsert = NSBatchInsertRequest(entityName: "Series", objects: uniqueItems.map {
+            var seriesDict: [String: Any] = [
+                "title": $0.name,
+                "posterURL": $0.cover ?? "",
+                "summary": $0.plot ?? "",
+                "rating": $0.rating ?? ""
+            ]
+            if let dateStr = $0.releaseDate, let date = dateFormatter.date(from: dateStr) {
+                seriesDict["releaseDate"] = date
+            }
+            return seriesDict
+        })
+
+        try context.execute(batchInsert)
+    }
+
+    private static func importLiveStreams(items: [XtreamCodesLive], baseURL: URL, username: String, password: String, context: NSManagedObjectContext) throws {
+        guard !items.isEmpty else { return }
+
+        // Fetch existing channels
+        let existingChannelNames: Set<String> = try {
+            let fetchRequest: NSFetchRequest<Channel> = Channel.fetchRequest()
+            fetchRequest.propertiesToFetch = ["name"]
+            return Set(try context.fetch(fetchRequest).compactMap { $0.name })
+        }()
+
+        let existingVariantURLs: Set<String> = try {
+            let fetchRequest: NSFetchRequest<ChannelVariant> = ChannelVariant.fetchRequest()
+            fetchRequest.propertiesToFetch = ["streamURL"]
+            return Set(try context.fetch(fetchRequest).compactMap { $0.streamURL })
+        }()
+
+        // Batch insert new channels
+        let newChannels = items.filter { !existingChannelNames.contains($0.name) }
+        if !newChannels.isEmpty {
+            let channelBatchInsert = NSBatchInsertRequest(entityName: "Channel", objects: newChannels.map { item in
+                [
+                    "name": item.name,
+                    "logoURL": item.streamIcon ?? ""
+                ]
+            })
+            try context.execute(channelBatchInsert)
+            print("Successfully batch inserted \(newChannels.count) live channels.")
+        }
+
+        // Refresh channel map after batch insertion
+        let channelsByName: [String: Channel] = try {
+            let fetchRequest: NSFetchRequest<Channel> = Channel.fetchRequest()
+            let channels = try context.fetch(fetchRequest)
+            let pairs: [(String, Channel)] = channels.compactMap { channel in
+                guard let name = channel.name, !name.isEmpty else { return nil }
+                return (name, channel)
+            }
+            return Dictionary(pairs, uniquingKeysWith: { (first, _) in first })
+        }()
+
+        // Batch insert new variants
+        let newVariants = items.filter { item in
+            let streamURL = buildStreamURL(baseURL: baseURL, type: "live", username: username, password: password, id: item.streamId, ext: "m3u8")
+            return !existingVariantURLs.contains(streamURL)
+        }
+        
+        if !newVariants.isEmpty {
+            var variantDicts: [[String: Any]] = []
+            for item in newVariants {
+                if let channel = channelsByName[item.name] {
+                    let streamURL = buildStreamURL(baseURL: baseURL, type: "live", username: username, password: password, id: item.streamId, ext: "m3u8")
+                    variantDicts.append([
+                        "name": item.name,
+                        "streamURL": streamURL,
+                        "channel": channel
+                    ])
                 }
             }
-            task.resume()
+            
+            if !variantDicts.isEmpty {
+                let variantBatchInsert = NSBatchInsertRequest(entityName: "ChannelVariant", objects: variantDicts)
+                try context.execute(variantBatchInsert)
+                print("Successfully batch inserted \(variantDicts.count) live stream variants.")
+            }
         }
 
-        group.notify(queue: .main) {
-            completion(lastError)
+        if context.hasChanges {
+            try context.save()
         }
     }
 
-    private static func saveVOD(from vod: XtreamCodesVOD, context: NSManagedObjectContext) {
-        let fetchRequest: NSFetchRequest<Movie> = Movie.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "title == %@", vod.name)
-
-        do {
-            if try context.fetch(fetchRequest).isEmpty {
-                let movie = Movie(context: context)
-                movie.title = vod.name
-                movie.posterURL = vod.streamIcon
-                movie.rating = vod.rating
-            }
-        } catch {
-            print("Failed to process VOD: \\(vod.name). Error: \\(error)")
+    private static func buildStreamURL(baseURL: URL, type: String, username: String, password: String, id: Int, ext: String) -> String {
+        guard var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false) else {
+            return baseURL.absoluteString
         }
-    }
-
-    private static func saveSeries(from seriesData: XtreamCodesSeries, context: NSManagedObjectContext) {
-        let fetchRequest: NSFetchRequest<Series> = Series.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "title == %@", seriesData.name)
-
-        do {
-            if try context.fetch(fetchRequest).isEmpty {
-                let series = Series(context: context)
-                series.title = seriesData.name
-                series.posterURL = seriesData.cover
-                series.summary = seriesData.plot
-                series.rating = seriesData.rating
-
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "yyyy-MM-dd"
-                if let dateStr = seriesData.releaseDate {
-                    series.releaseDate = dateFormatter.date(from: dateStr)
-                }
-            }
-        } catch {
-            print("Failed to process Series: \\(seriesData.name). Error: \\(error)")
+        components.query = nil
+        components.path = ""
+        guard var finalURL = components.url else {
+            return baseURL.absoluteString
         }
-    }
-
-    private static func saveLiveStream(from live: XtreamCodesLive, context: NSManagedObjectContext) {
-        let fetchRequest: NSFetchRequest<Channel> = Channel.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "name == %@", live.name)
-
-        do {
-            if try context.fetch(fetchRequest).isEmpty {
-                let channel = Channel(context: context)
-                channel.name = live.name
-                channel.logoURL = live.streamIcon
-            }
-        } catch {
-            print("Failed to process Live Stream: \\(live.name). Error: \\(error)")
-        }
+        finalURL.appendPathComponent(type)
+        finalURL.appendPathComponent(username)
+        finalURL.appendPathComponent(password)
+        finalURL.appendPathComponent("\(id).\(ext)")
+        return finalURL.absoluteString
     }
 }
