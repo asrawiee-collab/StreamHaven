@@ -147,7 +147,6 @@ struct MovieDetailView: View {
     private func playMovie() {
         guard let profile = profileManager.currentProfile else { return }
         playbackManager.loadMedia(for: movie, profile: profile)
-        let _ = PlaybackProgressTracker(player: playbackManager.player, item: movie, watchHistoryManager: watchHistoryManager)
         showingPlayer = true
     }
 

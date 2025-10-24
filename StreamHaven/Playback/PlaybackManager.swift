@@ -20,12 +20,15 @@ class PlaybackManager: ObservableObject {
     private var currentProfile: Profile?
     private var context: NSManagedObjectContext
     private var settingsManager: SettingsManager
+    private var watchHistoryManager: WatchHistoryManager
+    private var progressTracker: PlaybackProgressTracker?
 
     private var cancellables = Set<AnyCancellable>()
 
-    init(context: NSManagedObjectContext, settingsManager: SettingsManager) {
+    init(context: NSManagedObjectContext, settingsManager: SettingsManager, watchHistoryManager: WatchHistoryManager) {
         self.context = context
         self.settingsManager = settingsManager
+        self.watchHistoryManager = watchHistoryManager
     }
 
     func loadMedia(for item: NSManagedObject, profile: Profile) {
@@ -34,6 +37,8 @@ class PlaybackManager: ObservableObject {
             self.playbackState = .failed(NSError(domain: "PlaybackManager", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid stream URL"]))
             return
         }
+
+        stop() // Stop any existing playback before starting new media
 
         self.currentItem = item
         self.currentProfile = profile
@@ -47,6 +52,7 @@ class PlaybackManager: ObservableObject {
         playerItem.textStyleRules = [subtitleRule]
 
         self.player = AVPlayer(playerItem: playerItem)
+        self.progressTracker = PlaybackProgressTracker(player: self.player, item: self.currentItem, watchHistoryManager: self.watchHistoryManager)
 
         setupPlayerObservers()
 
@@ -82,6 +88,8 @@ class PlaybackManager: ObservableObject {
 
     func stop() {
         player?.pause()
+        progressTracker?.stopTracking()
+        progressTracker = nil
         player = nil
         currentItem = nil
         currentProfile = nil
