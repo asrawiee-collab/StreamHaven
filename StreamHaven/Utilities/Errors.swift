@@ -1,13 +1,20 @@
 import Foundation
 
-enum PlaylistImportError: Error, LocalizedError {
+/// An enumeration of the possible errors that can occur during playlist import.
+public enum PlaylistImportError: Error, LocalizedError {
+    /// The URL is invalid.
     case invalidURL
+    /// A network error occurred.
     case networkError(Error)
+    /// The playlist type is not supported.
     case unsupportedPlaylistType
+    /// Parsing the playlist failed.
     case parsingFailed(Error)
+    /// Saving the data failed.
     case saveDataFailed(Error)
 
-    var errorDescription: String? {
+    /// A localized description of the error.
+    public var errorDescription: String? {
         switch self {
         case .invalidURL:
             return NSLocalizedString("The URL you entered appears to be invalid. Please check it and try again.", comment: "Invalid URL format error message")
@@ -22,7 +29,8 @@ enum PlaylistImportError: Error, LocalizedError {
         }
     }
 
-    var recoverySuggestion: String? {
+    /// A localized recovery suggestion for the error.
+    public var recoverySuggestion: String? {
         switch self {
         case .invalidURL, .unsupportedPlaylistType, .parsingFailed:
             return NSLocalizedString("Please check the playlist URL and format, then try again.", comment: "Recovery suggestion for URL/format errors")

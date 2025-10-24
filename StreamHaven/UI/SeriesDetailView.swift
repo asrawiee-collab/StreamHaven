@@ -1,6 +1,8 @@
 import SwiftUI
 
-struct SeriesDetailView: View {
+/// A view that displays the details of a series.
+public struct SeriesDetailView: View {
+    /// The series to display.
     let series: Series
 
     @EnvironmentObject var profileManager: ProfileManager
@@ -22,7 +24,8 @@ struct SeriesDetailView: View {
         return set.sorted { $0.episodeNumber < $1.episodeNumber }
     }
 
-    var body: some View {
+    /// The body of the view.
+    public var body: some View {
 #if os(tvOS)
         tvOSDetailView
 #else

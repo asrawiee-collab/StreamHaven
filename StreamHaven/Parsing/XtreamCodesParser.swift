@@ -2,37 +2,57 @@ import Foundation
 import CoreData
 
 /// A parser for processing Xtream Codes playlists and importing their content into Core Data.
-class XtreamCodesParser {
+public class XtreamCodesParser {
 
     /// A struct representing a single VOD (Video on Demand) item from an Xtream Codes API response.
-    struct XtreamCodesVOD: Decodable {
+    public struct XtreamCodesVOD: Decodable {
+        /// The name of the VOD item.
         let name: String
+        /// The stream ID of the VOD item.
         let streamId: Int
+        /// The URL of the VOD item's icon.
         let streamIcon: String?
+        /// The rating of the VOD item.
         let rating: String?
+        /// The category ID of the VOD item.
         let categoryId: Int?
+        /// The container extension of the VOD item (e.g., "mp4", "mkv").
         let containerExtension: String?
     }
 
     /// A struct representing a single series from an Xtream Codes API response.
-    struct XtreamCodesSeries: Decodable {
+    public struct XtreamCodesSeries: Decodable {
+        /// The name of the series.
         let name: String
+        /// The series ID.
         let seriesId: Int
+        /// The URL of the series' cover art.
         let cover: String?
+        /// A summary of the series' plot.
         let plot: String?
+        /// The cast of the series.
         let cast: String?
+        /// The director of the series.
         let director: String?
+        /// The genre of the series.
         let genre: String?
+        /// The release date of the series.
         let releaseDate: String?
+        /// The rating of the series.
         let rating: String?
+        /// The category ID of the series.
         let categoryId: Int?
     }
 
     /// A struct representing a single live stream channel from an Xtream Codes API response.
-    struct XtreamCodesLive: Decodable {
+    public struct XtreamCodesLive: Decodable {
+        /// The name of the live stream.
         let name: String
+        /// The stream ID of the live stream.
         let streamId: Int
+        /// The URL of the live stream's icon.
         let streamIcon: String?
+        /// The category ID of the live stream.
         let categoryId: Int?
     }
 
@@ -42,7 +62,7 @@ class XtreamCodesParser {
     ///   - url: The base URL of the Xtream Codes playlist.
     ///   - context: The `NSManagedObjectContext` to perform the import on.
     /// - Throws: A `PlaylistImportError` if the URL is invalid, a network request fails, or parsing fails.
-    static func parse(url: URL, context: NSManagedObjectContext) async throws {
+    public static func parse(url: URL, context: NSManagedObjectContext) async throws {
         let actions = ["get_vod_streams", "get_series", "get_live_streams"]
 
         for action in actions {
@@ -96,6 +116,12 @@ class XtreamCodesParser {
         }
     }
 
+    /// Saves a VOD item to Core Data as a `Movie`.
+    /// - Parameters:
+    ///   - vod: The `XtreamCodesVOD` to save.
+    ///   - baseURL: The base URL of the Xtream Codes playlist.
+    ///   - context: The `NSManagedObjectContext` to perform the save on.
+    /// - Throws: An error if there is a problem saving to Core Data.
     private static func saveVOD(from vod: XtreamCodesVOD, baseURL: URL, context: NSManagedObjectContext) throws {
         let fetchRequest: NSFetchRequest<Movie> = Movie.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "title == %@", vod.name)
@@ -109,6 +135,12 @@ class XtreamCodesParser {
         }
     }
 
+    /// Saves a series to Core Data as a `Series`.
+    /// - Parameters:
+    ///   - seriesData: The `XtreamCodesSeries` to save.
+    ///   - baseURL: The base URL of the Xtream Codes playlist.
+    ///   - context: The `NSManagedObjectContext` to perform the save on.
+    /// - Throws: An error if there is a problem saving to Core Data.
     private static func saveSeries(from seriesData: XtreamCodesSeries, baseURL: URL, context: NSManagedObjectContext) throws {
         let fetchRequest: NSFetchRequest<Series> = Series.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "title == %@", seriesData.name)
@@ -128,6 +160,12 @@ class XtreamCodesParser {
         }
     }
 
+    /// Saves a live stream to Core Data as a `Channel`.
+    /// - Parameters:
+    ///   - live: The `XtreamCodesLive` to save.
+    ///   - baseURL: The base URL of the Xtream Codes playlist.
+    ///   - context: The `NSManagedObjectContext` to perform the save on.
+    /// - Throws: An error if there is a problem saving to Core Data.
     private static func saveLiveStream(from live: XtreamCodesLive, baseURL: URL, context: NSManagedObjectContext) throws {
         let fetchRequest: NSFetchRequest<Channel> = Channel.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "name == %@", live.name)
@@ -156,6 +194,13 @@ class XtreamCodesParser {
         }
     }
 
+    /// Builds the full stream URL for a given content type.
+    /// - Parameters:
+    ///   - type: The type of content ("movie", "live").
+    ///   - baseURL: The base URL of the Xtream Codes playlist.
+    ///   - id: The stream ID.
+    ///   - ext: The stream's container extension.
+    /// - Returns: The full stream URL as a string.
     private static func buildStreamURL(for type: String, baseURL: URL, id: Int, ext: String) -> String? {
         guard var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false),
               let username = components.queryItems?.first(where: { $0.name == "username" })?.value,

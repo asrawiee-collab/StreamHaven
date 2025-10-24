@@ -1,25 +1,35 @@
 import Foundation
 import CoreData
 
-struct TMDbMovieSearchResult: Decodable {
+/// A struct representing a movie search result from the TMDb API.
+public struct TMDbMovieSearchResult: Decodable {
+    /// The TMDb ID of the movie.
     let id: Int
 }
 
-struct TMDbMovieSearchResponse: Decodable {
+/// A struct representing the response from a movie search request to the TMDb API.
+public struct TMDbMovieSearchResponse: Decodable {
+    /// An array of `TMDbMovieSearchResult` objects.
     let results: [TMDbMovieSearchResult]
 }
 
-struct TMDbExternalIDs: Decodable {
+/// A struct representing the external IDs of a movie from the TMDb API.
+public struct TMDbExternalIDs: Decodable {
+    /// The IMDb ID of the movie.
     let imdbId: String?
 }
 
+/// A class for interacting with The Movie Database (TMDb) API.
 @MainActor
-class TMDbManager: ObservableObject {
+public class TMDbManager: ObservableObject {
 
+    /// The TMDb API key.
     private var apiKey: String?
+    /// The base URL for the TMDb API.
     private let apiBaseURL = "https://api.themoviedb.org/3"
 
-    init() {
+    /// Initializes a new `TMDbManager` and loads the API key from the `Info.plist`.
+    public init() {
         if let key = Bundle.main.object(forInfoDictionaryKey: "TMDbAPIKey") as? String {
             self.apiKey = key
         } else {
@@ -27,7 +37,12 @@ class TMDbManager: ObservableObject {
         }
     }
 
-    func fetchIMDbID(for movie: Movie, context: NSManagedObjectContext) async {
+    /// Fetches the IMDb ID for a movie from the TMDb API and saves it to the Core Data object.
+    ///
+    /// - Parameters:
+    ///   - movie: The `Movie` object to fetch the IMDb ID for.
+    ///   - context: The `NSManagedObjectContext` to perform the save on.
+    public func fetchIMDbID(for movie: Movie, context: NSManagedObjectContext) async {
         guard let apiKey = apiKey, let title = movie.title else { return }
 
         // Don't re-fetch if we already have it

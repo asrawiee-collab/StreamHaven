@@ -1,6 +1,7 @@
 import SwiftUI
 
-struct MainView: View {
+/// The main view of the application, which contains the tab bar for iPhone and the split view for iPad.
+public struct MainView: View {
     @StateObject private var playbackManager: PlaybackManager
     @StateObject private var favoritesManager: FavoritesManager
     @StateObject private var watchHistoryManager: WatchHistoryManager
@@ -9,7 +10,12 @@ struct MainView: View {
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
-    init(profileManager: ProfileManager, settingsManager: SettingsManager) {
+    /// Initializes a new `MainView`.
+    ///
+    /// - Parameters:
+    ///   - profileManager: The `ProfileManager` for accessing the current profile.
+    ///   - settingsManager: The `SettingsManager` for accessing user settings.
+    public init(profileManager: ProfileManager, settingsManager: SettingsManager) {
         self.profileManager = profileManager
 
         let context = PersistenceController.shared.container.viewContext
@@ -24,7 +30,8 @@ struct MainView: View {
         _favoritesManager = StateObject(wrappedValue: FavoritesManager(context: context, profile: profile))
     }
 
-    var body: some View {
+    /// The body of the view.
+    public var body: some View {
         Group {
             if horizontalSizeClass == .compact {
                 iPhoneTabView
@@ -38,6 +45,7 @@ struct MainView: View {
         .environmentObject(navigationCoordinator)
     }
 
+    /// The tab view for iPhone.
     private var iPhoneTabView: some View {
         TabView {
             NavigationStack(path: $navigationCoordinator.path) {

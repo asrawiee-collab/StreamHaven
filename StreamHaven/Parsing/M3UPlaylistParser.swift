@@ -2,13 +2,17 @@ import Foundation
 import CoreData
 
 /// A parser for processing M3U playlists and importing their content into Core Data.
-class M3UPlaylistParser {
+public class M3UPlaylistParser {
 
     /// A struct representing a single channel parsed from an M3U playlist.
-    struct M3UChannel {
+    public struct M3UChannel {
+        /// The title of the channel.
         let title: String
+        /// The URL of the channel's logo.
         let logoURL: String?
+        /// The group or category of the channel.
         let group: String?
+        /// The URL of the channel's stream.
         let url: String
     }
 
@@ -27,7 +31,7 @@ class M3UPlaylistParser {
     ///   - data: The raw `Data` of the M3U playlist file.
     ///   - context: The `NSManagedObjectContext` to perform the import on.
     /// - Throws: An error if the data cannot be decoded or if there is a problem saving to Core Data.
-    static func parse(data: Data, context: NSManagedObjectContext) throws {
+    public static func parse(data: Data, context: NSManagedObjectContext) throws {
         guard let content = String(data: data, encoding: .utf8) else {
             throw PlaylistImportError.parsingFailed(NSError(domain: "M3UParser", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid data encoding"]))
         }
@@ -95,6 +99,11 @@ class M3UPlaylistParser {
         }
     }
 
+    /// Saves a channel to Core Data.
+    /// - Parameters:
+    ///   - m3uChannel: The `M3UChannel` to save.
+    ///   - context: The `NSManagedObjectContext` to perform the save on.
+    /// - Throws: An error if there is a problem saving to Core Data.
     private static func saveChannel(from m3uChannel: M3UChannel, context: NSManagedObjectContext) throws {
         let fetchRequest: NSFetchRequest<Channel> = Channel.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "name == %@", m3uChannel.title)
@@ -122,6 +131,11 @@ class M3UPlaylistParser {
         }
     }
 
+    /// Saves a movie to Core Data.
+    /// - Parameters:
+    ///  - m3uChannel: The `M3UChannel` to save as a movie.
+    /// - context: The `NSManagedObjectContext` to perform the save on.
+    /// - Throws: An error if there is a problem saving to Core Data.
     private static func saveMovie(from m3uChannel: M3UChannel, context: NSManagedObjectContext) throws {
         let fetchRequest: NSFetchRequest<Movie> = Movie.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "title == %@", m3uChannel.title)

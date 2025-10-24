@@ -1,9 +1,12 @@
 import SwiftUI
 
-struct ProfileSelectionView: View {
-    @ObservedObject var profileManager: ProfileManager
+/// A view for selecting a user profile.
+public struct ProfileSelectionView: View {
+    /// The `ProfileManager` for managing user profiles.
+    @ObservedObject public var profileManager: ProfileManager
 
-    var body: some View {
+    /// The body of the view.
+    public var body: some View {
         VStack {
             Text(NSLocalizedString("Who's Watching?", comment: "Profile selection title"))
                 .font(.largeTitle)

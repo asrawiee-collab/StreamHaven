@@ -1,21 +1,29 @@
 import SwiftUI
 
 #if os(iOS)
-struct iPadContainerView: View {
+/// A view that displays the main UI for iPad, using a `NavigationSplitView`.
+public struct iPadContainerView: View {
 
-    enum SidebarTab: String, Hashable {
+    /// An enumeration of the possible tabs in the sidebar.
+    public enum SidebarTab: String, Hashable {
+        /// The home tab.
         case home = "Home"
+        /// The favorites tab.
         case favorites = "Favorites"
+        /// The search tab.
         case search = "Search"
+        /// The settings tab.
         case settings = "Settings"
     }
 
     @State private var selectedTab: SidebarTab? = .home
     @State private var selectedDetail: Destination?
 
-    @ObservedObject var profileManager: ProfileManager
+    /// The `ProfileManager` for managing user profiles.
+    @ObservedObject public var profileManager: ProfileManager
 
-    var body: some View {
+    /// The body of the view.
+    public var body: some View {
         NavigationSplitView {
             List(selection: $selectedTab) {
                 Label(SidebarTab.home.rawValue, systemImage: "house").tag(SidebarTab.home)

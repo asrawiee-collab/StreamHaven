@@ -1,16 +1,20 @@
 import SwiftUI
 import AVKit
 
-struct PlaybackViewController: UIViewControllerRepresentable {
+/// A view that represents a playback view controller.
+public struct PlaybackViewController: UIViewControllerRepresentable {
 
-    var player: AVPlayer
+    /// The `AVPlayer` to use for playback.
+    public var player: AVPlayer
 
     @EnvironmentObject var subtitleManager: SubtitleManager
     @EnvironmentObject var audioSubtitleManager: AudioSubtitleManager
 
-    var imdbID: String?
+    /// The IMDb ID of the media being played.
+    public var imdbID: String?
 
-    func makeUIViewController(context: Context) -> CustomPlayerViewController {
+    /// Creates a `CustomPlayerViewController`.
+    public func makeUIViewController(context: Context) -> CustomPlayerViewController {
         let controller = CustomPlayerViewController()
         controller.player = player
         controller.subtitleManager = subtitleManager
@@ -19,18 +23,24 @@ struct PlaybackViewController: UIViewControllerRepresentable {
         return controller
     }
 
-    func updateUIViewController(_ uiViewController: CustomPlayerViewController, context: Context) {
+    /// Updates the `CustomPlayerViewController`.
+    public func updateUIViewController(_ uiViewController: CustomPlayerViewController, context: Context) {
         uiViewController.player = player
     }
 }
 
-class CustomPlayerViewController: AVPlayerViewController {
+/// A custom `AVPlayerViewController` that adds subtitle search functionality.
+public class CustomPlayerViewController: AVPlayerViewController {
 
-    var subtitleManager: SubtitleManager?
-    var audioSubtitleManager: AudioSubtitleManager?
-    var imdbID: String?
+    /// The `SubtitleManager` for searching for subtitles.
+    public var subtitleManager: SubtitleManager?
+    /// The `AudioSubtitleManager` for managing audio and subtitle tracks.
+    public var audioSubtitleManager: AudioSubtitleManager?
+    /// The IMDb ID of the media being played.
+    public var imdbID: String?
 
-    override func viewDidLoad() {
+    /// Called after the controller's view is loaded into memory.
+    public override func viewDidLoad() {
         super.viewDidLoad()
 
         let subtitleSearchButton = UIBarButtonItem(
@@ -44,6 +54,7 @@ class CustomPlayerViewController: AVPlayerViewController {
         parent?.navigationItem.rightBarButtonItems = [subtitleSearchButton]
     }
 
+    /// Searches for subtitles.
     @objc private func searchForSubtitles() {
         guard let imdbID = imdbID, let subtitleManager = subtitleManager else {
             print("IMDb ID or SubtitleManager not available.")
@@ -60,6 +71,8 @@ class CustomPlayerViewController: AVPlayerViewController {
         }
     }
 
+    /// Presents a list of subtitle options to the user.
+    /// - Parameter subtitles: An array of `Subtitle` objects.
     private func presentSubtitleOptions(_ subtitles: [Subtitle]) {
         let alert = UIAlertController(title: "Select Subtitle", message: nil, preferredStyle: .actionSheet)
 
@@ -74,6 +87,8 @@ class CustomPlayerViewController: AVPlayerViewController {
         present(alert, animated: true)
     }
 
+    /// Downloads and applies a subtitle.
+    /// - Parameter subtitle: The `Subtitle` to download and apply.
     private func downloadAndApplySubtitle(_ subtitle: Subtitle) {
         guard let fileID = subtitle.attributes.files.first?.fileId,
               let subtitleManager = subtitleManager,
@@ -91,6 +106,8 @@ class CustomPlayerViewController: AVPlayerViewController {
         }
     }
 
+    /// Presents an error to the user.
+    /// - Parameter error: The `Error` to present.
     private func presentError(_ error: Error) {
         let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))

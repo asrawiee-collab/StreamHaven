@@ -2,22 +2,27 @@ import SwiftUI
 import CoreData
 import Combine
 
-struct SearchView: View {
+/// A view for searching for movies, series, and channels.
+public struct SearchView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @State private var searchQuery: String = ""
     @State private var searchResults: [NSManagedObject] = []
     @EnvironmentObject private var navigationCoordinator: NavigationCoordinator
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    var onItemSelected: ((Destination) -> Void)? = nil
+    /// A closure that is called when an item is selected.
+    public var onItemSelected: ((Destination) -> Void)? = nil
 
     private let searchPublisher = PassthroughSubject<String, Never>()
 
-    init(onItemSelected: ((Destination) -> Void)? = nil) {
+    /// Initializes a new `SearchView`.
+    /// - Parameter onItemSelected: A closure that is called when an item is selected.
+    public init(onItemSelected: ((Destination) -> Void)? = nil) {
         self.onItemSelected = onItemSelected
     }
 
-    var body: some View {
+    /// The body of the view.
+    public var body: some View {
         VStack {
             SearchBar(text: $searchQuery, onSearchChanged: { query in
                 self.searchPublisher.send(query)
@@ -50,6 +55,8 @@ struct SearchView: View {
         }
     }
 
+    /// Handles the selection of an item.
+    /// - Parameter destination: The `Destination` to navigate to.
     private func handleSelection(_ destination: Destination) {
         if horizontalSizeClass == .regular {
             onItemSelected?(destination)
@@ -58,6 +65,8 @@ struct SearchView: View {
         }
     }
 
+    /// Performs a search with the given query.
+    /// - Parameter query: The search query.
     private func performSearch(query: String) {
         if query.isEmpty {
             searchResults = []
@@ -69,11 +78,15 @@ struct SearchView: View {
     }
 }
 
-struct SearchBar: View {
-    @Binding var text: String
-    var onSearchChanged: (String) -> Void
+/// A view that displays a search bar.
+public struct SearchBar: View {
+    /// The text in the search bar.
+    @Binding public var text: String
+    /// A closure that is called when the search text changes.
+    public var onSearchChanged: (String) -> Void
 
-    var body: some View {
+    /// The body of the view.
+    public var body: some View {
         HStack {
             TextField(NSLocalizedString("Search for movies, series, or channels", comment: "Search bar placeholder"), text: $text)
                 .padding(8)
