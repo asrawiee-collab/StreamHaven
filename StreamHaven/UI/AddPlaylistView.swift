@@ -1,6 +1,7 @@
 import SwiftUI
 
-struct AddPlaylistView: View {
+/// A view for adding a new playlist from a URL.
+public struct AddPlaylistView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var dataManager: StreamHavenData
@@ -10,7 +11,8 @@ struct AddPlaylistView: View {
     @State private var loadingStatus: String = ""
     @State private var errorAlert: ErrorAlert?
 
-    var body: some View {
+    /// The body of the view.
+    public var body: some View {
         NavigationView {
             Form {
                 Section(header: Text(NSLocalizedString("Playlist URL", comment: "Add playlist view section header"))) {
@@ -66,6 +68,7 @@ struct AddPlaylistView: View {
         }
     }
 
+    /// Adds the playlist from the URL.
     private func addPlaylist() {
         guard let url = URL(string: playlistURL) else {
             self.errorAlert = ErrorAlert(message: PlaylistImportError.invalidURL.localizedDescription)
@@ -106,9 +109,14 @@ struct AddPlaylistView: View {
     }
 }
 
-struct ErrorAlert: Identifiable {
-    var id = UUID()
-    var title: String = NSLocalizedString("Error", comment: "Default alert title for errors")
-    var message: String
-    var retryAction: (() -> Void)? = nil
+/// A struct representing an error alert.
+public struct ErrorAlert: Identifiable {
+    /// The unique identifier for the alert.
+    public var id = UUID()
+    /// The title of the alert.
+    public var title: String = NSLocalizedString("Error", comment: "Default alert title for errors")
+    /// The message of the alert.
+    public var message: String
+    /// An optional action to perform when the user taps the retry button.
+    public var retryAction: (() -> Void)? = nil
 }

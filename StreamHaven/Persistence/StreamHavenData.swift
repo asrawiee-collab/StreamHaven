@@ -2,17 +2,17 @@ import Foundation
 import CoreData
 
 /// Manages all data operations for the StreamHaven application, including importing playlists and managing the Core Data stack.
-class StreamHavenData {
+public class StreamHavenData {
 
     /// The main persistence controller for the Core Data stack.
-    let persistenceController: PersistenceController
+    public let persistenceController: PersistenceController
 
     /// A background context for performing data import and processing tasks without blocking the main thread.
-    let backgroundContext: NSManagedObjectContext
+    public let backgroundContext: NSManagedObjectContext
 
     /// Initializes a new data manager with the specified persistence controller.
     /// - Parameter persistenceController: The `PersistenceController` to use for Core Data operations. Defaults to the shared instance.
-    init(persistenceController: PersistenceController = .shared) {
+    public init(persistenceController: PersistenceController = .shared) {
         self.persistenceController = persistenceController
         self.backgroundContext = persistenceController.container.newBackgroundContext()
         self.backgroundContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
@@ -41,35 +41,16 @@ class StreamHavenData {
     ///   - url: The URL of the playlist to import.
     ///   - progress: A closure that is called with status updates during the import process.
     /// - Throws: A `PlaylistImportError` if the import fails at any stage.
-    func importPlaylist(from url: URL, progress: @escaping (String) -> Void) async throws {
-        let data: Data
-        do {
-            let (sessionData, _) = try await URLSession.shared.data(from: url)
-            data = sessionData
-        } catch {
-            throw PlaylistImportError.networkError(error)
-        }
+    public func importPlaylist(from url: URL, progress: @escaping (String) -> Void) async throws {
+        progress(NSLocalizedString("Downloading...", comment: "Playlist import status"))
+        let (data, _) = try await URLSession.shared.data(from: url)
 
         try await backgroundContext.perform {
-            do {
-                progress(NSLocalizedString("Caching playlist...", comment: "Playlist import status"))
-                _ = PlaylistCacheManager.cachePlaylist(url: url, data: data, context: self.backgroundContext)
+            progress(NSLocalizedString("Caching playlist...", comment: "Playlist import status"))
+            _ = PlaylistCacheManager.cachePlaylist(url: url, data: data, context: self.backgroundContext)
 
-                progress(NSLocalizedString("Parsing playlist...", comment: "Playlist import status"))
-                let type = PlaylistParser.detectPlaylistType(from: url)
-                switch type {
-                case .m3u:
-                    try M3UPlaylistParser.parse(data: data, context: self.backgroundContext)
-                case .xtreamCodes:
-                    try await XtreamCodesParser.parse(url: url, context: self.backgroundContext)
-                case .unknown:
-                    throw PlaylistImportError.unsupportedPlaylistType
-                }
-            } catch let error as PlaylistImportError {
-                throw error
-            } catch {
-                throw PlaylistImportError.parsingFailed(error)
-            }
+            progress(NSLocalizedString("Parsing playlist...", comment: "Playlist import status"))
+            try await PlaylistParser.parse(url: url, context: self.backgroundContext)
         }
     }
 }

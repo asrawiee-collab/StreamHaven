@@ -1,9 +1,11 @@
 import SwiftUI
 
-struct SettingsView: View {
+/// A view for managing user settings.
+public struct SettingsView: View {
     @EnvironmentObject var settingsManager: SettingsManager
 
-    var body: some View {
+    /// The body of the view.
+    public var body: some View {
         Form {
             Section(header: Text(NSLocalizedString("Appearance", comment: "Settings section header for appearance"))) {
                 Picker(NSLocalizedString("Theme", comment: "Settings option for app theme"), selection: $settingsManager.theme) {

@@ -1,14 +1,18 @@
 import SwiftUI
 
-struct CardView: View {
+/// A view that displays a card with an image and a title.
+public struct CardView: View {
+    /// The URL of the image to display.
     let url: URL?
+    /// The title to display.
     let title: String
 
 #if os(tvOS)
     @Environment(\.isFocused) var isFocused: Bool
 #endif
 
-    var body: some View {
+    /// The body of the view.
+    public var body: some View {
         VStack {
             AsyncImage(url: url) { image in
                 image

@@ -1,34 +1,48 @@
 import Foundation
 
-struct SubtitleFile: Decodable {
+/// A struct representing a subtitle file from the OpenSubtitles API.
+public struct SubtitleFile: Decodable {
+    /// The ID of the file.
     let fileId: Int
+    /// The name of the file.
     let fileName: String
 }
 
-struct Subtitle: Decodable {
+/// A struct representing a subtitle from the OpenSubtitles API.
+public struct Subtitle: Decodable {
+    /// The attributes of the subtitle.
     let attributes: SubtitleAttributes
 }
 
-struct SubtitleAttributes: Decodable {
+/// A struct representing the attributes of a subtitle from the OpenSubtitles API.
+public struct SubtitleAttributes: Decodable {
+    /// The language of the subtitle.
     let language: String
+    /// An array of `SubtitleFile` objects.
     let files: [SubtitleFile]
 }
 
-struct SubtitleSearchResponse: Decodable {
+/// A struct representing the response from a subtitle search request to the OpenSubtitles API.
+public struct SubtitleSearchResponse: Decodable {
+    /// An array of `Subtitle` objects.
     let data: [Subtitle]
 }
 
-struct SubtitleDownloadResponse: Decodable {
+/// A struct representing the response from a subtitle download request to the OpenSubtitles API.
+public struct SubtitleDownloadResponse: Decodable {
+    /// The URL to download the subtitle from.
     let link: String
 }
 
+/// A class for interacting with the OpenSubtitles API.
 @MainActor
-class SubtitleManager: ObservableObject {
+public class SubtitleManager: ObservableObject {
 
     private var apiKey: String? // Will be loaded from Info.plist
     private let apiBaseURL = "https://api.opensubtitles.com/api/v1"
 
-    init() {
+    /// Initializes a new `SubtitleManager` and loads the API key from the `Info.plist`.
+    public init() {
         // In a real app, you would load this from a secure place.
         // For this project, we'll expect it to be in the Info.plist.
         // I will add instructions for this in the README.
@@ -39,7 +53,12 @@ class SubtitleManager: ObservableObject {
         }
     }
 
-    func searchSubtitles(for imdbID: String) async throws -> [Subtitle] {
+    /// Searches for subtitles for a given IMDb ID.
+    ///
+    /// - Parameter imdbID: The IMDb ID of the movie or series to search for.
+    /// - Returns: An array of `Subtitle` objects.
+    /// - Throws: An error if the search fails.
+    public func searchSubtitles(for imdbID: String) async throws -> [Subtitle] {
         guard let apiKey = apiKey else {
             throw NSError(domain: "SubtitleManager", code: 1, userInfo: [NSLocalizedDescriptionKey: "API Key is missing."])
         }
@@ -58,7 +77,12 @@ class SubtitleManager: ObservableObject {
         return response.data
     }
 
-    func downloadSubtitle(for fileID: Int) async throws -> URL {
+    /// Downloads a subtitle file.
+    ///
+    /// - Parameter fileID: The ID of the file to download.
+    /// - Returns: The local URL of the downloaded subtitle file.
+    /// - Throws: An error if the download fails.
+    public func downloadSubtitle(for fileID: Int) async throws -> URL {
         guard let apiKey = apiKey else {
             throw NSError(domain: "SubtitleManager", code: 1, userInfo: [NSLocalizedDescriptionKey: "API Key is missing."])
         }

@@ -1,17 +1,24 @@
 import SwiftUI
 import CoreData
 
-struct FavoritesView: View {
+/// A view that displays the user's favorite movies, series, and channels.
+public struct FavoritesView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @ObservedObject var profileManager: ProfileManager
     @EnvironmentObject private var navigationCoordinator: NavigationCoordinator
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    var onItemSelected: ((Destination) -> Void)? = nil
+    /// A closure that is called when an item is selected.
+    public var onItemSelected: ((Destination) -> Void)? = nil
 
     @FetchRequest var favorites: FetchedResults<Favorite>
 
-    init(profileManager: ProfileManager, onItemSelected: ((Destination) -> Void)? = nil) {
+    /// Initializes a new `FavoritesView`.
+    ///
+    - Parameters:
+    ///   - profileManager: The `ProfileManager` for accessing the current profile.
+    ///   - onItemSelected: A closure that is called when an item is selected.
+    public init(profileManager: ProfileManager, onItemSelected: ((Destination) -> Void)? = nil) {
         self.profileManager = profileManager
         self.onItemSelected = onItemSelected
 
@@ -26,7 +33,8 @@ struct FavoritesView: View {
             animation: .default)
     }
 
-    var body: some View {
+    /// The body of the view.
+    public var body: some View {
         Group {
             if favorites.isEmpty {
                 EmptyStateView(
@@ -59,6 +67,8 @@ struct FavoritesView: View {
         .navigationTitle(NSLocalizedString("Favorites", comment: "Favorites view navigation title"))
     }
 
+    /// Handles the selection of an item.
+    /// - Parameter destination: The `Destination` to navigate to.
     private func handleSelection(_ destination: Destination) {
         if horizontalSizeClass == .regular {
             onItemSelected?(destination)

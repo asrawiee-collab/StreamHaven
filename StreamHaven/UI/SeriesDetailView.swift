@@ -1,6 +1,8 @@
 import SwiftUI
 
-struct SeriesDetailView: View {
+/// A view that displays the details of a series.
+public struct SeriesDetailView: View {
+    /// The series to display.
     let series: Series
 
     @EnvironmentObject var profileManager: ProfileManager
@@ -22,7 +24,8 @@ struct SeriesDetailView: View {
         return set.sorted { $0.episodeNumber < $1.episodeNumber }
     }
 
-    var body: some View {
+    /// The body of the view.
+    public var body: some View {
 #if os(tvOS)
         tvOSDetailView
 #else
@@ -125,13 +128,14 @@ struct SeriesDetailView: View {
 #if os(tvOS)
             Image(systemName: isFavorite ? "heart.fill" : "heart")
             Text(isFavorite ? NSLocalizedString("Favorited", comment: "Button title for favorited item") : NSLocalizedString("Add to Favorites", comment: "Button title to add an item to favorites"))
-                .accessibilityLabel(isFavorite ? Text(NSLocalizedString("Remove from favorites", comment: "Accessibility label for favorited item")) : Text(NSLocalizedString("Add to favorites", comment: "Accessibility label for add to favorites button")))
 #else
             Image(systemName: isFavorite ? "heart.fill" : "heart")
                 .font(.title)
                 .foregroundColor(.red)
 #endif
         }
+        .accessibilityLabel(Text(NSLocalizedString("Favorite", comment: "Accessibility label for favorite button")))
+        .accessibilityHint(isFavorite ? Text(NSLocalizedString("Removes the series from favorites", comment: "Accessibility hint for favorited item")) : Text(NSLocalizedString("Adds the series to favorites", comment: "Accessibility hint for add to favorites button")))
     }
 
     private var episodeList: some View {
@@ -143,6 +147,8 @@ struct SeriesDetailView: View {
                             .padding(.vertical, 4)
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel(Text(episode.title ?? "No Title"))
+                    .accessibilityHint(Text(NSLocalizedString("Plays the episode", comment: "Accessibility hint for play episode button")))
                 }
             }
         }

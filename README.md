@@ -1,12 +1,14 @@
 # StreamHaven
 
-StreamHaven is a local-first streaming hub for iOS, iPadOS, and tvOS.
+StreamHaven is a local-first streaming hub for iOS, iPadOS, and tvOS that allows you to aggregate and manage your IPTV playlists (M3U/Xtream Codes) in one place. All your data is stored locally on your device using Core Data, ensuring privacy and offline access.
 
-## Getting Started
+## Table of Contents
 
-To run the project, open the `Package.swift` file in Xcode 16 or later. Xcode will automatically resolve the package and generate the necessary project files.
-
-**Note:** This project is designed to be opened directly from the `Package.swift` file. There is no `.xcodeproj` file included in the repository.
+- [Features](#features)
+- [Architecture](#architecture)
+- [Getting Started](#getting-started)
+- [Core Data Model Updates](#core-data-model-updates)
+- [Finalizing App Metadata](#finalizing-app-metadata)
 
 ## Features
 
@@ -15,6 +17,28 @@ To run the project, open the `Package.swift` file in Xcode 16 or later. Xcode wi
 *   **User Profiles:** Separate "Adult" and "Kids" profiles with content filtering.
 *   **Playback:** AVKit-based playback for a reliable experience.
 *   **SwiftUI:** A modern, SwiftUI-based interface.
+*   **Adaptive UI:** A responsive UI that adapts to different screen sizes on iPhone and iPad.
+*   **tvOS Support:** A dedicated tvOS interface for a cinematic experience.
+*   **Subtitle Search:** Search for and download subtitles from OpenSubtitles.com.
+
+## Architecture
+
+StreamHaven is built using the MVVM (Model-View-ViewModel) architecture pattern, with a Core Data stack for local persistence. The project is structured into the following modules:
+
+-   **App:** The main entry point of the application.
+-   **Models:** The Core Data managed object models.
+-   **Parsing:** Parsers for M3U and Xtream Codes playlists.
+-   **Persistence:** The Core Data stack and related components.
+-   **Playback:** The `AVPlayer`-based playback manager and related components.
+-   **UI:** The SwiftUI views and related components.
+-   **User:** Managers for user profiles, favorites, and settings.
+-   **Utilities:** Helper classes and enums.
+
+## Getting Started
+
+To run the project, open the `Package.swift` file in Xcode 16 or later. Xcode will automatically resolve the package and generate the necessary project files.
+
+**Note:** This project is designed to be opened directly from the `Package.swift` file. There is no `.xcodeproj` file included in the repository.
 
 ## Core Data Model Updates
 

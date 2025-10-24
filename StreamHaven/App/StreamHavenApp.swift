@@ -1,10 +1,13 @@
 import SwiftUI
 
+/// The main entry point of the StreamHaven application.
 @main
-struct StreamHavenApp: App {
+public struct StreamHavenApp: App {
+    /// The shared `PersistenceController` for Core Data.
     let persistenceController = PersistenceController.shared
 
-    var body: some Scene {
+    /// The body of the app.
+    public var body: some Scene {
         WindowGroup {
             ContentView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
