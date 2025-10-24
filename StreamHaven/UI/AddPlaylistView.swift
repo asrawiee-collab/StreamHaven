@@ -7,6 +7,7 @@ struct AddPlaylistView: View {
 
     @State private var playlistURL: String = ""
     @State private var isLoading: Bool = false
+    @State private var loadingStatus: String = ""
     @State private var errorAlert: ErrorAlert?
 
     var body: some View {
@@ -23,7 +24,12 @@ struct AddPlaylistView: View {
                     HStack {
                         Spacer()
                         if isLoading {
-                            ProgressView()
+                            VStack {
+                                ProgressView()
+                                Text(loadingStatus)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
                         } else {
                             Text(NSLocalizedString("Add Playlist", comment: "Button title to add a playlist"))
                         }
@@ -42,29 +48,53 @@ struct AddPlaylistView: View {
                 }
             }
             .alert(item: $errorAlert) { alert in
-                Alert(
-                    title: Text(alert.title),
-                    message: Text(alert.message),
-                    dismissButton: .default(Text(NSLocalizedString("OK", comment: "Default button for alert")))
-                )
+                if let retryAction = alert.retryAction {
+                    return Alert(
+                        title: Text(alert.title),
+                        message: Text(alert.message),
+                        primaryButton: .default(Text(NSLocalizedString("Retry", comment: "Retry button title")), action: retryAction),
+                        secondaryButton: .cancel(Text(NSLocalizedString("OK", comment: "Default button for alert")))
+                    )
+                } else {
+                    return Alert(
+                        title: Text(alert.title),
+                        message: Text(alert.message),
+                        dismissButton: .default(Text(NSLocalizedString("OK", comment: "Default button for alert")))
+                    )
+                }
             }
         }
     }
 
     private func addPlaylist() {
         guard let url = URL(string: playlistURL) else {
-            self.errorAlert = ErrorAlert(message: NSLocalizedString("The URL you entered appears to be invalid. Please check it and try again.", comment: "Invalid URL format error message"))
+            self.errorAlert = ErrorAlert(message: PlaylistImportError.invalidURL.localizedDescription)
             return
         }
 
         isLoading = true
+        loadingStatus = NSLocalizedString("Downloading...", comment: "Playlist import status")
 
         Task {
             do {
-                try await dataManager.importPlaylist(from: url)
+                try await dataManager.importPlaylist(from: url, progress: { status in
+                    Task { @MainActor in
+                        self.loadingStatus = status
+                    }
+                })
                 await MainActor.run {
                     self.isLoading = false
                     self.presentationMode.wrappedValue.dismiss()
+                }
+            } catch let error as PlaylistImportError {
+                await MainActor.run {
+                    self.isLoading = false
+                    self.errorAlert = ErrorAlert(
+                        message: error.localizedDescription,
+                        retryAction: {
+                            self.addPlaylist()
+                        }
+                    )
                 }
             } catch {
                 await MainActor.run {
@@ -80,4 +110,5 @@ struct ErrorAlert: Identifiable {
     var id = UUID()
     var title: String = NSLocalizedString("Error", comment: "Default alert title for errors")
     var message: String
+    var retryAction: (() -> Void)? = nil
 }

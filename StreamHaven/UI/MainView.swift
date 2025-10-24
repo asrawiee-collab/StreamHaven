@@ -13,13 +13,15 @@ struct MainView: View {
         self.profileManager = profileManager
 
         let context = PersistenceController.shared.container.viewContext
-        _playbackManager = StateObject(wrappedValue: PlaybackManager(context: context, settingsManager: settingsManager))
-
         guard let profile = profileManager.currentProfile else {
             fatalError("MainView should not be initialized without a current profile.")
         }
+
+        let watchHistoryManager = WatchHistoryManager(context: context, profile: profile)
+        _watchHistoryManager = StateObject(wrappedValue: watchHistoryManager)
+
+        _playbackManager = StateObject(wrappedValue: PlaybackManager(context: context, settingsManager: settingsManager, watchHistoryManager: watchHistoryManager))
         _favoritesManager = StateObject(wrappedValue: FavoritesManager(context: context, profile: profile))
-        _watchHistoryManager = StateObject(wrappedValue: WatchHistoryManager(context: context, profile: profile))
     }
 
     var body: some View {
