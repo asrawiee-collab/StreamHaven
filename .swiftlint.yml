@@ -1,0 +1,9 @@
+disabled_rules:
+  - trailing_whitespace
+included:
+  - StreamHaven
+excluded:
+  - Carthage
+  - Pods
+  - SourcePackages
+line_length: 120

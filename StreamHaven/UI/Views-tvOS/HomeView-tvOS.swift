@@ -2,7 +2,8 @@
 import SwiftUI
 import CoreData
 
-struct HomeView_tvOS: View {
+/// A view that displays the user's library of movies, series, and channels on tvOS.
+public struct HomeView_tvOS: View {
     @Environment(\.managedObjectContext) private var viewContext
     @ObservedObject var profileManager: ProfileManager
 
@@ -12,7 +13,9 @@ struct HomeView_tvOS: View {
     @FetchRequest var watchHistory: FetchedResults<WatchHistory>
     @State private var backgroundPosterURL: URL?
 
-    init(profileManager: ProfileManager) {
+    /// Initializes a new `HomeView_tvOS`.
+    /// - Parameter profileManager: The `ProfileManager` for accessing the current profile.
+    public init(profileManager: ProfileManager) {
         self.profileManager = profileManager
 
         var moviePredicate = NSPredicate(value: true)
@@ -56,7 +59,8 @@ struct HomeView_tvOS: View {
         }
     }
 
-    var body: some View {
+    /// The body of the view.
+    public var body: some View {
         ZStack {
             // Animated blurred background
             AsyncImage(url: backgroundPosterURL) { image in
@@ -140,6 +144,7 @@ struct HomeView_tvOS: View {
     }
 }
 
+/// A view that displays a carousel item.
 fileprivate struct CarouselItemView<Destination: View>: View {
     let url: String?
     let title: String?

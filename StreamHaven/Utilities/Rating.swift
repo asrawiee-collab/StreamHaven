@@ -1,11 +1,18 @@
 import Foundation
 
-enum Rating: String, Comparable, CaseIterable {
+/// An enumeration of the possible content ratings.
+public enum Rating: String, Comparable, CaseIterable {
+    /// G - General Audiences.
     case g = "G"
+    /// PG - Parental Guidance Suggested.
     case pg = "PG"
+    /// PG-13 - Parents Strongly Cautioned.
     case pg13 = "PG-13"
+    /// R - Restricted.
     case r = "R"
+    /// NC-17 - Adults Only.
     case nc17 = "NC-17"
+    /// Unrated.
     case unrated = "Unrated"
 
     private var order: Int {
@@ -19,7 +26,7 @@ enum Rating: String, Comparable, CaseIterable {
         }
     }
 
-    static func < (lhs: Rating, rhs: Rating) -> Bool {
+    public static func < (lhs: Rating, rhs: Rating) -> Bool {
         return lhs.order < rhs.order
     }
 }

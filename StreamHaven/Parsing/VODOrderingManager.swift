@@ -1,13 +1,26 @@
 import Foundation
 import CoreData
 
-class VODOrderingManager {
+/// A utility class for ordering Video on Demand (VOD) content.
+public class VODOrderingManager {
 
-    enum SortOrder {
-        case releaseDate, chronological, alphabetical
+    /// An enumeration of the available sort orders for VOD content.
+    public enum SortOrder {
+        /// Sorts by release date.
+        case releaseDate
+        /// Sorts chronologically.
+        case chronological
+        /// Sorts alphabetically.
+        case alphabetical
     }
 
-    static func orderMovies(movies: [Movie], by order: SortOrder = .releaseDate) -> [Movie] {
+    /// Orders an array of movies based on the specified sort order.
+    ///
+    /// - Parameters:
+    ///   - movies: An array of `Movie` objects to order.
+    ///   - order: The `SortOrder` to use for ordering. Defaults to `.releaseDate`.
+    /// - Returns: A new array of `Movie` objects sorted according to the specified order.
+    public static func orderMovies(movies: [Movie], by order: SortOrder = .releaseDate) -> [Movie] {
         switch order {
         case .releaseDate:
             return movies.sorted {

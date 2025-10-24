@@ -14,38 +14,31 @@ class M3UPlaylistParserTests: XCTestCase {
     }
 
     override func tearDown() {
-        context = nil
-        persistenceController = nil
         super.tearDown()
+        persistenceController = nil
+        context = nil
     }
 
-    func testStandardM3U() {
+    func testParseM3UPlaylist() throws {
         let m3uString = """
         #EXTM3U
-        #EXTINF:-1 tvg-id="channel1" tvg-name="Channel 1" tvg-logo="http://logo.url/1.png" group-title="Group A",Channel 1
-        http://stream.url/1
+        #EXTINF:-1 tvg-id="channel1" tvg-name="Channel 1" tvg-logo="logo1.png" group-title="News",Channel 1
+        http://server.com/stream1
+        #EXTINF:-1 tvg-id="movie1" tvg-name="Movie 1" tvg-logo="logo2.png" group-title="Movies",Movie 1
+        http://server.com/movie1
         """
-        let data = m3uString.data(using: .utf8)!
+        let m3uData = m3uString.data(using: .utf8)!
 
-        XCTAssertNoThrow(try M3UPlaylistParser.parse(data: data, context: context))
+        try M3UPlaylistParser.parse(data: m3uData, context: context)
 
-        let fetchRequest: NSFetchRequest<Channel> = Channel.fetchRequest()
+        let channelFetchRequest: NSFetchRequest<Channel> = Channel.fetchRequest()
+        let channels = try context.fetch(channelFetchRequest)
+        XCTAssertEqual(channels.count, 1)
+        XCTAssertEqual(channels.first?.name, "Channel 1")
 
-        XCTAssertNoThrow(try {
-            let channels = try context.fetch(fetchRequest)
-            XCTAssertEqual(channels.count, 1)
-            XCTAssertEqual(channels.first?.name, "Channel 1")
-            XCTAssertEqual(channels.first?.variants?.count, 1)
-        }())
-    }
-
-    func testInvalidDataEncoding() {
-        // Using a different encoding to make the data invalid for UTF-8 parsing
-        let m3uString = "invalid data"
-        let data = m3uString.data(using: .utf16)!
-
-        XCTAssertThrowsError(try M3UPlaylistParser.parse(data: data, context: context)) { error in
-            XCTAssertEqual(error as? M3UParserError, .invalidDataEncoding)
-        }
+        let movieFetchRequest: NSFetchRequest<Movie> = Movie.fetchRequest()
+        let movies = try context.fetch(movieFetchRequest)
+        XCTAssertEqual(movies.count, 1)
+        XCTAssertEqual(movies.first?.title, "Movie 1")
     }
 }

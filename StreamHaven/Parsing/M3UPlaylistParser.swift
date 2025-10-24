@@ -2,13 +2,17 @@ import Foundation
 import CoreData
 
 /// A parser for processing M3U playlists and importing their content into Core Data.
-class M3UPlaylistParser {
+public class M3UPlaylistParser {
 
     /// A struct representing a single channel parsed from an M3U playlist.
-    struct M3UChannel {
+    public struct M3UChannel {
+        /// The title of the channel.
         let title: String
+        /// The URL of the channel's logo.
         let logoURL: String?
+        /// The group or category of the channel.
         let group: String?
+        /// The URL of the channel's stream.
         let url: String
     }
 
@@ -27,13 +31,14 @@ class M3UPlaylistParser {
     ///   - data: The raw `Data` of the M3U playlist file.
     ///   - context: The `NSManagedObjectContext` to perform the import on.
     /// - Throws: An error if the data cannot be decoded or if there is a problem saving to Core Data.
-    static func parse(data: Data, context: NSManagedObjectContext) throws {
+    public static func parse(data: Data, context: NSManagedObjectContext) throws {
         guard let content = String(data: data, encoding: .utf8) else {
             throw PlaylistImportError.parsingFailed(NSError(domain: "M3UParser", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid data encoding"]))
         }
 
         let lines = content.components(separatedBy: .newlines)
-        var channels: [M3UChannel] = []
+        var movieItems: [M3UChannel] = []
+        var channelItems: [M3UChannel] = []
         var currentChannelInfo: [String: String] = [:]
 
         for i in 0..<lines.count {
@@ -69,69 +74,98 @@ class M3UPlaylistParser {
             } else if !line.isEmpty && !line.hasPrefix("#") {
                 if var title = currentChannelInfo["title"] {
                     if title.isEmpty {
-                        title = currentChannelInfo["tvg-name"] ?? "Unknown Channel"
+                        title = currentChannelInfo["tvg-name"] ?? "Unknown"
                     }
                     let logo = currentChannelInfo["tvg-logo"]
                     let group = currentChannelInfo["group-title"]
                     let url = line
 
                     let channel = M3UChannel(title: title, logoURL: logo, group: group, url: url)
-                    channels.append(channel)
 
                     if let groupTitle = channel.group, groupTitle.localizedCaseInsensitiveContains("Movie") {
-                        try saveMovie(from: channel, context: context)
+                        movieItems.append(channel)
                     } else {
-                        try saveChannel(from: channel, context: context)
+                        channelItems.append(channel)
                     }
                 }
             }
         }
 
+        try batchInsertMovies(items: movieItems, context: context)
+        try importChannels(items: channelItems, context: context)
+
+        if context.hasChanges {
+            do {
+                try context.save()
+            } catch {
+                throw PlaylistImportError.saveDataFailed(error)
+            }
+        }
+    }
+
+    private static func batchInsertMovies(items: [M3UChannel], context: NSManagedObjectContext) throws {
+        guard !items.isEmpty else { return }
+
+        // Fetch existing movie titles to avoid duplicates
+        let existingTitles: Set<String> = try {
+            let fetchRequest: NSFetchRequest<Movie> = Movie.fetchRequest()
+            fetchRequest.propertiesToFetch = ["title"]
+            let existingMovies = try context.fetch(fetchRequest)
+            return Set(existingMovies.compactMap { $0.title })
+        }()
+
+        let uniqueItems = items.filter { !existingTitles.contains($0.title) }
+
+        guard !uniqueItems.isEmpty else { return }
+
+        let batchInsertRequest = NSBatchInsertRequest(entityName: "Movie", objects: uniqueItems.map { item in
+            [
+                "title": item.title,
+                "posterURL": item.logoURL ?? "",
+                "streamURL": item.url
+            ]
+        })
+
         do {
-            try context.save()
-            print("Successfully saved \(channels.count) channels from M3U playlist.")
+            try context.execute(batchInsertRequest)
+            print("Successfully batch inserted \(uniqueItems.count) movies.")
         } catch {
             throw PlaylistImportError.saveDataFailed(error)
         }
     }
 
-    private static func saveChannel(from m3uChannel: M3UChannel, context: NSManagedObjectContext) throws {
-        let fetchRequest: NSFetchRequest<Channel> = Channel.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "name == %@", m3uChannel.title)
+    private static func importChannels(items: [M3UChannel], context: NSManagedObjectContext) throws {
+        guard !items.isEmpty else { return }
 
-        let existingChannels = try context.fetch(fetchRequest)
-        let channel: Channel
+        // Fetch existing channels and variants to avoid duplicates
+        let existingChannels: [String: Channel] = try {
+            let fetchRequest: NSFetchRequest<Channel> = Channel.fetchRequest()
+            let channels = try context.fetch(fetchRequest)
+            return Dictionary(channels.compactMap { $0.name != nil ? ($0.name!, $0) : nil }, uniquingKeysWith: { (first, _) in first })
+        }()
 
-        if let existingChannel = existingChannels.first {
-            channel = existingChannel
-        } else {
-            channel = Channel(context: context)
-            channel.name = m3uChannel.title
-            channel.logoURL = m3uChannel.logoURL
-        }
+        let existingVariantURLs: Set<String> = try {
+            let fetchRequest: NSFetchRequest<ChannelVariant> = ChannelVariant.fetchRequest()
+            let variants = try context.fetch(fetchRequest)
+            return Set(variants.compactMap { $0.streamURL })
+        }()
 
-        let variantFetchRequest: NSFetchRequest<ChannelVariant> = ChannelVariant.fetchRequest()
-        variantFetchRequest.predicate = NSPredicate(format: "streamURL == %@", m3uChannel.url)
+        for item in items {
+            let channel: Channel
+            if let existingChannel = existingChannels[item.title] {
+                channel = existingChannel
+            } else {
+                channel = Channel(context: context)
+                channel.name = item.title
+                channel.logoURL = item.logoURL
+            }
 
-        let existingVariants = try context.fetch(variantFetchRequest)
-        if existingVariants.isEmpty {
-            let variant = ChannelVariant(context: context)
-            variant.name = m3uChannel.title
-            variant.streamURL = m3uChannel.url
-            variant.channel = channel
-        }
-    }
-
-    private static func saveMovie(from m3uChannel: M3UChannel, context: NSManagedObjectContext) throws {
-        let fetchRequest: NSFetchRequest<Movie> = Movie.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "title == %@", m3uChannel.title)
-
-        if try context.fetch(fetchRequest).isEmpty {
-            let movie = Movie(context: context)
-            movie.title = m3uChannel.title
-            movie.posterURL = m3uChannel.logoURL
-            movie.streamURL = m3uChannel.url
-            // M3U provides limited metadata, so other fields are left nil
+            if !existingVariantURLs.contains(item.url) {
+                let variant = ChannelVariant(context: context)
+                variant.name = item.title
+                variant.streamURL = item.url
+                variant.channel = channel
+            }
         }
     }
 }

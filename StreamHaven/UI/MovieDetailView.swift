@@ -1,6 +1,8 @@
 import SwiftUI
 
-struct MovieDetailView: View {
+/// A view that displays the details of a movie.
+public struct MovieDetailView: View {
+    /// The movie to display.
     let movie: Movie
 
     @Environment(\.managedObjectContext) private var viewContext
@@ -13,7 +15,8 @@ struct MovieDetailView: View {
     @State private var showingPlayer = false
     @State private var isFavorite: Bool = false
 
-    var body: some View {
+    /// The body of the view.
+    public var body: some View {
 #if os(tvOS)
         tvOSDetailView
 #else
@@ -21,6 +24,7 @@ struct MovieDetailView: View {
 #endif
     }
 
+    /// The detail view for iOS.
     private var iosDetailView: some View {
         ScrollView {
             VStack(alignment: .leading) {
@@ -82,6 +86,7 @@ struct MovieDetailView: View {
         })
     }
 
+    /// The detail view for tvOS.
     private var tvOSDetailView: some View {
         ZStack {
             AsyncImage(url: URL(string: movie.posterURL ?? "")) { image in
@@ -114,7 +119,8 @@ struct MovieDetailView: View {
                         Button(action: playMovie) {
                             Text(NSLocalizedString("Play", comment: "Button title to play a movie"))
                         }
-                        .accessibilityLabel(Text(NSLocalizedString("Play", comment: "Accessibility label for play button")))
+                        .accessibilityLabel(Text(movie.title ?? "No Title"))
+                        .accessibilityHint(Text(NSLocalizedString("Plays the movie", comment: "Accessibility hint for play button")))
 
                         Button(action: {
                             favoritesManager.toggleFavorite(for: movie)
@@ -123,7 +129,8 @@ struct MovieDetailView: View {
                             Image(systemName: isFavorite ? "heart.fill" : "heart")
                             Text(isFavorite ? NSLocalizedString("Favorited", comment: "Button title for favorited item") : NSLocalizedString("Add to Favorites", comment: "Button title to add an item to favorites"))
                         }
-                        .accessibilityLabel(isFavorite ? Text(NSLocalizedString("Remove from favorites", comment: "Accessibility label for favorited item")) : Text(NSLocalizedString("Add to favorites", comment: "Accessibility label for add to favorites button")))
+                        .accessibilityLabel(Text(NSLocalizedString("Favorite", comment: "Accessibility label for favorite button")))
+                        .accessibilityHint(isFavorite ? Text(NSLocalizedString("Removes the movie from favorites", comment: "Accessibility hint for favorited item")) : Text(NSLocalizedString("Adds the movie to favorites", comment: "Accessibility hint for add to favorites button")))
                     }
 
                     Spacer()
@@ -142,16 +149,19 @@ struct MovieDetailView: View {
         })
     }
 
+    /// Sets up the view.
     private func setup() {
         isFavorite = favoritesManager.isFavorite(item: movie)
     }
 
+    /// Plays the movie.
     private func playMovie() {
         guard let profile = profileManager.currentProfile else { return }
         playbackManager.loadMedia(for: movie, profile: profile)
         showingPlayer = true
     }
 
+    /// Fetches the IMDb ID for the movie.
     private func fetchIMDbID() {
         Task {
             await tmdbManager.fetchIMDbID(for: movie, context: viewContext)

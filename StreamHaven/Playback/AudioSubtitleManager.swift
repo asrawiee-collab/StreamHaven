@@ -1,14 +1,20 @@
 import AVKit
 
-class AudioSubtitleManager {
+/// A class for managing audio and subtitle tracks for a given `AVPlayer`.
+public class AudioSubtitleManager {
 
+    /// The `AVPlayer` instance to manage.
     private var player: AVPlayer?
 
-    init(player: AVPlayer?) {
+    /// Initializes a new `AudioSubtitleManager`.
+    /// - Parameter player: The `AVPlayer` to manage.
+    public init(player: AVPlayer?) {
         self.player = player
     }
 
-    func getAvailableAudioTracks() -> [AVMediaSelectionOption] {
+    /// Retrieves the available audio tracks for the current player item.
+    /// - Returns: An array of `AVMediaSelectionOption` objects representing the available audio tracks.
+    public func getAvailableAudioTracks() -> [AVMediaSelectionOption] {
         guard let playerItem = player?.currentItem,
               let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .audible) else {
             return []
@@ -16,7 +22,9 @@ class AudioSubtitleManager {
         return group.options
     }
 
-    func selectAudioTrack(_ track: AVMediaSelectionOption) {
+    /// Selects an audio track for the current player item.
+    /// - Parameter track: The `AVMediaSelectionOption` of the audio track to select.
+    public func selectAudioTrack(_ track: AVMediaSelectionOption) {
         guard let playerItem = player?.currentItem,
               let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .audible) else {
             return
@@ -24,7 +32,9 @@ class AudioSubtitleManager {
         playerItem.select(track, in: group)
     }
 
-    func getCurrentAudioTrack() -> AVMediaSelectionOption? {
+    /// Retrieves the currently selected audio track.
+    /// - Returns: The `AVMediaSelectionOption` of the currently selected audio track, or `nil` if no track is selected.
+    public func getCurrentAudioTrack() -> AVMediaSelectionOption? {
         guard let playerItem = player?.currentItem,
               let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .audible) else {
             return nil
@@ -32,7 +42,9 @@ class AudioSubtitleManager {
         return playerItem.selectedMediaOption(in: group)
     }
 
-    func getAvailableSubtitleTracks() -> [AVMediaSelectionOption] {
+    /// Retrieves the available subtitle tracks for the current player item.
+    /// - Returns: An array of `AVMediaSelectionOption` objects representing the available subtitle tracks.
+    public func getAvailableSubtitleTracks() -> [AVMediaSelectionOption] {
         guard let playerItem = player?.currentItem,
               let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) else {
             return []
@@ -40,7 +52,9 @@ class AudioSubtitleManager {
         return group.options
     }
 
-    func selectSubtitleTrack(_ track: AVMediaSelectionOption?) {
+    /// Selects a subtitle track for the current player item.
+    /// - Parameter track: The `AVMediaSelectionOption` of the subtitle track to select.
+    public func selectSubtitleTrack(_ track: AVMediaSelectionOption?) {
         guard let playerItem = player?.currentItem,
               let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) else {
             return
@@ -48,7 +62,9 @@ class AudioSubtitleManager {
         playerItem.select(track, in: group)
     }
 
-    func getCurrentSubtitleTrack() -> AVMediaSelectionOption? {
+    /// Retrieves the currently selected subtitle track.
+    /// - Returns: The `AVMediaSelectionOption` of the currently selected subtitle track, or `nil` if no track is selected.
+    public func getCurrentSubtitleTrack() -> AVMediaSelectionOption? {
         guard let playerItem = player?.currentItem,
               let group = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) else {
             return nil
@@ -56,11 +72,17 @@ class AudioSubtitleManager {
         return playerItem.selectedMediaOption(in: group)
     }
 
-    func disableSubtitles() {
+    /// Disables subtitles for the current player item.
+    public func disableSubtitles() {
         selectSubtitleTrack(nil)
     }
 
-    func addSubtitle(from url: URL, for playerItem: AVPlayerItem?) async throws {
+    /// Adds a subtitle track from a URL to the current player item.
+    /// - Parameters:
+    ///   - url: The URL of the subtitle file.
+    ///   - playerItem: The `AVPlayerItem` to add the subtitle to.
+    /// - Throws: An error if the subtitle file cannot be loaded.
+    public func addSubtitle(from url: URL, for playerItem: AVPlayerItem?) async throws {
         guard let playerItem = playerItem else { return }
 
         let subtitleAsset = AVURLAsset(url: url)

@@ -1,14 +1,22 @@
 import Foundation
 import CoreData
 
-class SearchIndexSync {
+/// A class for performing searches across the Core Data store.
+public class SearchIndexSync {
 
     // Note: FTS5 is not directly supported by Core Data.
     // The search functionality is implemented using standard Core Data queries.
     // For optimal performance, the 'title' and 'name' attributes of the Movie, Series,
     // and Channel entities should be indexed in the Xcode Data Model Editor.
 
-    static func search(query: String, persistence: PersistenceController, completion: @escaping ([NSManagedObject]) -> Void) {
+    /// Searches for movies, series, and channels that match a given query.
+    ///
+    /// - Parameters:
+    ///   - query: The search query.
+    ///   - persistence: The `PersistenceController` to use for the search.
+    ///   - completion: A closure that is called with the search results.
+    ///   - results: An array of `NSManagedObject`s that match the search query.
+    public static func search(query: String, persistence: PersistenceController, completion: @escaping (_ results: [NSManagedObject]) -> Void) {
         let backgroundContext = persistence.container.newBackgroundContext()
 
         backgroundContext.perform {

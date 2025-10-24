@@ -2,7 +2,8 @@ import SwiftUI
 import CoreData
 
 #if os(iOS)
-struct HomeView: View {
+/// A view that displays the user's library of movies, series, and channels.
+public struct HomeView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @ObservedObject var profileManager: ProfileManager
 
@@ -16,9 +17,15 @@ struct HomeView: View {
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
-    var onItemSelected: ((Destination) -> Void)? = nil
+    /// A closure that is called when an item is selected.
+    public var onItemSelected: ((Destination) -> Void)? = nil
 
-    init(profileManager: ProfileManager, onItemSelected: ((Destination) -> Void)? = nil) {
+    /// Initializes a new `HomeView`.
+    ///
+    /// - Parameters:
+    ///   - profileManager: The `ProfileManager` for accessing the current profile.
+    ///   - onItemSelected: A closure that is called when an item is selected.
+    public init(profileManager: ProfileManager, onItemSelected: ((Destination) -> Void)? = nil) {
         self.profileManager = profileManager
         self.onItemSelected = onItemSelected
 
@@ -62,7 +69,8 @@ struct HomeView: View {
         return movies.filter { !franchiseMovieIDs.contains($0.objectID) }
     }
 
-    var body: some View {
+    /// The body of the view.
+    public var body: some View {
         Group {
             if movies.isEmpty && series.isEmpty && channels.isEmpty {
                 EmptyStateView(
@@ -188,6 +196,8 @@ struct HomeView: View {
         }
     }
 
+    /// Handles the selection of an item.
+    /// - Parameter destination: The `Destination` to navigate to.
     private func handleSelection(_ destination: Destination) {
         if horizontalSizeClass == .regular {
             onItemSelected?(destination)
