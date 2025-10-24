@@ -121,12 +121,7 @@ struct HomeView_tvOS: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 50) {
                             ForEach(channels) { channel in
-                                CardView(url: URL(string: channel.logoURL ?? ""), title: channel.name ?? "No Name")
-                                    .focusable { isFocused in
-                                        if isFocused {
-                                            backgroundPosterURL = URL(string: channel.logoURL ?? "")
-                                        }
-                                    }
+                                CarouselItemView(url: channel.logoURL, title: channel.name, destination: EmptyView(), backgroundURL: $backgroundPosterURL)
                             }
                         }
                         .padding(.horizontal)
@@ -150,17 +145,23 @@ fileprivate struct CarouselItemView<Destination: View>: View {
     let title: String?
     let destination: Destination
     @Binding var backgroundURL: URL?
+    @State private var isFocused = false
 
     var body: some View {
         NavigationLink(destination: destination) {
             CardView(url: URL(string: url ?? ""), title: title ?? "No Title")
         }
         .buttonStyle(.card)
-        .focusable { isFocused in
-            if isFocused {
+        .scaleEffect(isFocused ? 1.1 : 1.0)
+        .shadow(radius: isFocused ? 20 : 0)
+        .animation(.easeInOut, value: isFocused)
+        .focusable { focused in
+            self.isFocused = focused
+            if focused {
                 backgroundURL = URL(string: url ?? "")
             }
         }
+        .accessibilityLabel(title ?? "")
     }
 }
 #endif

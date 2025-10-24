@@ -16,11 +16,35 @@ To run the project, open the `Package.swift` file in Xcode 16 or later. Xcode wi
 *   **Playback:** AVKit-based playback for a reliable experience.
 *   **SwiftUI:** A modern, SwiftUI-based interface.
 
-## Future Improvements
+## Core Data Model Updates
 
-### Smart Grouping
+To enable future features like Smart Grouping and Subtitle Search, you must manually update the Core Data model.
 
-The current Core Data model does not support grouping multiple stream sources for a single movie or episode. To implement this, the following changes are required:
+### 1. Enable Lightweight Migration
+
+Before making any schema changes, it is crucial to enable automatic lightweight migration to prevent data loss for existing users.
+
+1.  Open `StreamHaven/Persistence/PersistenceController.swift`.
+2.  Locate the `init` method.
+3.  Add the following lines **before** `container.loadPersistentStores`:
+
+```swift
+let description = NSPersistentStoreDescription()
+description.shouldInferMappingModelAutomatically = true
+description.shouldMigrateStoreAutomatically = true
+container.persistentStoreDescriptions = [description]
+```
+
+This ensures that Core Data will automatically migrate user data when the app is updated with a new model version.
+
+### 2. Create a New Model Version
+
+1.  In Xcode, select the `.xcdatamodeld` file.
+2.  From the **Editor** menu, choose **Add Model Version...**.
+3.  Name the new version (e.g., `StreamHavenV2`) and ensure it's based on the previous model.
+4.  In the File Inspector on the right, under **Model Version**, change the active version to your newly created model.
+
+### 3. Update the Schema for Smart Grouping
 
 1.  **Create `MovieVariant` and `EpisodeVariant` Entities:**
     *   Add new entities named `MovieVariant` and `EpisodeVariant`.
@@ -34,7 +58,12 @@ The current Core Data model does not support grouping multiple stream sources fo
     *   Remove the `streamURL` attribute.
     *   Add a one-to-many relationship named `variants` to the `EpisodeVariant` entity.
 
-After these changes are made in the `.xcdatamodeld` file and the managed object subclasses are regenerated, the parsing logic can be updated to support grouping.
+### 4. Update the Schema for Subtitle Search
+
+1.  Select the `Movie` entity.
+2.  Add a new attribute named `imdbID` of type `String`.
+
+After these changes are made and the managed object subclasses are regenerated, the parsing and subtitle search logic can be updated to support these new features.
 
 ## Finalizing App Metadata
 
@@ -95,11 +124,3 @@ To enable the automatic fetching of IMDb IDs (which is required for subtitle sea
     2.  Click the `+` button to add a new key.
     3.  For the key name, enter `TMDbAPIKey`.
     4.  Set the value to your TMDb API key.
-
-### 4. Update Core Data Model for Subtitle Search
-
-To enable subtitle search, the `Movie` entity in the Core Data model must be updated to include an IMDb ID.
-
-1.  Open the `.xcdatamodeld` file in Xcode.
-2.  Select the `Movie` entity.
-3.  Add a new attribute named `imdbID` of type `String`.
