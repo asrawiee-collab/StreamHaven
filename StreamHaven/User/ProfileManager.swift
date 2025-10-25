@@ -10,12 +10,16 @@ public class ProfileManager: ObservableObject {
     @Published public var profiles: [Profile] = []
 
     private var context: NSManagedObjectContext
+    private var cloudKitSyncManager: CloudKitSyncManager?
 
     /// Initializes a new `ProfileManager`.
     ///
-    /// - Parameter context: The `NSManagedObjectContext` to use for Core Data operations.
-    public init(context: NSManagedObjectContext) {
+    /// - Parameters:
+    ///   - context: The `NSManagedObjectContext` to use for Core Data operations.
+    ///   - cloudKitSyncManager: Optional CloudKit sync manager for cross-device sync.
+    public init(context: NSManagedObjectContext, cloudKitSyncManager: CloudKitSyncManager? = nil) {
         self.context = context
+        self.cloudKitSyncManager = cloudKitSyncManager
         fetchProfiles()
 
         if profiles.isEmpty {
@@ -42,24 +46,75 @@ public class ProfileManager: ObservableObject {
         do {
             profiles = try context.fetch(request)
         } catch {
-            print("Failed to fetch profiles: \(error)")
-        }
-    }
-
     /// Creates the default "Adult" and "Kids" profiles.
     private func createDefaultProfiles() {
         let adultProfile = Profile(context: context)
         adultProfile.name = "Adult"
         adultProfile.isAdult = true
+        adultProfile.modifiedAt = Date()
 
         let kidsProfile = Profile(context: context)
         kidsProfile.name = "Kids"
         kidsProfile.isAdult = false
+        kidsProfile.modifiedAt = Date()
 
         do {
             try context.save()
+            
+            // Sync to CloudKit if enabled
+            Task { @MainActor in
+                try? await cloudKitSyncManager?.syncProfile(adultProfile)
+                try? await cloudKitSyncManager?.syncProfile(kidsProfile)
+            }
         } catch {
-            print("Failed to create default profiles: \(error)")
+            ErrorReporter.log(error, context: "ProfileManager.createDefaultProfiles.save")
+        }
+    }
+    
+    /// Creates a new profile.
+    ///
+    /// - Parameters:
+    ///   - name: The name of the profile.
+    ///   - isAdult: Whether the profile is for an adult.
+    public func createProfile(name: String, isAdult: Bool) {
+        let profile = Profile(context: context)
+        profile.name = name
+        profile.isAdult = isAdult
+        profile.modifiedAt = Date()
+        
+        do {
+            try context.save()
+            fetchProfiles()
+            
+            // Sync to CloudKit if enabled
+            Task { @MainActor in
+                try? await cloudKitSyncManager?.syncProfile(profile)
+            }
+        } catch {
+            ErrorReporter.log(error, context: "ProfileManager.createProfile.save")
+        }
+    }
+    
+    /// Deletes a profile.
+    ///
+    /// - Parameter profile: The profile to delete.
+    public func deleteProfile(_ profile: Profile) {
+        // Delete from CloudKit first
+        Task { @MainActor in
+            try? await cloudKitSyncManager?.deleteProfile(profile)
+        }
+        
+        context.delete(profile)
+        
+        do {
+            try context.save()
+            fetchProfiles()
+        } catch {
+            ErrorReporter.log(error, context: "ProfileManager.deleteProfile.save")
+        }
+    }
+}       } catch {
+            ErrorReporter.log(error, context: "ProfileManager.createDefaultProfiles.save")
         }
     }
 }

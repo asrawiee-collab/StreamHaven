@@ -62,9 +62,12 @@ public final class XtreamCodesParser {
     ///
     /// - Parameters:
     ///   - url: The base URL of the Xtream Codes playlist.
+    ///   - username: The username for authentication.
+    ///   - password: The password for authentication.
+    ///   - sourceID: Optional source ID to associate with imported content.
     ///   - context: The `NSManagedObjectContext` to perform the import on.
     /// - Throws: A `PlaylistImportError` if the URL is invalid, a network request fails, or parsing fails.
-    public static func parse(url: URL, username: String, password: String, context: NSManagedObjectContext) async throws {
+    public static func parse(url: URL, username: String, password: String, sourceID: UUID? = nil, context: NSManagedObjectContext) async throws {
         let actions = ["get_vod_streams", "get_series", "get_live_streams"]
 
         for action in actions {
@@ -92,13 +95,13 @@ public final class XtreamCodesParser {
                     switch action {
                     case "get_vod_streams":
                         let items = try decoder.decode([XtreamCodesVOD].self, from: data)
-                        try self.batchInsertVOD(items: items, baseURL: url, username: username, password: password, context: context)
+                        try self.batchInsertVOD(items: items, baseURL: url, username: username, password: password, sourceID: sourceID, context: context)
                     case "get_series":
                         let items = try decoder.decode([XtreamCodesSeries].self, from: data)
-                        try self.batchInsertSeries(items: items, baseURL: url, context: context)
+                        try self.batchInsertSeries(items: items, baseURL: url, sourceID: sourceID, context: context)
                     case "get_live_streams":
                         let items = try decoder.decode([XtreamCodesLive].self, from: data)
-                        try self.importLiveStreams(items: items, baseURL: url, username: username, password: password, context: context)
+                        try self.importLiveStreams(items: items, baseURL: url, username: username, password: password, sourceID: sourceID, context: context)
                     default:
                         break
                     }
@@ -111,7 +114,7 @@ public final class XtreamCodesParser {
         }
     }
 
-    private static func batchInsertVOD(items: [XtreamCodesVOD], baseURL: URL, username: String, password: String, context: NSManagedObjectContext) throws {
+    private static func batchInsertVOD(items: [XtreamCodesVOD], baseURL: URL, username: String, password: String, sourceID: UUID? = nil, context: NSManagedObjectContext) throws {
         guard !items.isEmpty else { return }
 
         let existingTitles: Set<String> = try {
@@ -125,18 +128,22 @@ public final class XtreamCodesParser {
 
         let batchInsert = NSBatchInsertRequest(entityName: "Movie", objects: uniqueItems.map {
             let streamURL = buildStreamURL(baseURL: baseURL, type: "movie", username: username, password: password, id: $0.streamId, ext: $0.containerExtension ?? "mp4")
-            return [
+            var movieDict: [String: Any] = [
                 "title": $0.name,
                 "posterURL": $0.streamIcon ?? "",
                 "rating": $0.rating ?? "",
                 "streamURL": streamURL
             ]
+            if let sourceID = sourceID {
+                movieDict["sourceID"] = sourceID
+            }
+            return movieDict
         })
 
         try context.execute(batchInsert)
     }
 
-    private static func batchInsertSeries(items: [XtreamCodesSeries], baseURL: URL, context: NSManagedObjectContext) throws {
+    private static func batchInsertSeries(items: [XtreamCodesSeries], baseURL: URL, sourceID: UUID? = nil, context: NSManagedObjectContext) throws {
         guard !items.isEmpty else { return }
 
         let existingTitles: Set<String> = try {
@@ -161,13 +168,16 @@ public final class XtreamCodesParser {
             if let dateStr = $0.releaseDate, let date = dateFormatter.date(from: dateStr) {
                 seriesDict["releaseDate"] = date
             }
+            if let sourceID = sourceID {
+                seriesDict["sourceID"] = sourceID
+            }
             return seriesDict
         })
 
         try context.execute(batchInsert)
     }
 
-    private static func importLiveStreams(items: [XtreamCodesLive], baseURL: URL, username: String, password: String, context: NSManagedObjectContext) throws {
+    private static func importLiveStreams(items: [XtreamCodesLive], baseURL: URL, username: String, password: String, sourceID: UUID? = nil, context: NSManagedObjectContext) throws {
         guard !items.isEmpty else { return }
 
         // Fetch existing channels
@@ -187,10 +197,14 @@ public final class XtreamCodesParser {
         let newChannels = items.filter { !existingChannelNames.contains($0.name) }
         if !newChannels.isEmpty {
             let channelBatchInsert = NSBatchInsertRequest(entityName: "Channel", objects: newChannels.map { item in
-                [
+                var channelDict: [String: Any] = [
                     "name": item.name,
                     "logoURL": item.streamIcon ?? ""
                 ]
+                if let sourceID = sourceID {
+                    channelDict["sourceID"] = sourceID
+                }
+                return channelDict
             })
             try context.execute(channelBatchInsert)
             print("Successfully batch inserted \(newChannels.count) live channels.")
@@ -218,11 +232,15 @@ public final class XtreamCodesParser {
             for item in newVariants {
                 if let channel = channelsByName[item.name] {
                     let streamURL = buildStreamURL(baseURL: baseURL, type: "live", username: username, password: password, id: item.streamId, ext: "m3u8")
-                    variantDicts.append([
+                    var variantDict: [String: Any] = [
                         "name": item.name,
                         "streamURL": streamURL,
                         "channel": channel
-                    ])
+                    ]
+                    if let sourceID = sourceID {
+                        variantDict["sourceID"] = sourceID
+                    }
+                    variantDicts.append(variantDict)
                 }
             }
             

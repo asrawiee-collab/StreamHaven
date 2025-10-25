@@ -20,6 +20,10 @@ extension WatchHistory {
     @NSManaged public var progress: Float
     /// The date when the item was last watched.
     @NSManaged public var watchedDate: Date?
+    /// CloudKit record name for sync tracking.
+    @NSManaged public var cloudKitRecordName: String?
+    /// Last modification timestamp for conflict resolution.
+    @NSManaged public var modifiedAt: Date?
     /// The `Profile` to which this watch history belongs.
     @NSManaged public var profile: Profile?
     /// The `Movie` object if the watch history is for a movie.

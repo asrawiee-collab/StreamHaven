@@ -24,5 +24,7 @@ extension PlaylistCache {
     @NSManaged public var url: String?
     /// The URL of the EPG (Electronic Program Guide) source for this playlist.
     @NSManaged public var epgURL: String?
+    /// The unique identifier of the source this cache belongs to.
+    @NSManaged public var sourceID: UUID?
 
 }

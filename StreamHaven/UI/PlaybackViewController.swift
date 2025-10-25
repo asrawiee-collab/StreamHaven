@@ -10,11 +10,14 @@ public struct PlaybackViewController: UIViewControllerRepresentable {
     @EnvironmentObject var subtitleManager: SubtitleManager
     @EnvironmentObject var audioSubtitleManager: AudioSubtitleManager
     @EnvironmentObject var playbackManager: PlaybackManager
+    @EnvironmentObject var settingsManager: SettingsManager
 
     /// The IMDb ID of the media being played.
     public var imdbID: String?
     /// The channel being played (for EPG overlay)
     public var channel: Channel?
+    /// The episode being played (for skip intro functionality)
+    public var episode: Episode?
 
     /// Creates a `CustomPlayerViewController`.
     public func makeUIViewController(context: Context) -> CustomPlayerViewController {
@@ -23,8 +26,10 @@ public struct PlaybackViewController: UIViewControllerRepresentable {
         controller.subtitleManager = subtitleManager
         controller.audioSubtitleManager = audioSubtitleManager
         controller.playbackManager = playbackManager
+        controller.settingsManager = settingsManager
         controller.imdbID = imdbID
         controller.channel = channel
+        controller.episode = episode
         return controller
     }
 
@@ -32,6 +37,7 @@ public struct PlaybackViewController: UIViewControllerRepresentable {
     public func updateUIViewController(_ uiViewController: CustomPlayerViewController, context: Context) {
         uiViewController.player = player
         uiViewController.channel = channel
+        uiViewController.episode = episode
     }
 }
 
@@ -48,6 +54,16 @@ public class CustomPlayerViewController: AVPlayerViewController {
     public var imdbID: String?
     /// The channel being played (for EPG overlay)
     public var channel: Channel?
+    /// The episode being played (for skip intro functionality)
+    public var episode: Episode?
+    /// The intro skipper manager
+    private var introSkipperManager: IntroSkipperManager?
+    /// The settings manager
+    private var settingsManager: SettingsManager?
+    /// Time observer for skip intro button
+    private var introTimeObserver: Any?
+    /// Skip intro button
+    private var skipIntroButton: UIButton?
 
     /// Called after the controller's view is loaded into memory.
     public override func viewDidLoad() {
@@ -67,8 +83,24 @@ public class CustomPlayerViewController: AVPlayerViewController {
             action: #selector(selectVariant)
         )
 
-        // Add the button to the navigation item
+        #if os(iOS)
+        let pipButton = UIBarButtonItem(
+            image: UIImage(systemName: "pip.enter"),
+            style: .plain,
+            target: self,
+            action: #selector(togglePiP)
+        )
+        
+        // Add buttons to the navigation item (include PiP on iOS only)
+        if AVPictureInPictureController.isPictureInPictureSupported() {
+            parent?.navigationItem.rightBarButtonItems = [subtitleSearchButton, variantSelectorButton, pipButton]
+        } else {
+            parent?.navigationItem.rightBarButtonItems = [subtitleSearchButton, variantSelectorButton]
+        }
+        #else
+        // tvOS doesn't support PiP
         parent?.navigationItem.rightBarButtonItems = [subtitleSearchButton, variantSelectorButton]
+        #endif
 
         // Add Now/Next EPG overlay if channel is available
         if let channel = channel, let epgEntries = channel.epgEntries as? Set<EPGEntry> {
@@ -106,12 +138,117 @@ public class CustomPlayerViewController: AVPlayerViewController {
                 }
             }
         }
+        
+        // Setup skip intro functionality if episode is available
+        if let episode = episode {
+            setupSkipIntroButton()
+            setupIntroTimeObserver()
+        }
+    }
+    
+    /// Sets up the skip intro button.
+    private func setupSkipIntroButton() {
+        let button = UIButton(type: .system)
+        button.setTitle("Skip Intro", for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        button.backgroundColor = UIColor.systemBlue
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 8
+        button.layer.masksToBounds = true
+        button.contentEdgeInsets = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20)
+        button.addTarget(self, action: #selector(skipIntro), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.isHidden = true // Hidden by default
+        
+        view.addSubview(button)
+        NSLayoutConstraint.activate([
+            button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            button.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100)
+        ])
+        
+        skipIntroButton = button
+    }
+    
+    /// Sets up time observer to show/hide skip intro button.
+    private func setupIntroTimeObserver() {
+        guard let episode = episode,
+              let settingsManager = settingsManager,
+              settingsManager.enableSkipIntro else { return }
+        
+        // Initialize intro skipper manager
+        let tvdbAPIKey = settingsManager.tvdbAPIKey
+        introSkipperManager = IntroSkipperManager(tvdbAPIKey: tvdbAPIKey)
+        
+        // Fetch intro timing data
+        Task {
+            guard let context = episode.managedObjectContext,
+                  let timing = await introSkipperManager?.getIntroTiming(for: episode, context: context) else {
+                return
+            }
+            
+            // Setup time observer
+            await MainActor.run {
+                let interval = CMTime(seconds: 1, preferredTimescale: 1)
+                introTimeObserver = player?.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
+                    self?.checkIntroTiming(currentTime: time, introTiming: timing)
+                }
+            }
+        }
+    }
+    
+    /// Checks if current time is within intro range and shows/hides button.
+    private func checkIntroTiming(currentTime: CMTime, introTiming: IntroSkipperManager.IntroTiming) {
+        let currentSeconds = CMTimeGetSeconds(currentTime)
+        
+        guard let settingsManager = settingsManager else { return }
+        
+        // Check if we're in the intro range
+        if currentSeconds >= introTiming.introStart && currentSeconds <= introTiming.introEnd {
+            // Auto-skip if enabled
+            if settingsManager.autoSkipIntro {
+                skipToTime(introTiming.introEnd)
+                return
+            }
+            
+            // Show button if enabled
+            if settingsManager.enableSkipIntro {
+                skipIntroButton?.isHidden = false
+            }
+        } else {
+            skipIntroButton?.isHidden = true
+        }
+    }
+    
+    /// Skips to the end of the intro.
+    @objc private func skipIntro() {
+        guard let episode = episode else { return }
+        
+        // Get stored intro timing
+        let introEnd = episode.introEndTime
+        skipToTime(introEnd)
+        
+        // Hide button after skipping
+        skipIntroButton?.isHidden = true
+    }
+    
+    /// Seeks player to specified time.
+    private func skipToTime(_ seconds: Double) {
+        let time = CMTime(seconds: seconds, preferredTimescale: 1)
+        player?.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero)
+        PerformanceLogger.logPlayback("Skipped to: \(String(format: "%.1f", seconds))s")
+    }
+    
+    deinit {
+        // Remove time observer
+        if let observer = introTimeObserver {
+            player?.removeTimeObserver(observer)
+        }
     }
 
     /// Searches for subtitles.
     @objc private func searchForSubtitles() {
         guard let imdbID = imdbID, let subtitleManager = subtitleManager else {
-            print("IMDb ID or SubtitleManager not available.")
+            ErrorReporter.log(NSError(domain: "Playback", code: 0, userInfo: [NSLocalizedDescriptionKey: "IMDb ID or SubtitleManager not available."]), context: "Playback.searchForSubtitles")
             return
         }
 
@@ -120,6 +257,7 @@ public class CustomPlayerViewController: AVPlayerViewController {
                 let subtitles = try await subtitleManager.searchSubtitles(for: imdbID)
                 presentSubtitleOptions(subtitles)
             } catch {
+                ErrorReporter.log(error, context: "Playback.searchForSubtitles")
                 presentError(error)
             }
         }
@@ -140,6 +278,19 @@ public class CustomPlayerViewController: AVPlayerViewController {
 
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         present(alert, animated: true)
+    }
+    
+    /// Toggles Picture-in-Picture mode.
+    @objc private func togglePiP() {
+        #if os(iOS)
+        guard let playbackManager = playbackManager else { return }
+        
+        if playbackManager.isPiPActive {
+            playbackManager.stopPiP()
+        } else {
+            playbackManager.startPiP()
+        }
+        #endif
     }
 
     /// Presents a list of subtitle options to the user.
@@ -172,6 +323,7 @@ public class CustomPlayerViewController: AVPlayerViewController {
                 let localURL = try await subtitleManager.downloadSubtitle(for: fileID)
                 try await audioSubtitleManager.addSubtitle(from: localURL, for: player?.currentItem)
             } catch {
+                ErrorReporter.log(error, context: "Playback.downloadAndApplySubtitle")
                 presentError(error)
             }
         }
@@ -180,7 +332,8 @@ public class CustomPlayerViewController: AVPlayerViewController {
     /// Presents an error to the user.
     /// - Parameter error: The `Error` to present.
     private func presentError(_ error: Error) {
-        let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
+        ErrorReporter.log(error, context: "Playback.presentError")
+        let alert = UIAlertController(title: "Error", message: ErrorReporter.userMessage(for: error), preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
     }

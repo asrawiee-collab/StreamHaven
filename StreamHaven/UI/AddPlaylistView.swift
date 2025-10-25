@@ -16,6 +16,22 @@ public struct AddPlaylistView: View {
     public var body: some View {
         NavigationView {
             Form {
+                Section {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Image(systemName: "info.circle.fill")
+                                .foregroundColor(.blue)
+                            Text(NSLocalizedString("New: Multi-Source Support", comment: "Info banner title"))
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                        }
+                        Text(NSLocalizedString("Add multiple playlists and Xtream Codes logins in Settings > Manage Sources for a better experience.", comment: "Info banner message"))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.vertical, 4)
+                }
+                
                 Section(header: Text(NSLocalizedString("Playlist URL", comment: "Add playlist view section header"))) {
                     TextField("https://example.com/playlist.m3u", text: $playlistURL)
                         .keyboardType(.URL)
@@ -99,19 +115,21 @@ public struct AddPlaylistView: View {
                     self.presentationMode.wrappedValue.dismiss()
                 }
             } catch let error as PlaylistImportError {
+                ErrorReporter.log(error, context: "AddPlaylistView.importPlaylist")
                 await MainActor.run {
                     self.isLoading = false
                     self.errorAlert = ErrorAlert(
-                        message: error.localizedDescription,
+                        message: ErrorReporter.userMessage(for: error),
                         retryAction: {
                             self.addPlaylist()
                         }
                     )
                 }
             } catch {
+                ErrorReporter.log(error, context: "AddPlaylistView.importPlaylist")
                 await MainActor.run {
                     self.isLoading = false
-                    self.errorAlert = ErrorAlert(message: error.localizedDescription)
+                    self.errorAlert = ErrorAlert(message: ErrorReporter.userMessage(for: error))
                 }
             }
         }

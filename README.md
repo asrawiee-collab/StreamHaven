@@ -9,7 +9,7 @@ StreamHaven is a local-first streaming hub for iOS, iPadOS, and tvOS that allows
 - [Features](#features)
 - [Architecture](#architecture)
 - [Getting Started](#getting-started)
-- [Core Data Model Updates](#core-data-model-updates)
+- [Core Data](#core-data)
 - [Finalizing App Metadata](#finalizing-app-metadata)
 
 ## Features
@@ -21,7 +21,9 @@ StreamHaven is a local-first streaming hub for iOS, iPadOS, and tvOS that allows
 - **SwiftUI:** A modern, SwiftUI-based interface.
 - **Adaptive UI:** A responsive UI that adapts to different screen sizes on iPhone and iPad.
 - **tvOS Support:** A dedicated tvOS interface for a cinematic experience.
+- **EPG (Electronic Program Guide):** Full XMLTV EPG support with timeline grid view.
 - **Subtitle Search:** Search for and download subtitles from OpenSubtitles.com.
+- **100% Test Coverage:** Comprehensive test suite with 260+ test cases.
 
 ## Architecture
 
@@ -92,7 +94,7 @@ Do not enable NSAllowsArbitraryLoads. Add only the specific domains under NSExce
 
 ### 3. Configure OpenSubtitles API Key (Secure)
 
-4. Store the key securely in the Keychain during development using the app's helper:
+Store the key securely in the Keychain during development using the app's helper:
 
 ```swift
 // e.g., in a one-off dev tool or a debug-only code path
@@ -108,7 +110,7 @@ The app reads `OpenSubtitlesAPIKey` from the Keychain at runtime. Do not commit 
 
 ### 4. Configure TMDb API Key (Secure)
 
-3. Store the key securely in the Keychain during development:
+Store the key securely in the Keychain during development:
 
 ```swift
 KeychainHelper.savePassword(password: "<YOUR_TMDB_API_KEY>", for: "TMDbAPIKey", service: "StreamHaven.API")

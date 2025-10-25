@@ -6,15 +6,18 @@ import SwiftUI
 public class FavoritesManager: ObservableObject, FavoritesManaging {
     private let context: NSManagedObjectContext
     private let profile: Profile
+    private var cloudKitSyncManager: CloudKitSyncManager?
 
     /// Initializes a new `FavoritesManager`.
     ///
     /// - Parameters:
     ///   - context: The `NSManagedObjectContext` to use for Core Data operations.
     ///   - profile: The `Profile` for which to manage favorites.
-    public init(context: NSManagedObjectContext, profile: Profile) {
+    ///   - cloudKitSyncManager: Optional CloudKit sync manager for cross-device sync.
+    public init(context: NSManagedObjectContext, profile: Profile, cloudKitSyncManager: CloudKitSyncManager? = nil) {
         self.context = context
         self.profile = profile
+        self.cloudKitSyncManager = cloudKitSyncManager
     }
 
     /// Checks if an item is a favorite.
@@ -22,20 +25,24 @@ public class FavoritesManager: ObservableObject, FavoritesManaging {
     /// - Parameter item: The `NSManagedObject` to check (e.g., `Movie`, `Series`, `Channel`).
     /// - Returns: `true` if the item is a favorite, `false` otherwise.
     public func isFavorite(item: NSManagedObject) -> Bool {
-        return findFavorite(for: item) != nil
-    }
-
     /// Toggles the favorite status of an item.
     ///
     /// - Parameter item: The `NSManagedObject` to toggle (e.g., `Movie`, `Series`, `Channel`).
     public func toggleFavorite(for item: NSManagedObject) {
         if let favorite = findFavorite(for: item) {
             // It is a favorite, so remove it
+            
+            // Delete from CloudKit first
+            Task { @MainActor in
+                try? await cloudKitSyncManager?.deleteFavorite(favorite)
+            }
+            
             context.delete(favorite)
         } else {
             // It is not a favorite, so add it
             let newFavorite = Favorite(context: context)
             newFavorite.favoritedDate = Date()
+            newFavorite.modifiedAt = Date()
             newFavorite.profile = profile
 
             if let movie = item as? Movie {
@@ -45,7 +52,18 @@ public class FavoritesManager: ObservableObject, FavoritesManaging {
             } else if let channel = item as? Channel {
                 newFavorite.channel = channel
             }
+            
+            saveContext()
+            
+            // Sync to CloudKit if enabled
+            Task { @MainActor in
+                try? await cloudKitSyncManager?.syncFavorite(newFavorite)
+            }
+            return
         }
+
+        saveContext()
+    }   }
 
         saveContext()
     }
@@ -74,7 +92,7 @@ public class FavoritesManager: ObservableObject, FavoritesManaging {
         do {
             return try context.fetch(request).first
         } catch {
-            print("Failed to fetch favorite status: \(error)")
+            ErrorReporter.log(error, context: "FavoritesManager.findFavorite")
             return nil
         }
     }
@@ -85,7 +103,7 @@ public class FavoritesManager: ObservableObject, FavoritesManaging {
         do {
             try context.save()
         } catch {
-            print("Failed to save context after favorite toggle: \(error)")
+            ErrorReporter.log(error, context: "FavoritesManager.saveContext")
         }
     }
 }

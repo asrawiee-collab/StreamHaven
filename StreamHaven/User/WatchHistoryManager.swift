@@ -6,15 +6,18 @@ public final class WatchHistoryManager: WatchHistoryManaging {
 
     private let context: NSManagedObjectContext
     private let profile: Profile
+    private var cloudKitSyncManager: CloudKitSyncManager?
 
     /// Initializes a new `WatchHistoryManager`.
     ///
     /// - Parameters:
     ///   - context: The `NSManagedObjectContext` to use for Core Data operations.
     ///   - profile: The `Profile` for which to manage watch history.
-    public init(context: NSManagedObjectContext, profile: Profile) {
+    ///   - cloudKitSyncManager: Optional CloudKit sync manager for cross-device sync.
+    public init(context: NSManagedObjectContext, profile: Profile, cloudKitSyncManager: CloudKitSyncManager? = nil) {
         self.context = context
         self.profile = profile
+        self.cloudKitSyncManager = cloudKitSyncManager
     }
 
     /// Finds the `WatchHistory` object for a given item.
@@ -39,11 +42,8 @@ public final class WatchHistoryManager: WatchHistoryManaging {
         do {
             return try context.fetch(request).first
         } catch {
-            print("Failed to fetch watch history: \(error)")
+            ErrorReporter.log(error, context: "WatchHistoryManager.findWatchHistory")
             return nil
-        }
-    }
-
     /// Updates the watch history for a given item.
     ///
     /// - Parameters:
@@ -54,11 +54,20 @@ public final class WatchHistoryManager: WatchHistoryManaging {
             let history = self.findOrCreateWatchHistory(for: item)
             history.progress = progress
             history.watchedDate = Date()
+            history.modifiedAt = Date()
 
             do {
                 try self.context.save()
+                
+                // Sync to CloudKit if enabled
+                Task { @MainActor in
+                    try? await self.cloudKitSyncManager?.syncWatchHistory(history)
+                }
             } catch {
-                print("Failed to save watch history progress: \(error)")
+                ErrorReporter.log(error, context: "WatchHistoryManager.updateWatchHistory.save")
+            }
+        }
+    }           ErrorReporter.log(error, context: "WatchHistoryManager.updateWatchHistory.save")
             }
         }
     }
@@ -82,5 +91,40 @@ public final class WatchHistoryManager: WatchHistoryManaging {
         }
 
         return newHistory
+    }
+    
+    /// Checks if content has been watched past a certain threshold.
+    ///
+    /// - Parameters:
+    ///   - item: The content to check (Movie or Episode).
+    ///   - profile: The profile to check for.
+    ///   - threshold: The progress threshold (0.0 to 1.0), default 0.9.
+    /// - Returns: True if content has been watched past threshold, false otherwise.
+    public func hasWatched(_ item: NSManagedObject, profile: Profile, threshold: Float = 0.9) -> Bool {
+        let request: NSFetchRequest<WatchHistory> = WatchHistory.fetchRequest()
+        
+        var predicates: [NSPredicate] = [
+            NSPredicate(format: "profile == %@", profile),
+            NSPredicate(format: "progress >= %f", threshold)
+        ]
+        
+        if let movie = item as? Movie {
+            predicates.append(NSPredicate(format: "movie == %@", movie))
+        } else if let episode = item as? Episode {
+            predicates.append(NSPredicate(format: "episode == %@", episode))
+        } else {
+            return false
+        }
+        
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        request.fetchLimit = 1
+        
+        do {
+            let count = try context.count(for: request)
+            return count > 0
+        } catch {
+            ErrorReporter.log(error, context: "WatchHistoryManager.hasWatched")
+            return false
+        }
     }
 }

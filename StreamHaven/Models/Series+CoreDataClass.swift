@@ -26,6 +26,8 @@ extension Series {
     @NSManaged public var summary: String?
     /// The title of the series.
     @NSManaged public var title: String?
+    /// The unique identifier of the source this series came from.
+    @NSManaged public var sourceID: UUID?
     /// A set of `Season` objects belonging to this series.
     @NSManaged public var seasons: NSSet?
     /// The `Favorite` object if the series is marked as a favorite.

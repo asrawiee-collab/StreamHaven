@@ -22,6 +22,8 @@ extension Channel {
     @NSManaged public var name: String?
     /// The TVG ID used for linking to EPG data (from tvg-id attribute in M3U).
     @NSManaged public var tvgID: String?
+    /// The unique identifier of the source this channel came from.
+    @NSManaged public var sourceID: UUID?
     /// A set of `ChannelVariant` objects representing different streams or versions of the channel.
     @NSManaged public var variants: NSSet?
     /// The `Favorite` object if the channel is marked as a favorite.

@@ -9,10 +9,15 @@ public struct SeriesDetailView: View {
     @EnvironmentObject var playbackManager: PlaybackManager
     @EnvironmentObject var favoritesManager: FavoritesManager
     @EnvironmentObject var watchHistoryManager: WatchHistoryManager
+    @EnvironmentObject var watchlistManager: WatchlistManager
 
+    @StateObject private var smartSummaryManager = SmartSummaryManager()
     @State private var showingPlayer = false
     @State private var selectedEpisode: Episode?
     @State private var isFavorite: Bool = false
+    @State private var smartSummary: String?
+    @State private var showingWatchlistPicker = false
+    @State private var isInWatchlist: Bool = false
 
     private var seasons: [Season] {
         let set = series.seasons as? Set<Season> ?? []
@@ -46,8 +51,36 @@ public struct SeriesDetailView: View {
                 }
                 .padding()
 
-                Text(series.summary ?? "No summary available.")
+                // Smart Summary (Free Tier)
+                if let summary = smartSummary {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("AI Summary")
+                            .font(.headline)
+                            .foregroundColor(.secondary)
+                        Text(summary)
+                            .font(.body)
+                            .lineLimit(nil)
+                    }
                     .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(10)
+                    .padding(.horizontal)
+                } else {
+                    Text(series.summary ?? "No summary available.")
+                        .padding()
+                }
+                
+                // Add to Watchlist Button
+                Button(action: { showingWatchlistPicker = true }) {
+                    Label(isInWatchlist ? "In Watchlists" : "Add to Watchlist", systemImage: isInWatchlist ? "checkmark.circle.fill" : "plus.circle")
+                        .font(.headline)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(isInWatchlist ? Color.green : Color.indigo)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
+                .padding(.horizontal)
 
                 episodeList
 
@@ -60,7 +93,18 @@ public struct SeriesDetailView: View {
                 PlaybackViewController(player: player)
             }
         }
-        .onAppear(perform: setup)
+        .sheet(isPresented: $showingWatchlistPicker) {
+            WatchlistPickerSheet(content: series, isPresented: $showingWatchlistPicker)
+                .environmentObject(watchlistManager)
+                .environmentObject(profileManager)
+                .onDisappear {
+                    updateWatchlistStatus()
+                }
+        }
+        .onAppear(perform: {
+            setup()
+            generateSmartSummary()
+        })
     }
 
     private var tvOSDetailView: some View {
@@ -84,14 +128,28 @@ public struct SeriesDetailView: View {
                     Text(series.title ?? "No Title")
                         .font(.largeTitle)
 
-                    Text(series.summary ?? "No summary available.")
-                        .font(.body)
-
-                    favoriteButton
-
-                    episodeList
-
-                    Spacer()
+                    // Smart Summary (Free Tier) for tvOS
+                    if let summary = smartSummary {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("AI Summary")
+                                .font(.headline)
+                                .foregroundColor(.secondary)
+                            Text(summary)
+                                .font(.body)
+                        }
+                    } else {
+                        Text(series.summary ?? "No summary available.")
+                            .font(.body)
+        .fullScreenCover(isPresented: $showingPlayer) {
+            if let player = playbackManager.player {
+                PlaybackViewController(player: player)
+            }
+        }
+        .onAppear(perform: {
+            setup()
+            generateSmartSummary()
+        })
+    }               Spacer()
                 }
             }
             .padding(50)
@@ -156,6 +214,13 @@ public struct SeriesDetailView: View {
 
     private func setup() {
         isFavorite = favoritesManager.isFavorite(item: series)
+        updateWatchlistStatus()
+    }
+    
+    /// Updates watchlist status for this series.
+    private func updateWatchlistStatus() {
+        guard let profile = profileManager.currentProfile else { return }
+        isInWatchlist = watchlistManager.isInAnyWatchlist(series, profile: profile)
     }
 
     private func play(episode: Episode) {
@@ -163,5 +228,15 @@ public struct SeriesDetailView: View {
         guard let profile = profileManager.currentProfile else { return }
         playbackManager.loadMedia(for: episode, profile: profile)
         showingPlayer = true
+    }
+
+    /// Generates smart summary using NaturalLanguage framework
+    private func generateSmartSummary() {
+        guard let fullPlot = series.summary, !fullPlot.isEmpty else {
+            return
+        }
+
+        let cacheKey = "series_\(series.objectID.uriRepresentation().absoluteString)"
+        smartSummary = smartSummaryManager.getCachedSummary(cacheKey: cacheKey, fullPlot: fullPlot)
     }
 }

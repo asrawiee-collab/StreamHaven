@@ -21,6 +21,10 @@ public struct StreamHavenApp: App {
             self.persistenceProvider = DefaultPersistenceProvider(controller: controller)
         }
         
+        // Clear expired stream cache on app launch
+        let streamCacheManager = StreamCacheManager(context: self.persistenceProvider.container.viewContext)
+        streamCacheManager.clearExpiredCache()
+        
         // Initialize performance tooling
 #if canImport(Sentry)
         if let dsn = ProcessInfo.processInfo.environment["SENTRY_DSN"] ?? (Bundle.main.object(forInfoDictionaryKey: "SentryDSN") as? String),

@@ -10,6 +10,8 @@ public struct CardView: View {
     var nowProgram: String? = nil
     var nextProgram: String? = nil
 
+    @EnvironmentObject var settingsManager: SettingsManager
+
 #if os(tvOS)
     @Environment(\.isFocused) var isFocused: Bool
 #endif
@@ -30,8 +32,15 @@ public struct CardView: View {
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
                             .padding()
-                    }
-                }
+                .frame(width: 180, height: 270)
+                .cornerRadius(10)
+#if os(tvOS)
+                // Enhanced focus border for accessibility mode
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(isFocused && settingsManager.accessibilityModeEnabled ? Color.yellow : Color.clear, lineWidth: 4)
+                )
+#endif
                 .frame(width: 180, height: 270)
                 .cornerRadius(10)
 
@@ -55,14 +64,14 @@ public struct CardView: View {
                                 .cornerRadius(4)
                         }
                     }
-                    .padding(6)
-                }
-            }
-
-            Text(title)
-                .font(.caption)
-                .lineLimit(1)
         }
+#if os(tvOS)
+        .scaleEffect(isFocused ? (settingsManager.accessibilityModeEnabled ? 1.15 : 1.1) : 1.0)
+        .shadow(color: .black.opacity(0.7), radius: isFocused ? 20 : 0, x: 0, y: 10)
+        .animation(.easeInOut(duration: 0.2), value: isFocused)
+#endif
+    }
+}
 #if os(tvOS)
         .scaleEffect(isFocused ? 1.1 : 1.0)
         .shadow(color: .black.opacity(0.7), radius: isFocused ? 20 : 0, x: 0, y: 10)

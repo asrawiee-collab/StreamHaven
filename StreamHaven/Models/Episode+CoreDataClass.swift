@@ -24,6 +24,14 @@ extension Episode {
     @NSManaged public var title: String?
     /// The URL of the video stream for this episode.
     @NSManaged public var streamURL: String?
+    /// The start time of the intro in seconds (0 if unknown).
+    @NSManaged public var introStartTime: Double
+    /// The end time of the intro in seconds (0 if unknown).
+    @NSManaged public var introEndTime: Double
+    /// The start time of the credits in seconds (0 if unknown).
+    @NSManaged public var creditStartTime: Double
+    /// Whether intro timing data has been fetched and stored.
+    @NSManaged public var hasIntroData: Bool
     /// The parent `Season` object to which this episode belongs.
     @NSManaged public var season: Season?
     /// The `WatchHistory` object if the episode has been watched.

@@ -31,9 +31,10 @@ public final class M3UPlaylistParser {
     ///
     /// - Parameters:
     ///   - data: The raw `Data` of the M3U playlist file.
+    ///   - sourceID: Optional source ID to associate with imported content.
     ///   - context: The `NSManagedObjectContext` to perform the import on.
     /// - Throws: An error if the data cannot be decoded or if there is a problem saving to Core Data.
-    public static func parse(data: Data, context: NSManagedObjectContext) throws {
+    public static func parse(data: Data, sourceID: UUID? = nil, context: NSManagedObjectContext) throws {
         guard let content = String(data: data, encoding: .utf8) else {
             throw PlaylistImportError.parsingFailed(NSError(domain: "M3UParser", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid data encoding"]))
         }
@@ -115,8 +116,8 @@ public final class M3UPlaylistParser {
             }
         }
 
-        try batchInsertMovies(items: movieItems, context: context)
-        try importChannels(items: channelItems, context: context)
+        try batchInsertMovies(items: movieItems, sourceID: sourceID, context: context)
+        try importChannels(items: channelItems, sourceID: sourceID, context: context)
 
         // Store EPG URL in PlaylistCache if found
         if let epgURL = epgURL {
@@ -137,7 +138,7 @@ public final class M3UPlaylistParser {
     }
 
     /// Streams a playlist file from disk to reduce memory footprint.
-    public static func parse(fileURL: URL, context: NSManagedObjectContext) throws {
+    public static func parse(fileURL: URL, sourceID: UUID? = nil, context: NSManagedObjectContext) throws {
         guard let stream = InputStream(url: fileURL) else {
             throw PlaylistImportError.invalidURL
         }
@@ -238,8 +239,8 @@ public final class M3UPlaylistParser {
             processLine(line)
         }
 
-        try batchInsertMovies(items: movieItems, context: context)
-        try importChannels(items: channelItems, context: context)
+        try batchInsertMovies(items: movieItems, sourceID: sourceID, context: context)
+        try importChannels(items: channelItems, sourceID: sourceID, context: context)
 
         if let epgURL = epgURL {
             let fetchRequest: NSFetchRequest<PlaylistCache> = PlaylistCache.fetchRequest()
@@ -254,7 +255,7 @@ public final class M3UPlaylistParser {
         }
     }
 
-    private static func batchInsertMovies(items: [M3UChannel], context: NSManagedObjectContext) throws {
+    private static func batchInsertMovies(items: [M3UChannel], sourceID: UUID? = nil, context: NSManagedObjectContext) throws {
         guard !items.isEmpty else { return }
 
         // Fetch existing movie titles to avoid duplicates
@@ -270,11 +271,15 @@ public final class M3UPlaylistParser {
         guard !uniqueItems.isEmpty else { return }
 
         let batchInsertRequest = NSBatchInsertRequest(entityName: "Movie", objects: uniqueItems.map { item in
-            [
+            var movieDict: [String: Any] = [
                 "title": item.title,
                 "posterURL": item.logoURL ?? "",
                 "streamURL": item.url
             ]
+            if let sourceID = sourceID {
+                movieDict["sourceID"] = sourceID
+            }
+            return movieDict
         })
 
         do {
@@ -285,7 +290,7 @@ public final class M3UPlaylistParser {
         }
     }
 
-    private static func importChannels(items: [M3UChannel], context: NSManagedObjectContext) throws {
+    private static func importChannels(items: [M3UChannel], sourceID: UUID? = nil, context: NSManagedObjectContext) throws {
         guard !items.isEmpty else { return }
         
         // Fetch existing channels to avoid duplicates
@@ -306,11 +311,15 @@ public final class M3UPlaylistParser {
         let newChannels = items.filter { !existingChannelNames.contains($0.title) }
         if !newChannels.isEmpty {
             let channelBatchInsert = NSBatchInsertRequest(entityName: "Channel", objects: newChannels.map { item in
-                [
+                var channelDict: [String: Any] = [
                     "name": item.title,
                     "logoURL": item.logoURL ?? "",
                     "tvgID": item.tvgID ?? ""
                 ]
+                if let sourceID = sourceID {
+                    channelDict["sourceID"] = sourceID
+                }
+                return channelDict
             })
             try context.execute(channelBatchInsert)
             print("Successfully batch inserted \(newChannels.count) channels.")
@@ -330,11 +339,15 @@ public final class M3UPlaylistParser {
             var variantDicts: [[String: Any]] = []
             for item in newVariants {
                 if let channel = channelsByName[item.title] {
-                    variantDicts.append([
+                    var variantDict: [String: Any] = [
                         "name": item.title,
                         "streamURL": item.url,
                         "channel": channel
-                    ])
+                    ]
+                    if let sourceID = sourceID {
+                        variantDict["sourceID"] = sourceID
+                    }
+                    variantDicts.append(variantDict)
                 }
             }
             

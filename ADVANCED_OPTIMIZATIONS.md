@@ -15,7 +15,7 @@ Four major optimizations have been implemented:
 
 ## 1. Parallel Playlist Parsing
 
-### Implementation
+### Implementation (Parallel)
 
 **File:** `StreamHaven/Persistence/StreamHavenData.swift`
 
@@ -29,20 +29,20 @@ let results = await streamHavenData.importPlaylists(
 )
 ```
 
-### Architecture
+### Architecture (Parallel)
 
 - Uses Swift Concurrency `TaskGroup` for structured concurrency
 - Limits concurrent operations to 3 to avoid overwhelming network/CPU
 - Each import gets isolated `NSManagedObjectContext` to prevent conflicts
 - Returns dictionary mapping URLs to results (success/failure)
 
-### Performance Impact
+### Performance Impact (Parallel)
 
 - **3x faster** when importing 3+ playlists vs sequential
 - Prevents UI blocking during bulk imports
 - Graceful degradation if some imports fail
 
-### Usage Guidelines
+### Usage Guidelines (Parallel)
 
 - Use for bulk import operations (adding multiple playlists)
 - Each playlist downloads, caches, and parses independently
@@ -53,7 +53,7 @@ let results = await streamHavenData.importPlaylists(
 
 ## 2. Incremental Parsing
 
-### Implementation
+### Implementation (Incremental)
 
 **File:** `StreamHaven/Persistence/StreamHavenData.swift`
 
@@ -67,20 +67,20 @@ try await streamHavenData.importPlaylistIncremental(
 )
 ```
 
-### Architecture
+### Architecture (Incremental)
 
 - Uses `URLSession.bytes(from:)` streaming API
 - Writes to disk incrementally (64KB chunks)
 - Starts parsing before download completes
 - Falls back to standard import for Xtream Codes (requires full JSON)
 
-### Performance Impact
+### Performance Impact (Incremental)
 
 - **50% faster** perceived time-to-first-content for large M3U files
 - Reduces memory usage (streams to disk vs loading full file)
 - Better UX with faster feedback
 
-### Technical Details
+### Technical Details (Incremental)
 
 ```swift
 // Stream download
@@ -94,7 +94,7 @@ for try await chunk in stream {
 }
 ```
 
-### Limitations
+### Limitations (Incremental)
 
 - M3U playlists only (Xtream requires complete JSON)
 - Requires temporary file storage
@@ -104,7 +104,7 @@ for try await chunk in stream {
 
 ## 3. SQLite FTS5 Full-Text Search
 
-### Implementation
+### Implementation (FTS5)
 
 **File:** `StreamHaven/Persistence/FullTextSearchManager.swift`
 
@@ -120,9 +120,9 @@ manager.fuzzySearch(query: "jurasic park", maxResults: 20) { results in
 }
 ```
 
-### Architecture
+### Architecture (FTS5)
 
-#### Virtual Tables
+#### Virtual Tables (FTS5)
 
 Three FTS5 virtual tables with porter stemming:
 
@@ -130,7 +130,7 @@ Three FTS5 virtual tables with porter stemming:
 - `series_fts(title, summary)`  
 - `channel_fts(name)`
 
-#### Automatic Synchronization
+#### Automatic Synchronization (FTS5)
 
 SQLite triggers keep FTS in sync with Core Data:
 
@@ -145,7 +145,7 @@ END;
 -- Update and delete triggers maintain consistency
 ```
 
-#### Fuzzy Matching
+#### Fuzzy Matching (FTS5)
 
 Prefix matching with wildcard expansion:
 
@@ -155,21 +155,21 @@ Prefix matching with wildcard expansion:
 // Matches: "jurassic", "parking", etc.
 ```
 
-### Performance Impact
+### Performance Impact (FTS5)
 
 - **<100ms** search time on 100K+ items
 - **Typo-tolerant** via porter stemming
 - **No Core Data overhead** - direct SQLite queries
 - **Automatic sync** - no manual indexing needed
 
-### Search Features
+### Search Features (FTS5)
 
 1. **Porter Stemming**: "running" matches "run", "runs", "runner"
 2. **Unicode Support**: Handles international characters
 3. **Prefix Matching**: Incomplete words match
 4. **Ranked Results**: Most relevant results first (BM25 algorithm)
 
-### Usage Guidelines
+### Usage Guidelines (FTS5)
 
 ```swift
 // Setup once at app launch
@@ -184,7 +184,7 @@ ftsManager.fuzzySearch(query: "star wars", maxResults: 50) { results in
 }
 ```
 
-### Data Model
+### Data Model (FTS5)
 
 ```swift
 public struct SearchResult {
@@ -200,7 +200,7 @@ public struct SearchResult {
 
 ## 4. Core Data Denormalization
 
-### Implementation
+### Implementation (Denormalization)
 
 **Files:**
 
@@ -208,9 +208,9 @@ public struct SearchResult {
 - `StreamHaven/Persistence/OptimizedFetchRequests.swift`
 - `StreamHaven/Resources/StreamHaven.xcdatamodeld/contents`
 
-### Added Fields
+### Added Fields (Denormalization)
 
-#### Channel
+#### Channel (Denormalization)
 
 ```swift
 variantCount: Int32              // Count of channel variants
@@ -219,7 +219,7 @@ currentProgramTitle: String?     // Current program name
 epgLastUpdated: Date?           // Last EPG refresh
 ```
 
-#### Movie
+#### Movie (Denormalization)
 
 ```swift
 hasBeenWatched: Bool             // Watched status
@@ -228,7 +228,7 @@ isFavorite: Bool                 // Favorite status
 lastWatchedDate: Date?          // Last watch timestamp
 ```
 
-#### Series
+#### Series (Denormalization)
 
 ```swift
 totalEpisodeCount: Int32         // Total episodes across seasons
@@ -237,9 +237,9 @@ isFavorite: Bool                 // Favorite status
 unwatchedEpisodeCount: Int32    // Episodes not watched
 ```
 
-### Architecture
+### Architecture (Denormalization)
 
-#### Automatic Updates
+#### Automatic Updates (Denormalization)
 
 ```swift
 // After any playlist import
@@ -256,7 +256,7 @@ denormalizationManager.updateWatchProgress(
 denormalizationManager.updateChannelEPG(channel)
 ```
 
-#### Optimized Queries
+#### Optimized Queries (Denormalization)
 
 **Before (expensive join):**
 
@@ -274,9 +274,9 @@ let series = try context.fetchLongRunningSeries(minimumEpisodes: 50)
 // Uses: predicate "totalEpisodeCount >= 50"
 ```
 
-### Performance Impact
+### Performance Impact (Denormalization)
 
-#### Query Performance
+#### Query Performance (Denormalization)
 
 | Query Type | Before | After | Improvement |
 |------------|--------|-------|-------------|
@@ -285,13 +285,13 @@ let series = try context.fetchLongRunningSeries(minimumEpisodes: 50)
 | Unwatched series | 500ms (subquery) | 12ms (index) | **40x faster** |
 | Recently watched | 200ms (join) | 5ms (index) | **40x faster** |
 
-#### Memory Impact
+#### Memory Impact (Denormalization)
 
 - **70% reduction** in loaded objects (no relationship traversal)
 - **Faster Core Data faults** - fewer lazy loads triggered
 - **Smaller fetch result sets** - only relevant objects loaded
 
-### Optimized Fetch Extensions
+### Optimized Fetch Extensions (Denormalization)
 
 ```swift
 // All these avoid expensive joins/computations
@@ -318,9 +318,9 @@ let stats = try context.fetchContentStatistics()
 // Returns all counts without N+1 queries
 ```
 
-### Data Consistency
+### Data Consistency (Denormalization)
 
-#### Update Triggers
+#### Update Triggers (Denormalization)
 
 Denormalized fields update automatically:
 
@@ -329,7 +329,7 @@ Denormalized fields update automatically:
 3. **Favorites**: When user adds/removes favorite
 4. **EPG Refresh**: When EPG data updates
 
-#### Manual Updates
+#### Manual Updates (Denormalization)
 
 ```swift
 // Update specific entity

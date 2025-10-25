@@ -18,6 +18,10 @@ extension Favorite {
 
     /// The date when the item was marked as a favorite.
     @NSManaged public var favoritedDate: Date?
+    /// CloudKit record name for sync tracking.
+    @NSManaged public var cloudKitRecordName: String?
+    /// Last modification timestamp for conflict resolution.
+    @NSManaged public var modifiedAt: Date?
     /// The `Profile` to which this favorite belongs.
     @NSManaged public var profile: Profile?
     /// The `Movie` object if the favorite is a movie.

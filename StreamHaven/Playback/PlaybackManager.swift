@@ -7,7 +7,7 @@ import Sentry
 #endif
 
 /// A class for managing media playback.
-public class PlaybackManager: ObservableObject, PlaybackManaging {
+public class PlaybackManager: NSObject, ObservableObject, PlaybackManaging, AVPictureInPictureControllerDelegate, PreBufferDelegate {
 
     /// The `AVPlayer` instance.
     @Published public var player: AVPlayer?
@@ -15,6 +15,14 @@ public class PlaybackManager: ObservableObject, PlaybackManaging {
     @Published public var isPlaying: Bool = false
     /// The current playback state.
     @Published public var playbackState: PlaybackState = .stopped
+    /// The Picture-in-Picture controller (iOS/iPadOS only).
+    public var pipController: AVPictureInPictureController?
+    /// A boolean indicating whether Picture-in-Picture is currently active.
+    @Published public var isPiPActive: Bool = false
+    /// Background player for pre-buffering next episode.
+    private var nextEpisodePlayer: AVPlayer?
+    /// A boolean indicating whether next episode is pre-buffered and ready.
+    @Published public var isNextEpisodeReady: Bool = false
 
     /// An enumeration of the possible playback states.
     public enum PlaybackState {
@@ -32,25 +40,37 @@ public class PlaybackManager: ObservableObject, PlaybackManaging {
 
     private var currentItem: NSManagedObject?
     private var currentProfile: Profile?
-    private var availableVariants: [ChannelVariant] = []
-    private var currentVariantIndex: Int = 0
+    public var availableVariants: [ChannelVariant] = []
+    public var currentVariantIndex: Int = 0
     private var context: NSManagedObjectContext
     private var settingsManager: SettingsManager
     private var watchHistoryManager: WatchHistoryManager
     private var progressTracker: PlaybackProgressTracker?
+    private var streamCacheManager: StreamCacheManager?
+    private var liveActivityManager: LiveActivityManager?
+    private var downloadManager: DownloadManager?
+    private var queueManager: UpNextQueueManager?
 
     private var cancellables = Set<AnyCancellable>()
-
     /// Initializes a new `PlaybackManager`.
     ///
     /// - Parameters:
     ///   - context: The `NSManagedObjectContext` to use for Core Data operations.
     ///   - settingsManager: The `SettingsManager` for accessing user settings.
     ///   - watchHistoryManager: The `WatchHistoryManager` for managing watch history.
-    public init(context: NSManagedObjectContext, settingsManager: SettingsManager, watchHistoryManager: WatchHistoryManager) {
+    ///   - streamCacheManager: Optional `StreamCacheManager` for temporary stream caching.
+    ///   - liveActivityManager: Optional `LiveActivityManager` for Live Activities (iOS 16.1+).
+    ///   - downloadManager: Optional `DownloadManager` for offline playback support.
+    ///   - queueManager: Optional `UpNextQueueManager` for auto-play next in queue.
+    public init(context: NSManagedObjectContext, settingsManager: SettingsManager, watchHistoryManager: WatchHistoryManager, streamCacheManager: StreamCacheManager? = nil, liveActivityManager: LiveActivityManager? = nil, downloadManager: DownloadManager? = nil, queueManager: UpNextQueueManager? = nil) {
         self.context = context
         self.settingsManager = settingsManager
         self.watchHistoryManager = watchHistoryManager
+        self.streamCacheManager = streamCacheManager ?? StreamCacheManager(context: context)
+        self.liveActivityManager = liveActivityManager
+        self.downloadManager = downloadManager
+        self.queueManager = queueManager
+        super.init()
     }
 
     /// Loads media for a given item and profile.
@@ -58,7 +78,7 @@ public class PlaybackManager: ObservableObject, PlaybackManaging {
     /// - Parameters:
     ///   - item: The `NSManagedObject` to play (e.g., `Movie`, `Episode`, `ChannelVariant`).
     ///   - profile: The `Profile` of the current user.
-    public func loadMedia(for item: NSManagedObject, profile: Profile) {
+    public func loadMedia(for item: NSManagedObject, profile: Profile, isOffline: Bool = false) {
         stop()
 
         self.currentItem = item
@@ -71,17 +91,40 @@ public class PlaybackManager: ObservableObject, PlaybackManaging {
             self.currentVariantIndex = self.availableVariants.firstIndex(of: channelVariant) ?? 0
         }
 
-        loadCurrentVariant()
+        loadCurrentVariant(isOffline: isOffline)
     }
 
-    private func loadCurrentVariant() {
+    public func loadCurrentVariant(isOffline: Bool = false) {
         let itemToLoad = availableVariants.isEmpty ? currentItem : availableVariants[currentVariantIndex]
+
+        // Check for offline download first
+        if isOffline, let downloadManager = downloadManager,
+           let localPath = downloadManager.getLocalFilePath(for: itemToLoad!),
+           let localURL = URL(string: "file://\(localPath)") {
+            
+            let playerItem = AVPlayerItem(url: localURL)
+            playerItem.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: [.new, .old], context: nil)
+            
+            if self.player == nil {
+                self.player = AVPlayer(playerItem: playerItem)
+                setupPictureInPicture()
+            } else {
+                self.player?.replaceCurrentItem(with: playerItem)
+            }
+            
+            setupPlaybackTracking()
+            return
+        }
 
         guard let streamURLString = getStreamURL(for: itemToLoad),
               let streamURL = URL(string: streamURLString) else {
             handlePlaybackFailure()
             return
         }
+
+        // Record stream access for caching
+        let cacheIdentifier = getCacheIdentifier(for: itemToLoad)
+        streamCacheManager?.recordStreamAccess(for: streamURLString, cacheIdentifier: cacheIdentifier)
 
         let playerItem = AVPlayerItem(url: streamURL)
         playerItem.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: [.new, .old], context: nil)
@@ -91,6 +134,9 @@ public class PlaybackManager: ObservableObject, PlaybackManaging {
 
         self.player = AVPlayer(playerItem: playerItem)
         self.progressTracker = PlaybackProgressTracker(player: self.player, item: self.currentItem, watchHistoryManager: self.watchHistoryManager)
+        self.progressTracker?.preBufferDelegate = self
+        self.progressTracker?.preBufferTimeSeconds = settingsManager.preBufferTimeSeconds
+        setupPiPController()
         setupPlayerObservers()
         play()
     }
@@ -105,8 +151,13 @@ public class PlaybackManager: ObservableObject, PlaybackManaging {
     }
 
     override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == #keyPath(AVPlayerItem.status), let item = object as? AVPlayerItem, item.status == .failed {
-            handlePlaybackFailure()
+        if keyPath == #keyPath(AVPlayerItem.status), let item = object as? AVPlayerItem {
+            if item == player?.currentItem && item.status == .failed {
+                handlePlaybackFailure()
+            } else if item == nextEpisodePlayer?.currentItem && item.status == .readyToPlay {
+                isNextEpisodeReady = true
+                PerformanceLogger.logPlayback("Next episode pre-buffered and ready")
+            }
         }
     }
 
@@ -127,6 +178,13 @@ public class PlaybackManager: ObservableObject, PlaybackManaging {
         player?.play()
         isPlaying = true
         playbackState = .playing
+        
+        // Resume Live Activity if active
+        if settingsManager.enableLiveActivities {
+            Task { @MainActor in
+                await liveActivityManager?.resumeActivity()
+            }
+        }
     }
 
     /// Pauses playback.
@@ -134,6 +192,13 @@ public class PlaybackManager: ObservableObject, PlaybackManaging {
         player?.pause()
         isPlaying = false
         playbackState = .paused
+        
+        // Pause Live Activity if active
+        if settingsManager.enableLiveActivities {
+            Task { @MainActor in
+                await liveActivityManager?.pauseActivity()
+            }
+        }
     }
 
     /// Seeks to a specific time in the media.
@@ -149,11 +214,21 @@ public class PlaybackManager: ObservableObject, PlaybackManaging {
         progressTracker?.stopTracking()
         progressTracker = nil
         player = nil
+        nextEpisodePlayer?.pause()
+        nextEpisodePlayer = nil
+        isNextEpisodeReady = false
         currentItem = nil
         currentProfile = nil
         isPlaying = false
         playbackState = .stopped
         cancellables.removeAll()
+        
+        // End Live Activity when stopping playback
+        if settingsManager.enableLiveActivities {
+            Task { @MainActor in
+                await liveActivityManager?.endActivity()
+            }
+        }
     }
 
     /// Sets up observers for player events.
@@ -162,7 +237,24 @@ public class PlaybackManager: ObservableObject, PlaybackManaging {
 
         NotificationCenter.default.publisher(for: .AVPlayerItemDidPlayToEndTime, object: player.currentItem)
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in self?.playNextEpisode() }
+            .sink { [weak self] _ in 
+                guard let self = self else { return }
+                
+                // Mark content as completed in queue
+                if let currentItem = self.currentItem, let profile = self.currentProfile {
+                    self.queueManager?.processCompletion(of: currentItem, profile: profile)
+                }
+                
+                // For series, try next episode first
+                if self.isNextEpisodeReady == true {
+                    self.swapToNextEpisode()
+                } else if let nextEpisode = self.getNextEpisodeInSeries() {
+                    self.playNextEpisode()
+                } else {
+                    // No next episode, check Up Next queue
+                    self.playNextInQueue()
+                }
+            }
             .store(in: &cancellables)
 
         NotificationCenter.default.publisher(for: .AVPlayerItemPlaybackStalled, object: player.currentItem)
@@ -205,10 +297,39 @@ public class PlaybackManager: ObservableObject, PlaybackManaging {
         guard let currentEpisode = currentItem as? Episode,
               let profile = currentProfile,
               let nextEpisode = findNextEpisode(for: currentEpisode) else {
-            stop()
+            // No next episode, check Up Next queue
+            playNextInQueue()
             return
         }
         loadMedia(for: nextEpisode, profile: profile)
+    }
+    
+    /// Gets the next episode in a series for the current episode.
+    /// - Returns: The next Episode if found, nil otherwise.
+    private func getNextEpisodeInSeries() -> Episode? {
+        guard let currentEpisode = currentItem as? Episode else {
+            return nil
+        }
+        return findNextEpisode(for: currentEpisode)
+    }
+    
+    /// Plays the next item in the Up Next queue.
+    private func playNextInQueue() {
+        guard let profile = currentProfile,
+              let queueManager = queueManager,
+              let nextQueueItem = queueManager.getNextItem(),
+              let content = nextQueueItem.fetchContent(context: context) else {
+            stop()
+            return
+        }
+        
+        if let movie = content as? Movie {
+            loadMedia(for: movie, profile: profile)
+        } else if let episode = content as? Episode {
+            loadMedia(for: episode, profile: profile)
+        } else {
+            stop()
+        }
     }
 
     /// Finds the next episode in a season.
@@ -228,9 +349,259 @@ public class PlaybackManager: ObservableObject, PlaybackManaging {
 
         return nil
     }
+    
+    /// Generates a unique cache identifier for the given item.
+    /// - Parameter item: The media item.
+    /// - Returns: A unique identifier string.
+    private func getCacheIdentifier(for item: NSManagedObject?) -> String {
+        if let movie = item as? Movie {
+            return "movie_\(movie.objectID.uriRepresentation().absoluteString)"
+        } else if let episode = item as? Episode {
+            return "episode_\(episode.objectID.uriRepresentation().absoluteString)"
+        } else if let channelVariant = item as? ChannelVariant {
+            return "channel_\(channelVariant.objectID.uriRepresentation().absoluteString)"
+        }
+        return "unknown_\(UUID().uuidString)"
+    }
 }
 
 extension PlaybackManager {
+    // MARK: - PreBufferDelegate
+    
+    public func shouldPreBufferNextEpisode(timeRemaining: Double) {
+        guard settingsManager.enablePreBuffer else { return }
+        
+        PerformanceLogger.logPlayback("Pre-buffer requested with \(String(format: "%.1f", timeRemaining))s remaining")
+        
+        // Find next episode
+        guard let currentEpisode = currentItem as? Episode,
+              let nextEpisode = findNextEpisode(for: currentEpisode) else {
+            PerformanceLogger.logPlayback("No next episode found for pre-buffer")
+            return
+        }
+        
+        loadNextEpisodeInBackground(nextEpisode)
+    }
+    
+    /// Loads the next episode in a background player for seamless transition.
+    /// - Parameter episode: The next episode to pre-buffer.
+    private func loadNextEpisodeInBackground(_ episode: Episode) {
+        guard let streamURLString = episode.streamURL,
+              let streamURL = URL(string: streamURLString) else {
+            PerformanceLogger.logPlayback("Invalid stream URL for next episode")
+            return
+        }
+        
+        PerformanceLogger.logPlayback("Pre-buffering next episode: \(episode.title ?? "Unknown")")
+        
+        // Record stream access for caching
+        let cacheIdentifier = getCacheIdentifier(for: episode)
+        streamCacheManager?.recordStreamAccess(for: streamURLString, cacheIdentifier: cacheIdentifier)
+        
+        // Create background player with same settings
+        let playerItem = AVPlayerItem(url: streamURL)
+        let subtitleRule = AVTextStyleRule(textMarkupAttributes: [kCMTextMarkupAttribute_FontSizePercentage as String: settingsManager.subtitleSize])
+        playerItem.textStyleRules = [subtitleRule]
+        
+        nextEpisodePlayer = AVPlayer(playerItem: playerItem)
+        
+        // Observe when pre-buffer is ready
+        nextEpisodePlayer?.currentItem?.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: [.new], context: nil)
+        
+        // Preload the item to start buffering
+        nextEpisodePlayer?.currentItem?.preferredForwardBufferDuration = TimeInterval(30)
+    }
+    
+    /// Swaps the pre-buffered player to become the active player.
+    private func swapToNextEpisode() {
+        guard let nextPlayer = nextEpisodePlayer,
+              isNextEpisodeReady else {
+            PerformanceLogger.logPlayback("Next episode not ready, falling back to normal transition")
+            playNextEpisode()
+            return
+        }
+        
+        PerformanceLogger.logPlayback("Seamlessly transitioning to pre-buffered episode")
+        
+        // Stop current player
+        player?.pause()
+        progressTracker?.stopTracking()
+        player = nil
+        
+        // Swap to next player
+        player = nextPlayer
+        nextEpisodePlayer = nil
+        isNextEpisodeReady = false
+        
+        // Update current item to next episode
+        if let currentEpisode = currentItem as? Episode,
+           let nextEpisode = findNextEpisode(for: currentEpisode) {
+            currentItem = nextEpisode
+        }
+        
+        // Setup tracking for new episode
+        progressTracker = PlaybackProgressTracker(player: player, item: currentItem, watchHistoryManager: watchHistoryManager)
+        progressTracker?.preBufferDelegate = self
+        progressTracker?.preBufferTimeSeconds = settingsManager.preBufferTimeSeconds
+        
+        // Setup observers and play
+        setupPiPController()
+        setupPlayerObservers()
+        play()
+    }
+    
+    /// Sets up the Picture-in-Picture controller (iOS/iPadOS only).
+    private func setupPiPController() {
+        #if os(iOS)
+        guard settingsManager.enablePiP,
+              AVPictureInPictureController.isPictureInPictureSupported(),
+              let player = player,
+              let playerLayer = player.currentItem?.tracks.first else {
+            pipController = nil
+            return
+        }
+        
+        // Create a placeholder AVPlayerLayer for PiP
+        let layer = AVPlayerLayer(player: player)
+        
+        if let controller = try? AVPictureInPictureController(playerLayer: layer) {
+            controller.delegate = self
+            pipController = controller
+            PerformanceLogger.logPlayback("PiP controller initialized")
+        }
+        #endif
+    }
+    
+    /// Starts Picture-in-Picture mode.
+    public func startPiP() {
+        #if os(iOS)
+        guard let pipController = pipController,
+              !pipController.isPictureInPictureActive else { return }
+        pipController.startPictureInPicture()
+        #endif
+    }
+    
+    /// Stops Picture-in-Picture mode.
+    public func stopPiP() {
+        #if os(iOS)
+        guard let pipController = pipController,
+              pipController.isPictureInPictureActive else { return }
+        pipController.stopPictureInPicture()
+        #endif
+    }
+    
+    // MARK: - AVPictureInPictureControllerDelegate
+    
+    public func pictureInPictureControllerWillStartPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
+        PerformanceLogger.logPlayback("PiP will start")
+    }
+    
+    public func pictureInPictureControllerDidStartPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
+        isPiPActive = true
+        PerformanceLogger.logPlayback("PiP started")
+    }
+    
+    public func pictureInPictureControllerWillStopPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
+        PerformanceLogger.logPlayback("PiP will stop")
+    }
+    
+    public func pictureInPictureControllerDidStopPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
+        isPiPActive = false
+        PerformanceLogger.logPlayback("PiP stopped")
+    }
+    
+    public func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, failedToStartPictureInPictureWithError error: Error) {
+        isPiPActive = false
+        ErrorReporter.log(error, context: "PlaybackManager.pictureInPictureController.failedToStart")
+        PerformanceLogger.logPlayback("PiP failed to start: \(error.localizedDescription)")
+    }
+    
+    public func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, restoreUserInterfaceForPictureInPictureStopWithCompletionHandler completionHandler: @escaping (Bool) -> Void) {
+        // Restore the playback UI when user taps the restore button
+        PerformanceLogger.logPlayback("PiP restore UI requested")
+        completionHandler(true)
+    }
+    
+    // MARK: - Live Activity Management
+    
+    /// Starts a Live Activity for the current playback item
+    private func startLiveActivity(for item: NSManagedObject?) async {
+        guard let item = item else { return }
+        
+        var title = ""
+        var contentType = ""
+        var seriesInfo: String?
+        var thumbnailURL: String?
+        var duration: TimeInterval = 0
+        
+        if let movie = item as? Movie {
+            title = movie.title ?? "Unknown Movie"
+            contentType = "movie"
+            thumbnailURL = movie.posterURL
+            if let playerDuration = player?.currentItem?.duration,
+               !playerDuration.isIndefinite {
+                duration = CMTimeGetSeconds(playerDuration)
+            }
+        } else if let episode = item as? Episode {
+            title = episode.title ?? "Unknown Episode"
+            contentType = "episode"
+            if let season = episode.season,
+               let series = season.series {
+                seriesInfo = "\(series.title ?? "") S\(season.seasonNumber)E\(episode.episodeNumber)"
+                thumbnailURL = series.posterURL
+            }
+            if let playerDuration = player?.currentItem?.duration,
+               !playerDuration.isIndefinite {
+                duration = CMTimeGetSeconds(playerDuration)
+            }
+        } else if let variant = item as? ChannelVariant,
+                  let channel = variant.channel {
+            title = channel.name ?? "Unknown Channel"
+            contentType = "channel"
+            thumbnailURL = channel.logoURL
+            duration = 0 // Live content has no fixed duration
+        }
+        
+        let streamIdentifier = getStreamURL(for: item) ?? UUID().uuidString
+        
+        do {
+            try await liveActivityManager?.startActivity(
+                title: title,
+                contentType: contentType,
+                streamIdentifier: streamIdentifier,
+                thumbnailURL: thumbnailURL,
+                seriesInfo: seriesInfo,
+                duration: duration
+            )
+        } catch {
+            ErrorReporter.log(error, context: "PlaybackManager.startLiveActivity")
+        }
+    }
+    
+    /// Updates the Live Activity with current playback progress
+    /// Called periodically by PlaybackProgressTracker
+    public func updateLiveActivityProgress() {
+        guard let player = player,
+              let currentTime = player.currentItem?.currentTime(),
+              let duration = player.currentItem?.duration,
+              !currentTime.isIndefinite,
+              !duration.isIndefinite else {
+            return
+        }
+        
+        let elapsed = CMTimeGetSeconds(currentTime)
+        let total = CMTimeGetSeconds(duration)
+        let progress = total > 0 ? elapsed / total : 0.0
+        
+        Task { @MainActor in
+            await liveActivityManager?.updateActivity(
+                progress: progress,
+                isPlaying: isPlaying,
+                elapsedSeconds: elapsed
+            )
+        }
+    }
+    
     private func logAccessLog() {
         guard let events = player?.currentItem?.accessLog()?.events else { return }
         if let last = events.last {

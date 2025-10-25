@@ -10,6 +10,7 @@ This document describes how to profile StreamHaven and review runtime telemetry.
 4. Start recording, navigate typical user flows, then stop and inspect call trees.
 
 Tips:
+
 - Filter by the `StreamHaven` module to focus on app code.
 - Look for long-running SwiftUI view updates and Core Data fetches.
 
@@ -24,6 +25,7 @@ Tips:
 - Features enabled: crash reporting, app hang tracking, UI tracing, network tracking, Core Data tracing.
 
 Set DSN locally by adding to the scheme's Environment Variables:
+
 - Key: `SENTRY_DSN`
 - Value: `<your DSN>`
 

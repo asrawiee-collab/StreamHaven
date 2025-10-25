@@ -6,12 +6,18 @@ import CoreData
 public struct HomeView_tvOS: View {
     @Environment(\.managedObjectContext) private var viewContext
     @ObservedObject var profileManager: ProfileManager
+    @EnvironmentObject var settingsManager: SettingsManager
+    @EnvironmentObject var previewManager: HoverPreviewManager
 
     @FetchRequest var movies: FetchedResults<Movie>
     @FetchRequest var series: FetchedResults<Series>
     @FetchRequest var channels: FetchedResults<Channel>
     @FetchRequest var watchHistory: FetchedResults<WatchHistory>
     @State private var backgroundPosterURL: URL?
+    @State private var trendingMovies: [Movie] = []
+    @State private var trendingSeries: [Series] = []
+    @State private var recommendedMovies: [Movie] = []
+    @EnvironmentObject var tmdbManager: TMDbManager
 
     /// Initializes a new `HomeView_tvOS`.
     /// - Parameter profileManager: The `ProfileManager` for accessing the current profile.
@@ -20,10 +26,18 @@ public struct HomeView_tvOS: View {
 
         var moviePredicate = NSPredicate(value: true)
         var seriesPredicate = NSPredicate(value: true)
+        
+        // Enforced filtering for Kids profiles (G, PG, PG-13, Unrated only)
         if let profile = profileManager.currentProfile, !profile.isAdult {
             let allowedRatings = [Rating.g.rawValue, Rating.pg.rawValue, Rating.pg13.rawValue, Rating.unrated.rawValue]
             moviePredicate = NSPredicate(format: "rating IN %@", allowedRatings)
             seriesPredicate = NSPredicate(format: "rating IN %@", allowedRatings)
+        }
+        // Optional filtering for Adult profiles (exclude NC-17 if hideAdultContent is enabled)
+        else if UserDefaults.standard.bool(forKey: "hideAdultContent") {
+            let safeRatings = [Rating.g.rawValue, Rating.pg.rawValue, Rating.pg13.rawValue, Rating.r.rawValue, Rating.unrated.rawValue]
+            moviePredicate = NSPredicate(format: "rating IN %@", safeRatings)
+            seriesPredicate = NSPredicate(format: "rating IN %@", safeRatings)
         }
 
         _movies = FetchRequest<Movie>(
@@ -88,10 +102,61 @@ public struct HomeView_tvOS: View {
                             HStack(spacing: 50) {
                                 ForEach(watchHistory) { history in
                                     if let movie = history.movie {
-                                        CarouselItemView(url: movie.posterURL, title: movie.title, destination: MovieDetailView(movie: movie), backgroundURL: $backgroundPosterURL)
+                                        MovieCardWithPreview(
+                                            movie: movie,
+                                            previewManager: previewManager,
+                                            backgroundURL: $backgroundPosterURL
+                                        )
                                     } else if let episode = history.episode, let series = episode.season?.series {
-                                        CarouselItemView(url: series.posterURL, title: episode.title, destination: SeriesDetailView(series: series), backgroundURL: $backgroundPosterURL)
+                                        SeriesCardWithPreview(
+                                            series: series,
+                                            previewManager: previewManager,
+                                            backgroundURL: $backgroundPosterURL
+                                        )
                                     }
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+                    }
+
+                    // Trending This Week
+                    if !trendingMovies.isEmpty || !trendingSeries.isEmpty {
+                        sectionHeader(NSLocalizedString("Trending This Week", comment: "Home view section title"))
+
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 50) {
+                                ForEach(trendingMovies) { movie in
+                                    MovieCardWithPreview(
+                                        movie: movie,
+                                        previewManager: previewManager,
+                                        backgroundURL: $backgroundPosterURL
+                                    )
+                                }
+                                ForEach(trendingSeries) { series in
+                                    SeriesCardWithPreview(
+                                        series: series,
+                                        previewManager: previewManager,
+                                        backgroundURL: $backgroundPosterURL
+                                    )
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+                    }
+
+                    // Recommended for You
+                    if !recommendedMovies.isEmpty {
+                        sectionHeader(NSLocalizedString("Recommended for You", comment: "Home view section title"))
+
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 50) {
+                                ForEach(recommendedMovies) { movie in
+                                    MovieCardWithPreview(
+                                        movie: movie,
+                                        previewManager: previewManager,
+                                        backgroundURL: $backgroundPosterURL
+                                    )
                                 }
                             }
                             .padding(.horizontal)
@@ -103,7 +168,11 @@ public struct HomeView_tvOS: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 50) {
                             ForEach(movies) { movie in
-                                CarouselItemView(url: movie.posterURL, title: movie.title, destination: MovieDetailView(movie: movie), backgroundURL: $backgroundPosterURL)
+                                MovieCardWithPreview(
+                                    movie: movie,
+                                    previewManager: previewManager,
+                                    backgroundURL: $backgroundPosterURL
+                                )
                             }
                         }
                         .padding(.horizontal)
@@ -114,7 +183,11 @@ public struct HomeView_tvOS: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 50) {
                             ForEach(series) { seriesItem in
-                                CarouselItemView(url: seriesItem.posterURL, title: seriesItem.title, destination: SeriesDetailView(series: seriesItem), backgroundURL: $backgroundPosterURL)
+                                SeriesCardWithPreview(
+                                    series: seriesItem,
+                                    previewManager: previewManager,
+                                    backgroundURL: $backgroundPosterURL
+                                )
                             }
                         }
                         .padding(.horizontal)
@@ -139,6 +212,44 @@ public struct HomeView_tvOS: View {
             // Set initial background
             if let firstMovie = movies.first {
                 backgroundPosterURL = URL(string: firstMovie.posterURL ?? "")
+            }
+            fetchRecommendations()
+        }
+    }
+
+    /// Fetches trending and recommended content from TMDb
+    private func fetchRecommendations() {
+        Task {
+            // Fetch trending movies and series
+            do {
+                let tmdbTrendingMovies = try await tmdbManager.getTrendingMovies()
+                let tmdbTrendingSeries = try await tmdbManager.getTrendingSeries()
+                
+                // Match TMDb trending with local library
+                await MainActor.run {
+                    trendingMovies = tmdbTrendingMovies.compactMap { tmdbMovie in
+                        tmdbManager.findLocalMovie(title: tmdbMovie.title, context: viewContext)
+                    }.prefix(10).map { $0 }
+                    
+                    trendingSeries = tmdbTrendingSeries.compactMap { tmdbSeries in
+                        tmdbManager.findLocalSeries(name: tmdbSeries.name, context: viewContext)
+                    }.prefix(10).map { $0 }
+                }
+            } catch {
+                PerformanceLogger.logNetwork("Failed to fetch trending content: \(error)")
+            }
+            
+            // Fetch recommendations based on watch history
+            if let recentlyWatched = watchHistory.first?.movie {
+                do {
+                    // For simplicity, use trending as recommendations
+                    // In production, you'd use TMDb similar movies API
+                    await MainActor.run {
+                        recommendedMovies = trendingMovies.filter { $0.objectID != recentlyWatched.objectID }
+                    }
+                } catch {
+                    PerformanceLogger.logNetwork("Failed to fetch recommendations: \(error)")
+                }
             }
         }
     }

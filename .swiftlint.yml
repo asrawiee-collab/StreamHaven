@@ -45,6 +45,7 @@ identifier_name:
 opt_in_rules:
   - empty_count
   - fatal_error_message
+  - force_cast
   - force_unwrapping
   - implicit_getter
   - joined_default_parameter
@@ -64,3 +65,10 @@ disabled_rules:
   - function_parameter_count
 
 reporter: "github-actions-logging"
+
+# Enforce no force casts and no force unwraps at error severity
+force_cast:
+  severity: error
+
+force_unwrapping:
+  severity: error

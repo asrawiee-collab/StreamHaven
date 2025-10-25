@@ -6,14 +6,14 @@ This document provides guidance for developers working on the StreamHaven projec
 
 StreamHaven is built using the MVVM (Model-View-ViewModel) architecture pattern, with a Core Data stack for local persistence. The project is structured into the following modules:
 
--   **App:** The main entry point of the application.
--   **Models:** The Core Data managed object models.
--   **Parsing:** Parsers for M3U and Xtream Codes playlists.
--   **Persistence:** The Core Data stack and related components.
--   **Playback:** The `AVPlayer`-based playback manager and related components.
--   **UI:** The SwiftUI views and related components.
--   **User:** Managers for user profiles, favorites, and settings.
--   **Utilities:** Helper classes and enums.
+- **App:** The main entry point of the application.
+- **Models:** The Core Data managed object models.
+- **Parsing:** Parsers for M3U and Xtream Codes playlists.
+- **Persistence:** The Core Data stack and related components.
+- **Playback:** The `AVPlayer`-based playback manager and related components.
+- **UI:** The SwiftUI views and related components.
+- **User:** Managers for user profiles, favorites, and settings.
+- **Utilities:** Helper classes and enums.
 
 ## Blocked and Future Tasks
 

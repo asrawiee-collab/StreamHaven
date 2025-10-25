@@ -8,13 +8,24 @@ public struct MainView: View {
     @StateObject private var favoritesManager: FavoritesManager
     @StateObject private var watchHistoryManager: WatchHistoryManager
     @StateObject private var navigationCoordinator = NavigationCoordinator()
+    @StateObject private var downloadManager: DownloadManager
+    @StateObject private var queueManager: UpNextQueueManager
+    @StateObject private var watchlistManager: WatchlistManager
+    @StateObject private var sourceManager: PlaylistSourceManager
+    @StateObject private var contentManager: MultiSourceContentManager
     
     // These managers are created lazily on first access through the body
     @StateObject private var subtitleManager = SubtitleManager()
     @StateObject private var audioSubtitleManager = AudioSubtitleManager()
     @StateObject private var tmdbManager = TMDbManager()
+    @StateObject private var subscriptionManager: SubscriptionManager
+    
+    #if os(tvOS)
+    @StateObject private var previewManager: HoverPreviewManager
+    #endif
     
     @ObservedObject var profileManager: ProfileManager
+    @ObservedObject var settingsManager: SettingsManager
     private let persistenceProvider: PersistenceProviding
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -26,6 +37,7 @@ public struct MainView: View {
     ///   - settingsManager: The `SettingsManager` for accessing user settings.
     public init(profileManager: ProfileManager, settingsManager: SettingsManager, persistenceProvider: PersistenceProviding = DefaultPersistenceProvider()) {
         self.profileManager = profileManager
+        self.settingsManager = settingsManager
         self.persistenceProvider = persistenceProvider
 
         let context = persistenceProvider.container.viewContext
@@ -38,6 +50,33 @@ public struct MainView: View {
 
         _playbackManager = StateObject(wrappedValue: PlaybackManager(context: context, settingsManager: settingsManager, watchHistoryManager: watchHistoryManager))
         _favoritesManager = StateObject(wrappedValue: FavoritesManager(context: context, profile: profile))
+        
+        // Initialize download manager
+        _downloadManager = StateObject(wrappedValue: DownloadManager(context: context, maxStorageGB: 10))
+        
+        // Initialize queue and watchlist managers
+        _queueManager = StateObject(wrappedValue: UpNextQueueManager(context: context, watchHistoryManager: watchHistoryManager))
+        _watchlistManager = StateObject(wrappedValue: WatchlistManager(context: context))
+        
+        // Initialize multi-source managers
+        _sourceManager = StateObject(wrappedValue: PlaylistSourceManager(persistenceController: persistenceProvider as? PersistenceController ?? .shared))
+        _contentManager = StateObject(wrappedValue: MultiSourceContentManager(context: context))
+        
+        #if os(tvOS)
+        // Initialize preview manager with settings
+        _previewManager = StateObject(wrappedValue: HoverPreviewManager(settingsManager: settingsManager))
+        #endif
+
+        // Initialize SubscriptionManager with appropriate StoreKit provider
+        #if canImport(StoreKit)
+        if #available(iOS 15.0, tvOS 15.0, *) {
+            _subscriptionManager = StateObject(wrappedValue: SubscriptionManager(storeKitProvider: AppleStoreKitProvider()))
+        } else {
+            _subscriptionManager = StateObject(wrappedValue: SubscriptionManager(storeKitProvider: NoopStoreKitProvider()))
+        }
+        #else
+        _subscriptionManager = StateObject(wrappedValue: SubscriptionManager(storeKitProvider: NoopStoreKitProvider()))
+        #endif
     }
 
     /// The body of the view.
@@ -53,9 +92,19 @@ public struct MainView: View {
         .environmentObject(favoritesManager)
         .environmentObject(watchHistoryManager)
         .environmentObject(navigationCoordinator)
-        .environmentObject(lazyManagers.subtitleManager())
-        .environmentObject(lazyManagers.audioSubtitleManager())
-        .environmentObject(lazyManagers.tmdbManager())
+        .environmentObject(subtitleManager)
+        .environmentObject(audioSubtitleManager)
+        .environmentObject(tmdbManager)
+        .environmentObject(downloadManager)
+        .environmentObject(queueManager)
+        .environmentObject(watchlistManager)
+        .environmentObject(sourceManager)
+        .environmentObject(contentManager)
+        .environmentObject(settingsManager)
+        .environmentObject(subscriptionManager)
+        #if os(tvOS)
+        .environmentObject(previewManager)
+        #endif
     }
 
     /// The tab view for iPhone.
@@ -73,14 +122,45 @@ public struct MainView: View {
                     }
             }
             .tabItem {
-        .environmentObject(playbackManager)
-        .environmentObject(favoritesManager)
-        .environmentObject(watchHistoryManager)
-        .environmentObject(navigationCoordinator)
-        .environmentObject(subtitleManager)
-        .environmentObject(audioSubtitleManager)
-        .environmentObject(tmdbManager)
+                Label(NSLocalizedString("Home", comment: "Tab bar item"), systemImage: "house")
+            }
+            
+            NavigationStack {
+                FavoritesView(profileManager: profileManager)
+            }
+            .tabItem {
                 Label(NSLocalizedString("Favorites", comment: "Tab bar item"), systemImage: "heart")
+            }
+            
+            NavigationStack {
+                WatchlistsView()
+            }
+            .tabItem {
+                Label(NSLocalizedString("Watchlists", comment: "Tab bar item"), systemImage: "list.bullet")
+            }
+            
+#if !os(tvOS)
+            NavigationStack {
+                DownloadsView()
+            }
+            .tabItem {
+                Label(NSLocalizedString("Downloads", comment: "Tab bar item"), systemImage: "arrow.down.circle")
+            }
+            
+            NavigationStack {
+                UpNextView()
+            }
+            .tabItem {
+                Label(NSLocalizedString("Up Next", comment: "Tab bar item"), systemImage: "text.badge.plus")
+            }
+#endif
+
+            NavigationStack {
+                EPGView()
+                    .environment(\.managedObjectContext, persistenceProvider.container.viewContext)
+            }
+            .tabItem {
+                Label(NSLocalizedString("TV Guide", comment: "Tab bar item"), systemImage: "tv")
             }
 
             NavigationStack {

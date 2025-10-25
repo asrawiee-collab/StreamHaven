@@ -8,9 +8,35 @@ let package = Package(
         .tvOS(.v17)
     ],
     products: [
+        // Library product for modular reuse
         .library(
             name: "StreamHaven",
-            targets: ["StreamHaven"]),
+            targets: ["StreamHaven"]
+        ),
+        // iOS application product to enable reliable UI testing in CI
+        .iOSApplication(
+            name: "StreamHaven",
+            targets: ["StreamHaven"],
+            bundleIdentifier: "com.asrawiee.StreamHaven",
+            displayVersion: "1.0",
+            bundleVersion: "1",
+            appIcon: .asset("AppIcon"),
+            supportedDeviceFamilies: [ .phone, .pad ],
+            supportedInterfaceOrientations: [
+                .portrait,
+                .landscapeLeft,
+                .landscapeRight
+            ]
+        ),
+        // tvOS application product for tvOS UI testing
+        .tvOSApplication(
+            name: "StreamHavenTV",
+            targets: ["StreamHaven"],
+            bundleIdentifier: "com.asrawiee.StreamHaven.tv",
+            displayVersion: "1.0",
+            bundleVersion: "1",
+            appIcon: .asset("AppIcon")
+        )
     ],
     dependencies: [
         // Crash reporting & performance monitoring
@@ -31,6 +57,12 @@ let package = Package(
             resources: [
                 .copy("../Resources")
             ]
+        ),
+        // UI tests are organized under StreamHavenUITests. Xcode will run these as UI tests.
+        .testTarget(
+            name: "StreamHavenUITests",
+            dependencies: ["StreamHaven"],
+            path: "StreamHavenUITests"
         ),
     ]
 )

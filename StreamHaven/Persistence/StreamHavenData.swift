@@ -127,6 +127,7 @@ public final class StreamHavenData {
             return (url, .success(()))
         } catch {
             progress(url, NSLocalizedString("Failed", comment: ""))
+            ErrorReporter.log(error, context: "StreamHavenData.importPlaylistTask")
             return (url, .failure(error))
         }
     }

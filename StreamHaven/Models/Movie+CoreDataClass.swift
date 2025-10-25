@@ -30,6 +30,8 @@ extension Movie {
     @NSManaged public var title: String?
     /// The IMDb ID of the movie (e.g., "tt1234567").
     @NSManaged public var imdbID: String?
+    /// The unique identifier of the source this movie came from.
+    @NSManaged public var sourceID: UUID?
     /// The `WatchHistory` object if the movie has been watched.
     @NSManaged public var watchHistory: WatchHistory?
     /// The `Favorite` object if the movie is marked as a favorite.
