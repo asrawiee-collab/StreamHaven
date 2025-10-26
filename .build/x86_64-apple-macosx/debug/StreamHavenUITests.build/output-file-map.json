@@ -1,0 +1,54 @@
+{
+  "": {
+    "swift-dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/master.swiftdeps"
+  },
+  "/Users/asrawiee/Desktop/StreamHaven/StreamHavenUITests/FavoritesManagementUITests.swift": {
+    "dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/FavoritesManagementUITests.d",
+    "object": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/FavoritesManagementUITests.swift.o",
+    "swiftmodule": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/FavoritesManagementUITests~partial.swiftmodule",
+    "swift-dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/FavoritesManagementUITests.swiftdeps",
+    "diagnostics": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/FavoritesManagementUITests.dia"
+  },
+  "/Users/asrawiee/Desktop/StreamHaven/StreamHavenUITests/PlaybackControlsUITests.swift": {
+    "dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/PlaybackControlsUITests.d",
+    "object": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/PlaybackControlsUITests.swift.o",
+    "swiftmodule": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/PlaybackControlsUITests~partial.swiftmodule",
+    "swift-dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/PlaybackControlsUITests.swiftdeps",
+    "diagnostics": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/PlaybackControlsUITests.dia"
+  },
+  "/Users/asrawiee/Desktop/StreamHaven/StreamHavenUITests/PlaylistImportUITests.swift": {
+    "dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/PlaylistImportUITests.d",
+    "object": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/PlaylistImportUITests.swift.o",
+    "swiftmodule": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/PlaylistImportUITests~partial.swiftmodule",
+    "swift-dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/PlaylistImportUITests.swiftdeps",
+    "diagnostics": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/PlaylistImportUITests.dia"
+  },
+  "/Users/asrawiee/Desktop/StreamHaven/StreamHavenUITests/ProfileSelectionUITests.swift": {
+    "dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/ProfileSelectionUITests.d",
+    "object": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/ProfileSelectionUITests.swift.o",
+    "swiftmodule": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/ProfileSelectionUITests~partial.swiftmodule",
+    "swift-dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/ProfileSelectionUITests.swiftdeps",
+    "diagnostics": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/ProfileSelectionUITests.dia"
+  },
+  "/Users/asrawiee/Desktop/StreamHaven/StreamHavenUITests/SearchUITests.swift": {
+    "dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/SearchUITests.d",
+    "object": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/SearchUITests.swift.o",
+    "swiftmodule": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/SearchUITests~partial.swiftmodule",
+    "swift-dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/SearchUITests.swiftdeps",
+    "diagnostics": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/SearchUITests.dia"
+  },
+  "/Users/asrawiee/Desktop/StreamHaven/StreamHavenUITests/iPadSplitViewUITests.swift": {
+    "dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/iPadSplitViewUITests.d",
+    "object": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/iPadSplitViewUITests.swift.o",
+    "swiftmodule": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/iPadSplitViewUITests~partial.swiftmodule",
+    "swift-dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/iPadSplitViewUITests.swiftdeps",
+    "diagnostics": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/iPadSplitViewUITests.dia"
+  },
+  "/Users/asrawiee/Desktop/StreamHaven/StreamHavenUITests/tvOSFocusEngineUITests.swift": {
+    "dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/tvOSFocusEngineUITests.d",
+    "object": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/tvOSFocusEngineUITests.swift.o",
+    "swiftmodule": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/tvOSFocusEngineUITests~partial.swiftmodule",
+    "swift-dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/tvOSFocusEngineUITests.swiftdeps",
+    "diagnostics": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenUITests.build/tvOSFocusEngineUITests.dia"
+  }
+}
