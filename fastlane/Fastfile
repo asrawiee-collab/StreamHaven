@@ -1,6 +1,11 @@
 default_platform(:ios)
 
 platform :ios do
+  before_all do
+    # Ensure we're using the correct Xcode version
+    xcversion(version: "~> 16.0")
+  end
+
   desc "Run all tests"
   lane :test do
     scan(scheme: "StreamHaven")
@@ -9,13 +14,98 @@ platform :ios do
 
   desc "Build and upload to TestFlight"
   lane :beta do
-    build_app(scheme: "StreamHaven")
-    upload_to_testflight
+    # Increment build number (SwiftPM app uses Package.swift)
+    bump_package_swift_bundle_version
+    
+    # Get or create certificates and provisioning profiles
+    setup_ci if ENV['CI']
+    
+    # Use App Store Connect API Key (recommended) or fallback to Apple ID
+    if ENV['APP_STORE_CONNECT_API_KEY_CONTENT']
+      app_store_connect_api_key(
+        key_id: ENV['APP_STORE_CONNECT_API_KEY_ID'],
+        issuer_id: ENV['APP_STORE_CONNECT_API_ISSUER_ID'],
+        key_content: ENV['APP_STORE_CONNECT_API_KEY_CONTENT'],
+        is_key_content_base64: true
+      )
+    end
+    
+    # Match certificates (optional - remove if not using match)
+    # match(type: "appstore", readonly: is_ci)
+    
+    # Build the app
+    build_app(
+      scheme: "StreamHaven",
+      export_method: "app-store",
+      clean: true,
+      output_directory: "./build",
+      verbose: true
+    )
+    
+    # Upload to TestFlight
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true,
+      verbose: true
+    )
   end
 
   desc "Release to App Store"
   lane :release do
-    build_app(scheme: "StreamHaven")
-    upload_to_app_store
+    # Increment build number (SwiftPM app uses Package.swift)
+    bump_package_swift_bundle_version
+    
+    # Setup CI environment
+    setup_ci if ENV['CI']
+    
+    # Use App Store Connect API Key
+    if ENV['APP_STORE_CONNECT_API_KEY_CONTENT']
+      app_store_connect_api_key(
+        key_id: ENV['APP_STORE_CONNECT_API_KEY_ID'],
+        issuer_id: ENV['APP_STORE_CONNECT_API_ISSUER_ID'],
+        key_content: ENV['APP_STORE_CONNECT_API_KEY_CONTENT'],
+        is_key_content_base64: true
+      )
+    end
+    
+    # Build the app
+    build_app(
+      scheme: "StreamHaven",
+      export_method: "app-store",
+      clean: true,
+      output_directory: "./build",
+      verbose: true
+    )
+    
+    # Upload to App Store
+    upload_to_app_store(
+      force: true,
+      skip_screenshots: true,
+      skip_metadata: true,
+      verbose: true
+    )
+  end
+  
+  private_lane :bump_package_swift_bundle_version do
+    package_path = File.join(Dir.pwd, 'Package.swift')
+    UI.user_error!("Package.swift not found at #{package_path}") unless File.exist?(package_path)
+
+    content = File.read(package_path)
+    # Match bundleVersion: "<number>"
+    version_regex = /(bundleVersion:\s*\")([0-9]+)(\")/
+    match = content.match(version_regex)
+    UI.user_error!("bundleVersion not found in Package.swift") unless match
+
+    current = match[2].to_i
+    next_build = current + 1
+    UI.message("Incrementing bundleVersion: #{current} -> #{next_build}")
+
+    updated = content.sub(version_regex) { |m| m.sub(current.to_s, next_build.to_s) }
+    File.write(package_path, updated)
+  end
+  
+  error do |lane, exception|
+    UI.error("Error in lane #{lane}:")
+    UI.error(exception.message)
+    UI.error(exception.backtrace.join("\n"))
   end
 end

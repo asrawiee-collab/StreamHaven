@@ -24,11 +24,15 @@ public class HoverPreviewManager: ObservableObject {
     // MARK: - Properties
     
     private var previewPlayers: [String: AVPlayer] = [:]
+    private var accessOrder: [String] = [] // LRU order for previewPlayers keys (most recent at end)
     private var focusDelayTask: Task<Void, Never>?
     private var loopObserver: NSObjectProtocol?
     
     /// Cache for preview URLs to avoid repeated lookups
     private var previewCache: [String: String] = [:]
+    
+    /// Maximum number of cached players (LRU eviction)
+    private var maxCachedPlayers: Int = 10
     
     // MARK: - Settings
     
@@ -95,6 +99,12 @@ public class HoverPreviewManager: ObservableObject {
         
         // Set up loop observer
         setupLoopObserver(for: player)
+        
+        // Update LRU access order
+        touchLRUKey(previewURL)
+        
+        // Enforce cache size
+        enforceCacheLimit()
     }
     
     /// Stops the current preview
@@ -115,6 +125,7 @@ public class HoverPreviewManager: ObservableObject {
     private func getOrCreatePlayer(for urlString: String) -> AVPlayer {
         // Check cache
         if let existingPlayer = previewPlayers[urlString] {
+            touchLRUKey(urlString)
             return existingPlayer
         }
         
@@ -129,6 +140,7 @@ public class HoverPreviewManager: ObservableObject {
         player.actionAtItemEnd = .none // We'll handle looping manually
         
         previewPlayers[urlString] = player
+        accessOrder.append(urlString)
         
         return player
     }
@@ -167,6 +179,7 @@ public class HoverPreviewManager: ObservableObject {
             player.pause()
         }
         previewPlayers.removeAll()
+        accessOrder.removeAll()
     }
     
     // MARK: - Cleanup
@@ -182,6 +195,7 @@ public class HoverPreviewManager: ObservableObject {
             player.replaceCurrentItem(with: nil)
         }
         previewPlayers.removeAll()
+        accessOrder.removeAll()
         previewCache.removeAll()
     }
     
@@ -198,6 +212,35 @@ public class HoverPreviewManager: ObservableObject {
         
         if !enabled {
             stopPreview()
+        }
+    }
+    
+    /// Sets the maximum number of cached players
+    public func setMaxCachedPlayers(_ max: Int) {
+        self.maxCachedPlayers = max
+        enforceCacheLimit()
+    }
+    
+    // MARK: - LRU Helpers
+    private func touchLRUKey(_ key: String) {
+        if let idx = accessOrder.firstIndex(of: key) {
+            accessOrder.remove(at: idx)
+        }
+        accessOrder.append(key)
+    }
+    
+    private func enforceCacheLimit() {
+        while previewPlayers.count > maxCachedPlayers {
+            // Evict least recently used (front of accessOrder)
+            if let lruKey = accessOrder.first {
+                accessOrder.removeFirst()
+                if let player = previewPlayers.removeValue(forKey: lruKey) {
+                    player.pause()
+                    player.replaceCurrentItem(with: nil)
+                }
+            } else {
+                break
+            }
         }
     }
 }

@@ -108,6 +108,9 @@ public final class TMDbManager: TMDbManaging {
     private var apiKey: String?
     /// The base URL for the TMDb API.
     private let apiBaseURL = "https://api.themoviedb.org/3"
+    
+    /// Client-side rate limiter (default ~4 req/sec, burst 8)
+    private let rateLimiter = RateLimiter(maxTokens: 8, refillPerSecond: 4)
 
     /// Initializes a new `TMDbManager`.
     /// Tries to load API key from Keychain. You can also inject a key for testing.
@@ -142,6 +145,7 @@ public final class TMDbManager: TMDbManaging {
             let searchURLString = "\(apiBaseURL)/search/movie?api_key=\(apiKey)&query=\(searchQuery)"
             guard let searchURL = URL(string: searchURLString) else { return }
 
+            await rateLimiter.acquire()
             let (searchData, _) = try await URLSession.shared.data(from: searchURL)
             let searchResponse = try JSONDecoder().decode(TMDbMovieSearchResponse.self, from: searchData)
 
@@ -154,6 +158,7 @@ public final class TMDbManager: TMDbManaging {
             let externalIDsURLString = "\(apiBaseURL)/movie/\(tmdbID)/external_ids?api_key=\(apiKey)"
             guard let externalIDsURL = URL(string: externalIDsURLString) else { return }
 
+            await rateLimiter.acquire()
             let (externalIDsData, _) = try await URLSession.shared.data(from: externalIDsURL)
             let externalIDsResponse = try JSONDecoder().decode(TMDbExternalIDs.self, from: externalIDsData)
 
@@ -183,6 +188,7 @@ public final class TMDbManager: TMDbManaging {
             throw TMDbError.invalidURL
         }
         
+        await rateLimiter.acquire()
         let (data, _) = try await URLSession.shared.data(from: url)
         let response = try JSONDecoder().decode(TMDbMovieListResponse.self, from: data)
         PerformanceLogger.logNetwork("TMDb: Fetched \(response.results.count) similar movies for TMDb ID \(tmdbID)")
@@ -201,6 +207,7 @@ public final class TMDbManager: TMDbManaging {
             throw TMDbError.invalidURL
         }
         
+        await rateLimiter.acquire()
         let (data, _) = try await URLSession.shared.data(from: url)
         let response = try JSONDecoder().decode(TMDbMovieListResponse.self, from: data)
         PerformanceLogger.logNetwork("TMDb: Fetched \(response.results.count) trending movies")
@@ -219,6 +226,7 @@ public final class TMDbManager: TMDbManaging {
             throw TMDbError.invalidURL
         }
         
+        await rateLimiter.acquire()
         let (data, _) = try await URLSession.shared.data(from: url)
         let response = try JSONDecoder().decode(TMDbSeriesListResponse.self, from: data)
         PerformanceLogger.logNetwork("TMDb: Fetched \(response.results.count) trending series")
@@ -265,6 +273,7 @@ public final class TMDbManager: TMDbManaging {
             let searchURLString = "\(apiBaseURL)/search/movie?api_key=\(apiKey)&query=\(searchQuery)"
             guard let searchURL = URL(string: searchURLString) else { return nil }
             
+            await rateLimiter.acquire()
             let (searchData, _) = try await URLSession.shared.data(from: searchURL)
             let searchResponse = try JSONDecoder().decode(TMDbMovieSearchResponse.self, from: searchData)
             
@@ -277,6 +286,7 @@ public final class TMDbManager: TMDbManaging {
             let videosURLString = "\(apiBaseURL)/movie/\(tmdbID)/videos?api_key=\(apiKey)"
             guard let videosURL = URL(string: videosURLString) else { return nil }
             
+            await rateLimiter.acquire()
             let (videosData, _) = try await URLSession.shared.data(from: videosURL)
             let videosResponse = try JSONDecoder().decode(TMDbVideosResponse.self, from: videosData)
             
@@ -315,6 +325,7 @@ public final class TMDbManager: TMDbManaging {
             let searchURLString = "\(apiBaseURL)/search/tv?api_key=\(apiKey)&query=\(searchQuery)"
             guard let searchURL = URL(string: searchURLString) else { return nil }
             
+            await rateLimiter.acquire()
             let (searchData, _) = try await URLSession.shared.data(from: searchURL)
             let searchResponse = try JSONDecoder().decode(TMDbSeriesSearchResponse.self, from: searchData)
             
@@ -327,6 +338,7 @@ public final class TMDbManager: TMDbManaging {
             let videosURLString = "\(apiBaseURL)/tv/\(tmdbID)/videos?api_key=\(apiKey)"
             guard let videosURL = URL(string: videosURLString) else { return nil }
             
+            await rateLimiter.acquire()
             let (videosData, _) = try await URLSession.shared.data(from: videosURL)
             let videosResponse = try JSONDecoder().decode(TMDbVideosResponse.self, from: videosData)
             

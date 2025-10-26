@@ -45,7 +45,7 @@ public class EPGParser: NSObject, XMLParserDelegate {
             throw PlaylistImportError.parsingFailed(NSError(domain: "EPGParser", code: 1, userInfo: [NSLocalizedDescriptionKey: "Unknown parsing error"]))
         }
         
-        try parser.saveToCore Data()
+        try parser.saveToCoreData()
     }
     
     /// Parses an XMLTV date-time string and converts it to a Date.

@@ -72,6 +72,9 @@ public final class SubtitleManager: SubtitleManaging {
         request.addValue(apiKey, forHTTPHeaderField: "Api-Key")
         request.addValue("StreamHaven v1.0", forHTTPHeaderField: "User-Agent")
 
+        // Rate limit to avoid exhausting API quotas
+        let limiter = RateLimiter(maxTokens: 8, refillPerSecond: 4)
+        await limiter.acquire()
         let (data, _) = try await URLSession.shared.data(for: request)
         let response = try JSONDecoder().decode(SubtitleSearchResponse.self, from: data)
         return response.data
@@ -101,6 +104,8 @@ public final class SubtitleManager: SubtitleManaging {
         let body = ["file_id": fileID]
         request.httpBody = try JSONEncoder().encode(body)
 
+        let limiter = RateLimiter(maxTokens: 8, refillPerSecond: 4)
+        await limiter.acquire()
         let (data, _) = try await URLSession.shared.data(for: request)
         let response = try JSONDecoder().decode(SubtitleDownloadResponse.self, from: data)
 

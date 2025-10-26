@@ -20,10 +20,13 @@ public final class M3UPlaylistParser {
 
     // This regex handles attributes with double quotes, single quotes, or no quotes.
     private static let attributeRegex: NSRegularExpression = {
+        let pattern = "([\\w-]+)=(\"[^\"]*\"|'[^']*'|[^,\\s]+)"
         do {
-            return try NSRegularExpression(pattern: "([\\w-]+)=(\"[^\"]*\"|'[^']*'|[^,\\s]+)", options: .caseInsensitive)
+            return try NSRegularExpression(pattern: pattern, options: .caseInsensitive)
         } catch {
-            fatalError("Failed to compile attribute regex: \(error)")
+            // Avoid crashing in production; fall back to a regex that matches nothing and log the issue.
+            PerformanceLogger.logNetwork("M3UPlaylistParser: Failed to compile attribute regex: \(error)", level: .error)
+            return try! NSRegularExpression(pattern: "(?!)", options: [])
         }
     }()
 

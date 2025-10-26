@@ -5,7 +5,12 @@ import CoreData
 /// This class is a Core Data managed object.
 @objc(Series)
 public class Series: NSManagedObject {
-
+    public override func awakeFromInsert() {
+        super.awakeFromInsert()
+        if self.stableID == nil {
+            self.stableID = UUID().uuidString
+        }
+    }
 }
 
 extension Series {
@@ -26,6 +31,8 @@ extension Series {
     @NSManaged public var summary: String?
     /// The title of the series.
     @NSManaged public var title: String?
+    /// A stable UUID string for cross-table references and FTS mapping.
+    @NSManaged public var stableID: String?
     /// The unique identifier of the source this series came from.
     @NSManaged public var sourceID: UUID?
     /// A set of `Season` objects belonging to this series.

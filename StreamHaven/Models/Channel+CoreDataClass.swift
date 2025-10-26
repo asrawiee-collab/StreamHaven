@@ -5,7 +5,12 @@ import CoreData
 /// This class is a Core Data managed object.
 @objc(Channel)
 public class Channel: NSManagedObject {
-
+    public override func awakeFromInsert() {
+        super.awakeFromInsert()
+        if self.stableID == nil {
+            self.stableID = UUID().uuidString
+        }
+    }
 }
 
 extension Channel {
@@ -22,6 +27,8 @@ extension Channel {
     @NSManaged public var name: String?
     /// The TVG ID used for linking to EPG data (from tvg-id attribute in M3U).
     @NSManaged public var tvgID: String?
+    /// A stable UUID string for cross-table references and FTS mapping.
+    @NSManaged public var stableID: String?
     /// The unique identifier of the source this channel came from.
     @NSManaged public var sourceID: UUID?
     /// A set of `ChannelVariant` objects representing different streams or versions of the channel.

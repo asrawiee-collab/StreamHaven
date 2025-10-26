@@ -42,7 +42,8 @@ public struct MainView: View {
 
         let context = persistenceProvider.container.viewContext
         guard let profile = profileManager.currentProfile else {
-            fatalError("MainView should not be initialized without a current profile.")
+            // Prefer explicit failure over hard crash; this should be routed via ProfileSelectionView before MainView.
+            preconditionFailure("MainView initialized without a current profile. Ensure profile selection flow precedes MainView.")
         }
 
         let watchHistoryManager = WatchHistoryManager(context: context, profile: profile)

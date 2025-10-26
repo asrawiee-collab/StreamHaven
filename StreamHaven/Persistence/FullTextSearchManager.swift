@@ -36,12 +36,11 @@ public final class FullTextSearchManager {
             }
             defer { sqlite3_close(database) }
             
-            // Create FTS5 virtual table for movies
+            // Create FTS5 virtual table for movies (use stableID for lookups)
             let createMovieFTS = """
             CREATE VIRTUAL TABLE IF NOT EXISTS movie_fts USING fts5(
+                stableID UNINDEXED,
                 title,
-                content='ZMOVIE',
-                content_rowid='Z_PK',
                 tokenize='porter unicode61'
             );
             """
@@ -49,9 +48,8 @@ public final class FullTextSearchManager {
             // Create FTS5 virtual table for series
             let createSeriesFTS = """
             CREATE VIRTUAL TABLE IF NOT EXISTS series_fts USING fts5(
+                stableID UNINDEXED,
                 title,
-                content='ZSERIES',
-                content_rowid='Z_PK',
                 tokenize='porter unicode61'
             );
             """
@@ -59,9 +57,8 @@ public final class FullTextSearchManager {
             // Create FTS5 virtual table for channels
             let createChannelFTS = """
             CREATE VIRTUAL TABLE IF NOT EXISTS channel_fts USING fts5(
+                stableID UNINDEXED,
                 name,
-                content='ZCHANNEL',
-                content_rowid='Z_PK',
                 tokenize='porter unicode61'
             );
             """
@@ -93,51 +90,51 @@ public final class FullTextSearchManager {
             // Movie triggers
             """
             CREATE TRIGGER IF NOT EXISTS movie_fts_insert AFTER INSERT ON ZMOVIE BEGIN
-                INSERT INTO movie_fts(rowid, title) VALUES (new.Z_PK, new.ZTITLE);
+                INSERT INTO movie_fts(stableID, title) VALUES (new.ZSTABLEID, new.ZTITLE);
             END;
             """,
             """
             CREATE TRIGGER IF NOT EXISTS movie_fts_update AFTER UPDATE ON ZMOVIE BEGIN
-                UPDATE movie_fts SET title = new.ZTITLE WHERE rowid = old.Z_PK;
+                UPDATE movie_fts SET title = new.ZTITLE WHERE stableID = old.ZSTABLEID;
             END;
             """,
             """
             CREATE TRIGGER IF NOT EXISTS movie_fts_delete AFTER DELETE ON ZMOVIE BEGIN
-                DELETE FROM movie_fts WHERE rowid = old.Z_PK;
+                DELETE FROM movie_fts WHERE stableID = old.ZSTABLEID;
             END;
             """,
             
             // Series triggers
             """
             CREATE TRIGGER IF NOT EXISTS series_fts_insert AFTER INSERT ON ZSERIES BEGIN
-                INSERT INTO series_fts(rowid, title) VALUES (new.Z_PK, new.ZTITLE);
+                INSERT INTO series_fts(stableID, title) VALUES (new.ZSTABLEID, new.ZTITLE);
             END;
             """,
             """
             CREATE TRIGGER IF NOT EXISTS series_fts_update AFTER UPDATE ON ZSERIES BEGIN
-                UPDATE series_fts SET title = new.ZTITLE WHERE rowid = old.Z_PK;
+                UPDATE series_fts SET title = new.ZTITLE WHERE stableID = old.ZSTABLEID;
             END;
             """,
             """
             CREATE TRIGGER IF NOT EXISTS series_fts_delete AFTER DELETE ON ZSERIES BEGIN
-                DELETE FROM series_fts WHERE rowid = old.Z_PK;
+                DELETE FROM series_fts WHERE stableID = old.ZSTABLEID;
             END;
             """,
             
             // Channel triggers
             """
             CREATE TRIGGER IF NOT EXISTS channel_fts_insert AFTER INSERT ON ZCHANNEL BEGIN
-                INSERT INTO channel_fts(rowid, name) VALUES (new.Z_PK, new.ZNAME);
+                INSERT INTO channel_fts(stableID, name) VALUES (new.ZSTABLEID, new.ZNAME);
             END;
             """,
             """
             CREATE TRIGGER IF NOT EXISTS channel_fts_update AFTER UPDATE ON ZCHANNEL BEGIN
-                UPDATE channel_fts SET name = new.ZNAME WHERE rowid = old.Z_PK;
+                UPDATE channel_fts SET name = new.ZNAME WHERE stableID = old.ZSTABLEID;
             END;
             """,
             """
             CREATE TRIGGER IF NOT EXISTS channel_fts_delete AFTER DELETE ON ZCHANNEL BEGIN
-                DELETE FROM channel_fts WHERE rowid = old.Z_PK;
+                DELETE FROM channel_fts WHERE stableID = old.ZSTABLEID;
             END;
             """
         ]
@@ -160,12 +157,14 @@ public final class FullTextSearchManager {
         let movies = try context.fetch(movieFetch)
         
         for movie in movies {
-            guard let title = movie.title else { continue }
-            let sql = "INSERT INTO movie_fts(rowid, title) VALUES (?, ?);"
+            // Ensure stableID exists
+            if movie.stableID == nil { movie.stableID = UUID().uuidString }
+            guard let title = movie.title, let stableID = movie.stableID else { continue }
+            let sql = "INSERT OR REPLACE INTO movie_fts(stableID, title) VALUES (?, ?);"
             var stmt: OpaquePointer?
             
             if sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK {
-                sqlite3_bind_int64(stmt, 1, Int64(movie.objectID.hashValue))
+                sqlite3_bind_text(stmt, 1, (stableID as NSString).utf8String, -1, nil)
                 sqlite3_bind_text(stmt, 2, (title as NSString).utf8String, -1, nil)
                 sqlite3_step(stmt)
             }
@@ -177,12 +176,13 @@ public final class FullTextSearchManager {
         let series = try context.fetch(seriesFetch)
         
         for show in series {
-            guard let title = show.title else { continue }
-            let sql = "INSERT INTO series_fts(rowid, title) VALUES (?, ?);"
+            if show.stableID == nil { show.stableID = UUID().uuidString }
+            guard let title = show.title, let stableID = show.stableID else { continue }
+            let sql = "INSERT OR REPLACE INTO series_fts(stableID, title) VALUES (?, ?);"
             var stmt: OpaquePointer?
             
             if sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK {
-                sqlite3_bind_int64(stmt, 1, Int64(show.objectID.hashValue))
+                sqlite3_bind_text(stmt, 1, (stableID as NSString).utf8String, -1, nil)
                 sqlite3_bind_text(stmt, 2, (title as NSString).utf8String, -1, nil)
                 sqlite3_step(stmt)
             }
@@ -194,12 +194,13 @@ public final class FullTextSearchManager {
         let channels = try context.fetch(channelFetch)
         
         for channel in channels {
-            guard let name = channel.name else { continue }
-            let sql = "INSERT INTO channel_fts(rowid, name) VALUES (?, ?);"
+            if channel.stableID == nil { channel.stableID = UUID().uuidString }
+            guard let name = channel.name, let stableID = channel.stableID else { continue }
+            let sql = "INSERT OR REPLACE INTO channel_fts(stableID, name) VALUES (?, ?);"
             var stmt: OpaquePointer?
             
             if sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK {
-                sqlite3_bind_int64(stmt, 1, Int64(channel.objectID.hashValue))
+                sqlite3_bind_text(stmt, 1, (stableID as NSString).utf8String, -1, nil)
                 sqlite3_bind_text(stmt, 2, (name as NSString).utf8String, -1, nil)
                 sqlite3_step(stmt)
             }
@@ -241,38 +242,38 @@ public final class FullTextSearchManager {
             
             // Search movies
             let movieSQL = """
-            SELECT rowid, rank FROM movie_fts
+            SELECT stableID, rank FROM movie_fts
             WHERE movie_fts MATCH ?
             ORDER BY rank
             LIMIT ?;
             """
             
-            if let movieIDs = self.executeFTSQuery(db: database, sql: movieSQL, query: fuzzyQuery, limit: maxResults) {
-                results.append(contentsOf: self.fetchMovies(context: context, ids: movieIDs))
+            if let movieIDs = self.executeFTSQueryStrings(db: database, sql: movieSQL, query: fuzzyQuery, limit: maxResults) {
+                results.append(contentsOf: self.fetchMovies(context: context, stableIDs: movieIDs))
             }
             
             // Search series
             let seriesSQL = """
-            SELECT rowid, rank FROM series_fts
+            SELECT stableID, rank FROM series_fts
             WHERE series_fts MATCH ?
             ORDER BY rank
             LIMIT ?;
             """
             
-            if let seriesIDs = self.executeFTSQuery(db: database, sql: seriesSQL, query: fuzzyQuery, limit: maxResults) {
-                results.append(contentsOf: self.fetchSeries(context: context, ids: seriesIDs))
+            if let seriesIDs = self.executeFTSQueryStrings(db: database, sql: seriesSQL, query: fuzzyQuery, limit: maxResults) {
+                results.append(contentsOf: self.fetchSeries(context: context, stableIDs: seriesIDs))
             }
             
             // Search channels
             let channelSQL = """
-            SELECT rowid, rank FROM channel_fts
+            SELECT stableID, rank FROM channel_fts
             WHERE channel_fts MATCH ?
             ORDER BY rank
             LIMIT ?;
             """
             
-            if let channelIDs = self.executeFTSQuery(db: database, sql: channelSQL, query: fuzzyQuery, limit: maxResults) {
-                results.append(contentsOf: self.fetchChannels(context: context, ids: channelIDs))
+            if let channelIDs = self.executeFTSQueryStrings(db: database, sql: channelSQL, query: fuzzyQuery, limit: maxResults) {
+                results.append(contentsOf: self.fetchChannels(context: context, stableIDs: channelIDs))
             }
             
             DispatchQueue.main.async {
@@ -282,9 +283,9 @@ public final class FullTextSearchManager {
     }
     
     /// Executes FTS query and returns matching row IDs.
-    private func executeFTSQuery(db: OpaquePointer, sql: String, query: String, limit: Int) -> [Int64]? {
+    private func executeFTSQueryStrings(db: OpaquePointer, sql: String, query: String, limit: Int) -> [String]? {
         var stmt: OpaquePointer?
-        var ids: [Int64] = []
+        var ids: [String] = []
         
         guard sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK else {
             return nil
@@ -295,37 +296,33 @@ public final class FullTextSearchManager {
         sqlite3_bind_int(stmt, 2, Int32(limit))
         
         while sqlite3_step(stmt) == SQLITE_ROW {
-            let rowid = sqlite3_column_int64(stmt, 0)
-            ids.append(rowid)
+            if let cString = sqlite3_column_text(stmt, 0) {
+                let idStr = String(cString: cString)
+                ids.append(idStr)
+            }
         }
         
         return ids
     }
     
     /// Fetches Movie entities by hash-based IDs.
-    private func fetchMovies(context: NSManagedObjectContext, ids: [Int64]) -> [Movie] {
+    private func fetchMovies(context: NSManagedObjectContext, stableIDs: [String]) -> [Movie] {
         let fetchRequest: NSFetchRequest<Movie> = Movie.fetchRequest()
-        if let movies = try? context.fetch(fetchRequest) {
-            return movies.filter { ids.contains(Int64($0.objectID.hashValue)) }
-        }
-        return []
+        fetchRequest.predicate = NSPredicate(format: "stableID IN %@", stableIDs)
+        return (try? context.fetch(fetchRequest)) ?? []
     }
     
     /// Fetches Series entities by hash-based IDs.
-    private func fetchSeries(context: NSManagedObjectContext, ids: [Int64]) -> [Series] {
+    private func fetchSeries(context: NSManagedObjectContext, stableIDs: [String]) -> [Series] {
         let fetchRequest: NSFetchRequest<Series> = Series.fetchRequest()
-        if let series = try? context.fetch(fetchRequest) {
-            return series.filter { ids.contains(Int64($0.objectID.hashValue)) }
-        }
-        return []
+        fetchRequest.predicate = NSPredicate(format: "stableID IN %@", stableIDs)
+        return (try? context.fetch(fetchRequest)) ?? []
     }
     
     /// Fetches Channel entities by hash-based IDs.
-    private func fetchChannels(context: NSManagedObjectContext, ids: [Int64]) -> [Channel] {
+    private func fetchChannels(context: NSManagedObjectContext, stableIDs: [String]) -> [Channel] {
         let fetchRequest: NSFetchRequest<Channel> = Channel.fetchRequest()
-        if let channels = try? context.fetch(fetchRequest) {
-            return channels.filter { ids.contains(Int64($0.objectID.hashValue)) }
-        }
-        return []
+        fetchRequest.predicate = NSPredicate(format: "stableID IN %@", stableIDs)
+        return (try? context.fetch(fetchRequest)) ?? []
     }
 }

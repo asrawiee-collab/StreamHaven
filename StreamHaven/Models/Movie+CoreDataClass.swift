@@ -5,7 +5,12 @@ import CoreData
 /// This class is a Core Data managed object.
 @objc(Movie)
 public class Movie: NSManagedObject {
-
+    public override func awakeFromInsert() {
+        super.awakeFromInsert()
+        if self.stableID == nil {
+            self.stableID = UUID().uuidString
+        }
+    }
 }
 
 extension Movie {
@@ -30,6 +35,8 @@ extension Movie {
     @NSManaged public var title: String?
     /// The IMDb ID of the movie (e.g., "tt1234567").
     @NSManaged public var imdbID: String?
+    /// A stable UUID string for cross-table references and FTS mapping.
+    @NSManaged public var stableID: String?
     /// The unique identifier of the source this movie came from.
     @NSManaged public var sourceID: UUID?
     /// The `WatchHistory` object if the movie has been watched.

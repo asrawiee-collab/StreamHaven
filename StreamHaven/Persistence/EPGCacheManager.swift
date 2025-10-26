@@ -83,34 +83,23 @@ public final class EPGCacheManager {
     /// - Returns: A tuple containing the current and next `EPGEntry` objects, or `nil` if not found.
     public static func getNowAndNext(for channel: Channel, context: NSManagedObjectContext) -> (now: EPGEntry?, next: EPGEntry?) {
         let now = Date()
-        let fetchRequest: NSFetchRequest<EPGEntry> = EPGEntry.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "channel == %@", channel)
-        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \EPGEntry.startTime, ascending: true)]
+        
+        // Fetch current programme (start <= now < end)
+        let currentRequest: NSFetchRequest<EPGEntry> = EPGEntry.fetchRequest()
+        currentRequest.predicate = NSPredicate(format: "channel == %@ AND startTime <= %@ AND endTime > %@", channel, now as CVarArg, now as CVarArg)
+        currentRequest.sortDescriptors = [NSSortDescriptor(keyPath: \EPGEntry.startTime, ascending: false)]
+        currentRequest.fetchLimit = 1
+        
+        // Fetch next programme (start > now)
+        let nextRequest: NSFetchRequest<EPGEntry> = EPGEntry.fetchRequest()
+        nextRequest.predicate = NSPredicate(format: "channel == %@ AND startTime > %@", channel, now as CVarArg)
+        nextRequest.sortDescriptors = [NSSortDescriptor(keyPath: \EPGEntry.startTime, ascending: true)]
+        nextRequest.fetchLimit = 1
         
         do {
-            let allEntries = try context.fetch(fetchRequest)
-            
-            // Find current programme
-            let currentProgramme = allEntries.first { entry in
-                guard let start = entry.startTime, let end = entry.endTime else { return false }
-                return start <= now && now < end
-            }
-            
-            // Find next programme
-            var nextProgramme: EPGEntry?
-            if let current = currentProgramme,
-               let currentIndex = allEntries.firstIndex(of: current),
-               currentIndex + 1 < allEntries.count {
-                nextProgramme = allEntries[currentIndex + 1]
-            } else {
-                // If no current programme, find the next upcoming one
-                nextProgramme = allEntries.first { entry in
-                    guard let start = entry.startTime else { return false }
-                    return start > now
-                }
-            }
-            
-            return (currentProgramme, nextProgramme)
+            let current = try context.fetch(currentRequest).first
+            let next = try context.fetch(nextRequest).first
+            return (current, next)
         } catch {
             print("Failed to fetch EPG entries: \(error)")
             return (nil, nil)

@@ -121,3 +121,8 @@ The app reads `TMDbAPIKey` from the Keychain at runtime.
 1. **Register an account** at [themoviedb.org](https://www.themoviedb.org/).
 2. Go to your account **Settings -> API** section to request an API key.
 3. Do not store API keys in Info.plist. Keep them only in the Keychain during development and retrieve at runtime.
+
+## Limitations and Platform Notes
+
+- External subtitle injection depends on AVFoundation media selection groups. If a legible text group is not present in the stream, external subtitles cannot be injected at runtime. In such cases, playback continues without subtitles. Prefer streams that advertise proper subtitle tracks.
+- TestFlight/App Store builds must run on macOS with Xcode. Running Fastlane on Windows is not supported. Use the provided GitHub Actions workflow (macOS runner) or build locally on a Mac.

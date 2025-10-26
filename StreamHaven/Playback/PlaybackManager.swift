@@ -7,7 +7,7 @@ import Sentry
 #endif
 
 /// A class for managing media playback.
-public class PlaybackManager: NSObject, ObservableObject, PlaybackManaging, AVPictureInPictureControllerDelegate, PreBufferDelegate {
+public final class PlaybackManager: NSObject, ObservableObject, PlaybackManaging, PreBufferDelegate {
 
     /// The `AVPlayer` instance.
     @Published public var player: AVPlayer?
@@ -15,10 +15,10 @@ public class PlaybackManager: NSObject, ObservableObject, PlaybackManaging, AVPi
     @Published public var isPlaying: Bool = false
     /// The current playback state.
     @Published public var playbackState: PlaybackState = .stopped
-    /// The Picture-in-Picture controller (iOS/iPadOS only).
-    public var pipController: AVPictureInPictureController?
-    /// A boolean indicating whether Picture-in-Picture is currently active.
-    @Published public var isPiPActive: Bool = false
+    /// The Picture-in-Picture manager (iOS/iPadOS only).
+    #if os(iOS)
+    public var pipManager: PiPManager?
+    #endif
     /// Background player for pre-buffering next episode.
     private var nextEpisodePlayer: AVPlayer?
     /// A boolean indicating whether next episode is pre-buffered and ready.
@@ -47,7 +47,10 @@ public class PlaybackManager: NSObject, ObservableObject, PlaybackManaging, AVPi
     private var watchHistoryManager: WatchHistoryManager
     private var progressTracker: PlaybackProgressTracker?
     private var streamCacheManager: StreamCacheManager?
+    #if os(iOS)
+    @available(iOS 16.1, *)
     private var liveActivityManager: LiveActivityManager?
+    #endif
     private var downloadManager: DownloadManager?
     private var queueManager: UpNextQueueManager?
 
@@ -62,12 +65,17 @@ public class PlaybackManager: NSObject, ObservableObject, PlaybackManaging, AVPi
     ///   - liveActivityManager: Optional `LiveActivityManager` for Live Activities (iOS 16.1+).
     ///   - downloadManager: Optional `DownloadManager` for offline playback support.
     ///   - queueManager: Optional `UpNextQueueManager` for auto-play next in queue.
-    public init(context: NSManagedObjectContext, settingsManager: SettingsManager, watchHistoryManager: WatchHistoryManager, streamCacheManager: StreamCacheManager? = nil, liveActivityManager: LiveActivityManager? = nil, downloadManager: DownloadManager? = nil, queueManager: UpNextQueueManager? = nil) {
+    public init(context: NSManagedObjectContext, settingsManager: SettingsManager, watchHistoryManager: WatchHistoryManager, streamCacheManager: StreamCacheManager? = nil, downloadManager: DownloadManager? = nil, queueManager: UpNextQueueManager? = nil) {
         self.context = context
         self.settingsManager = settingsManager
         self.watchHistoryManager = watchHistoryManager
         self.streamCacheManager = streamCacheManager ?? StreamCacheManager(context: context)
-        self.liveActivityManager = liveActivityManager
+        #if os(iOS)
+        if #available(iOS 16.1, *) {
+            self.liveActivityManager = LiveActivityManager()
+        }
+        self.pipManager = PiPManager()
+        #endif
         self.downloadManager = downloadManager
         self.queueManager = queueManager
         super.init()
@@ -136,6 +144,24 @@ public class PlaybackManager: NSObject, ObservableObject, PlaybackManaging, AVPi
         self.progressTracker = PlaybackProgressTracker(player: self.player, item: self.currentItem, watchHistoryManager: self.watchHistoryManager)
         self.progressTracker?.preBufferDelegate = self
         self.progressTracker?.preBufferTimeSeconds = settingsManager.preBufferTimeSeconds
+        
+        #if os(iOS)
+        // Configure PiP if enabled
+        if settingsManager.enablePiP, let player = self.player {
+            let layer = AVPlayerLayer(player: player)
+            pipManager?.configure(with: layer)
+        }
+        
+        // Start Live Activity if enabled
+        if settingsManager.enableLiveActivities, #available(iOS 16.1, *) {
+            let title = getContentTitle(for: itemToLoad)
+            let isLive = (itemToLoad as? Channel) != nil
+            Task { @MainActor in
+                await liveActivityManager?.start(title: title, isLive: isLive)
+            }
+        }
+        #endif
+        
         setupPiPController()
         setupPlayerObservers()
         play()
@@ -363,6 +389,20 @@ public class PlaybackManager: NSObject, ObservableObject, PlaybackManaging, AVPi
         }
         return "unknown_\(UUID().uuidString)"
     }
+    
+    private func getContentTitle(for item: NSManagedObject?) -> String {
+        if let movie = item as? Movie {
+            return movie.title ?? "Movie"
+        } else if let episode = item as? Episode {
+            let seriesTitle = episode.season?.series?.title ?? "Series"
+            let seasonNum = episode.season?.seasonNumber ?? 0
+            let episodeNum = episode.episodeNumber
+            return "\(seriesTitle) S\(seasonNum)E\(episodeNum)"
+        } else if let channelVariant = item as? ChannelVariant {
+            return channelVariant.channel?.name ?? "Live TV"
+        }
+        return "StreamHaven"
+    }
 }
 
 extension PlaybackManager {
@@ -381,6 +421,23 @@ extension PlaybackManager {
         }
         
         loadNextEpisodeInBackground(nextEpisode)
+    }
+    
+    public func updateLiveActivityProgress() {
+        #if os(iOS)
+        guard settingsManager.enableLiveActivities,
+              #available(iOS 16.1, *),
+              let player = player,
+              let duration = player.currentItem?.duration,
+              duration.isNumeric && duration.seconds > 0 else { return }
+        
+        let currentTime = player.currentTime().seconds
+        let progress = currentTime / duration.seconds
+        
+        Task { @MainActor in
+            await liveActivityManager?.update(progress: progress)
+        }
+        #endif
     }
     
     /// Loads the next episode in a background player for seamless transition.
@@ -452,75 +509,40 @@ extension PlaybackManager {
     
     /// Sets up the Picture-in-Picture controller (iOS/iPadOS only).
     private func setupPiPController() {
+        // PiP is now managed by PiPManager, this method kept for compatibility
+        // Actual setup happens in loadCurrentVariant after player creation
         #if os(iOS)
-        guard settingsManager.enablePiP,
-              AVPictureInPictureController.isPictureInPictureSupported(),
-              let player = player,
-              let playerLayer = player.currentItem?.tracks.first else {
-            pipController = nil
-            return
-        }
-        
-        // Create a placeholder AVPlayerLayer for PiP
-        let layer = AVPlayerLayer(player: player)
-        
-        if let controller = try? AVPictureInPictureController(playerLayer: layer) {
-            controller.delegate = self
-            pipController = controller
-            PerformanceLogger.logPlayback("PiP controller initialized")
-        }
+        PerformanceLogger.logPlayback("PiP controller setup delegated to PiPManager")
         #endif
     }
     
     /// Starts Picture-in-Picture mode.
     public func startPiP() {
         #if os(iOS)
-        guard let pipController = pipController,
-              !pipController.isPictureInPictureActive else { return }
-        pipController.startPictureInPicture()
+        pipManager?.start()
+        PerformanceLogger.logPlayback("PiP start requested")
         #endif
     }
     
     /// Stops Picture-in-Picture mode.
     public func stopPiP() {
         #if os(iOS)
-        guard let pipController = pipController,
-              pipController.isPictureInPictureActive else { return }
-        pipController.stopPictureInPicture()
+        pipManager?.stop()
+        PerformanceLogger.logPlayback("PiP stop requested")
+        #endif
+    }
+    
+    /// Computed property for PiP active state
+    public var isPiPActive: Bool {
+        #if os(iOS)
+        return pipManager?.isPictureInPictureActive ?? false
+        #else
+        return false
         #endif
     }
     
     // MARK: - AVPictureInPictureControllerDelegate
-    
-    public func pictureInPictureControllerWillStartPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
-        PerformanceLogger.logPlayback("PiP will start")
-    }
-    
-    public func pictureInPictureControllerDidStartPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
-        isPiPActive = true
-        PerformanceLogger.logPlayback("PiP started")
-    }
-    
-    public func pictureInPictureControllerWillStopPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
-        PerformanceLogger.logPlayback("PiP will stop")
-    }
-    
-    public func pictureInPictureControllerDidStopPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
-        isPiPActive = false
-        PerformanceLogger.logPlayback("PiP stopped")
-    }
-    
-    public func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, failedToStartPictureInPictureWithError error: Error) {
-        isPiPActive = false
-        ErrorReporter.log(error, context: "PlaybackManager.pictureInPictureController.failedToStart")
-        PerformanceLogger.logPlayback("PiP failed to start: \(error.localizedDescription)")
-    }
-    
-    public func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, restoreUserInterfaceForPictureInPictureStopWithCompletionHandler completionHandler: @escaping (Bool) -> Void) {
-        // Restore the playback UI when user taps the restore button
-        PerformanceLogger.logPlayback("PiP restore UI requested")
-        completionHandler(true)
-    }
+    // Removed - now handled by PiPManager
     
     // MARK: - Live Activity Management
     
