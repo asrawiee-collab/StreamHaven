@@ -1,52 +1,77 @@
-import Foundation
 import CoreData
+import Foundation
 
-/// A class for managing user profiles.
-public class ProfileManager: ObservableObject {
+/// Manages user profiles, including persistence and optional CloudKit sync.
+public final class ProfileManager: ObservableObject {
 
-    /// The currently selected profile.
+    // MARK: - Published Properties
+
+    @Published public private(set) var profiles: [Profile] = []
     @Published public var currentProfile: Profile?
-    /// An array of all available profiles.
-    @Published public var profiles: [Profile] = []
 
-    private var context: NSManagedObjectContext
-    private var cloudKitSyncManager: CloudKitSyncManager?
+    // MARK: - Dependencies
 
-    /// Initializes a new `ProfileManager`.
-    ///
-    /// - Parameters:
-    ///   - context: The `NSManagedObjectContext` to use for Core Data operations.
-    ///   - cloudKitSyncManager: Optional CloudKit sync manager for cross-device sync.
+    private let context: NSManagedObjectContext
+    private let cloudKitSyncManager: CloudKitSyncManager?
+
+    // MARK: - Initialization
+
     public init(context: NSManagedObjectContext, cloudKitSyncManager: CloudKitSyncManager? = nil) {
         self.context = context
         self.cloudKitSyncManager = cloudKitSyncManager
-        fetchProfiles()
+        refreshProfiles()
 
         if profiles.isEmpty {
             createDefaultProfiles()
-            fetchProfiles()
+            refreshProfiles()
         }
     }
 
-    /// Selects a profile as the current profile.
-    ///
-    /// - Parameter profile: The `Profile` to select.
+    // MARK: - Public API
+
     public func selectProfile(_ profile: Profile) {
-        self.currentProfile = profile
+        currentProfile = profile
     }
 
-    /// Deselects the current profile.
     public func deselectProfile() {
-        self.currentProfile = nil
+        currentProfile = nil
     }
 
-    /// Fetches all profiles from Core Data.
-    private func fetchProfiles() {
+    public func refreshProfiles() {
         let request: NSFetchRequest<Profile> = Profile.fetchRequest()
         do {
             profiles = try context.fetch(request)
         } catch {
-    /// Creates the default "Adult" and "Kids" profiles.
+            ErrorReporter.log(error, context: "ProfileManager.refreshProfiles.fetch")
+        }
+    }
+
+    public func createProfile(name: String, isAdult: Bool) {
+        let profile = Profile(context: context)
+        profile.name = name
+        profile.isAdult = isAdult
+        profile.modifiedAt = Date()
+
+        saveContext(contextMessage: "ProfileManager.createProfile.save")
+        refreshProfiles()
+
+        Task { @MainActor in
+            try? await cloudKitSyncManager?.syncProfile(profile)
+        }
+    }
+
+    public func deleteProfile(_ profile: Profile) {
+        Task { @MainActor in
+            try? await cloudKitSyncManager?.deleteProfile(profile)
+        }
+
+        context.delete(profile)
+        saveContext(contextMessage: "ProfileManager.deleteProfile.save")
+        refreshProfiles()
+    }
+
+    // MARK: - Private Helpers
+
     private func createDefaultProfiles() {
         let adultProfile = Profile(context: context)
         adultProfile.name = "Adult"
@@ -58,63 +83,21 @@ public class ProfileManager: ObservableObject {
         kidsProfile.isAdult = false
         kidsProfile.modifiedAt = Date()
 
-        do {
-            try context.save()
-            
-            // Sync to CloudKit if enabled
-            Task { @MainActor in
-                try? await cloudKitSyncManager?.syncProfile(adultProfile)
-                try? await cloudKitSyncManager?.syncProfile(kidsProfile)
-            }
-        } catch {
-            ErrorReporter.log(error, context: "ProfileManager.createDefaultProfiles.save")
-        }
-    }
-    
-    /// Creates a new profile.
-    ///
-    /// - Parameters:
-    ///   - name: The name of the profile.
-    ///   - isAdult: Whether the profile is for an adult.
-    public func createProfile(name: String, isAdult: Bool) {
-        let profile = Profile(context: context)
-        profile.name = name
-        profile.isAdult = isAdult
-        profile.modifiedAt = Date()
-        
-        do {
-            try context.save()
-            fetchProfiles()
-            
-            // Sync to CloudKit if enabled
-            Task { @MainActor in
-                try? await cloudKitSyncManager?.syncProfile(profile)
-            }
-        } catch {
-            ErrorReporter.log(error, context: "ProfileManager.createProfile.save")
-        }
-    }
-    
-    /// Deletes a profile.
-    ///
-    /// - Parameter profile: The profile to delete.
-    public func deleteProfile(_ profile: Profile) {
-        // Delete from CloudKit first
+        saveContext(contextMessage: "ProfileManager.createDefaultProfiles.save")
+
         Task { @MainActor in
-            try? await cloudKitSyncManager?.deleteProfile(profile)
-        }
-        
-        context.delete(profile)
-        
-        do {
-            try context.save()
-            fetchProfiles()
-        } catch {
-            ErrorReporter.log(error, context: "ProfileManager.deleteProfile.save")
+            try? await cloudKitSyncManager?.syncProfile(adultProfile)
+            try? await cloudKitSyncManager?.syncProfile(kidsProfile)
         }
     }
-}       } catch {
-            ErrorReporter.log(error, context: "ProfileManager.createDefaultProfiles.save")
+
+    private func saveContext(contextMessage: String) {
+        guard context.hasChanges else { return }
+
+        do {
+            try context.save()
+        } catch {
+            ErrorReporter.log(error, context: contextMessage)
         }
     }
 }

@@ -1,6 +1,8 @@
 import SwiftUI
 import CoreData
 
+#if os(iOS)
+
 /// View for managing playlist sources for a profile.
 struct PlaylistSourcesView: View {
     @Environment(\.managedObjectContext) private var context
@@ -208,3 +210,5 @@ extension PlaylistSource: Identifiable {
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }
+
+#endif

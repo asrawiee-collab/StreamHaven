@@ -1,5 +1,11 @@
 import SwiftUI
 import CoreData
+#if canImport(UIKit)
+import UIKit
+#endif
+#if canImport(AppKit)
+import AppKit
+#endif
 
 /// A single channel row in the EPG timeline showing programs across time.
 public struct EPGTimelineRow: View {
@@ -88,7 +94,7 @@ public struct EPGTimelineRow: View {
             Spacer()
         }
         .padding(.horizontal, 8)
-        .background(Color(UIColor.secondarySystemBackground))
+        .background(platformSecondaryBackground)
     }
     
     private var timeGridBackground: some View {
@@ -193,6 +199,16 @@ public struct EPGTimelineRow: View {
             to: endTime,
             context: context
         )
+    }
+
+    private var platformSecondaryBackground: Color {
+        #if canImport(UIKit)
+        Color(UIColor.secondarySystemBackground)
+        #elseif canImport(AppKit)
+        Color(NSColor.windowBackgroundColor)
+        #else
+        Color.gray.opacity(0.1)
+        #endif
     }
 }
 

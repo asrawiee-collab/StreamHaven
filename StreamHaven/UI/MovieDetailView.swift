@@ -1,3 +1,5 @@
+#if os(iOS) || os(tvOS)
+import CoreData
 import SwiftUI
 
 /// A view that displays the details of a movie.
@@ -162,6 +164,9 @@ public struct MovieDetailView: View {
                         .padding()
                         .frame(maxWidth: .infinity)
                         .background(isInQueue ? Color.green : Color.orange)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
                 .padding(.horizontal)
                 .disabled(isInQueue)
                 
@@ -521,3 +526,5 @@ struct WatchlistPickerRow: View {
         }
     }
 }
+
+#endif

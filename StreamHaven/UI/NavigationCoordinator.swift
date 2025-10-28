@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// An enumeration of the possible navigation destinations.
+@available(iOS 16, macOS 13, tvOS 16, *)
 public enum Destination: Hashable {
     /// The movie detail view.
     case movieDetail(Movie)
@@ -33,7 +34,8 @@ public enum Destination: Hashable {
 
 /// A class for coordinating navigation.
 @MainActor
-public class NavigationCoordinator: ObservableObject {
+@available(iOS 16, macOS 13, tvOS 16, *)
+public final class NavigationCoordinator: ObservableObject {
     /// The navigation path.
     @Published public var path = NavigationPath()
 

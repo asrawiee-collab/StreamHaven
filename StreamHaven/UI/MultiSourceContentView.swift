@@ -1,7 +1,8 @@
+import CoreData
 import SwiftUI
 
 /// View for displaying content with multiple source options.
-struct MultiSourceContentView<T>: View {
+struct MultiSourceContentView<T: NSManagedObject>: View {
     let group: MultiSourceContentManager.ContentGroup<T>
     let profile: Profile
     let contentManager: MultiSourceContentManager
@@ -81,7 +82,7 @@ struct MultiSourceContentView<T>: View {
 }
 
 /// Sheet for picking a source from multiple options.
-struct SourcePickerSheet<T>: View {
+struct SourcePickerSheet<T: NSManagedObject>: View {
     @Environment(\.dismiss) private var dismiss
     let group: MultiSourceContentManager.ContentGroup<T>
     let profile: Profile
@@ -110,7 +111,9 @@ struct SourcePickerSheet<T>: View {
                 }
             }
             .navigationTitle("Choose Source")
+#if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+#endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
@@ -122,13 +125,12 @@ struct SourcePickerSheet<T>: View {
     }
     
     private func isSelected(_ item: T) -> Bool {
-        // Compare by memory address as a simple identity check
-        return ObjectIdentifier(item as AnyObject) == ObjectIdentifier(selectedItem as AnyObject)
+        return item.objectID == selectedItem.objectID
     }
 }
 
 /// Row view for a source option.
-struct SourceItemRow<T>: View {
+struct SourceItemRow<T: NSManagedObject>: View {
     let item: T
     let profile: Profile
     let contentManager: MultiSourceContentManager
@@ -222,7 +224,8 @@ struct SourceItemRow<T>: View {
         if let movie = item as? Movie {
             return movie.streamURL
         } else if let channel = item as? Channel {
-            return channel.variants?.allObjects.first as? ChannelVariant |> { $0?.streamURL }
+            let variants = channel.variants?.allObjects as? [ChannelVariant]
+            return variants?.first?.streamURL
         }
         return nil
     }
@@ -325,8 +328,3 @@ struct ChannelRowView: View {
     }
 }
 
-infix operator |> : MultiplicationPrecedence
-func |> <T, U>(value: T?, transform: (T) -> U?) -> U? {
-    guard let value = value else { return nil }
-    return transform(value)
-}

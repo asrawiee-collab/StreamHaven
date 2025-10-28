@@ -55,6 +55,8 @@ opt_in_rules:
   - operator_usage_whitespace
   - redundant_nil_coalescing
   - sorted_imports
+
+analyzer_rules:
   - unused_import
 
 # Some rules are too noisy for now (can tighten later)

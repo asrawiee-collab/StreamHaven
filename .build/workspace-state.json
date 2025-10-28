@@ -33,13 +33,33 @@
           "location" : "https://github.com/getsentry/sentry-cocoa",
           "name" : "Sentry"
         },
-        "path" : "/Users/asrawiee/Desktop/StreamHaven/.build/artifacts/sentry-cocoa/Sentry-Dynamic-WithARM64e/Sentry-Dynamic-WithARM64e.xcframework",
+        "path" : "/Users/asrawiee/Desktop/StreamHaven/.build/artifacts/sentry-cocoa/Sentry-WithoutUIKitOrAppKit/Sentry-WithoutUIKitOrAppKit.xcframework",
         "source" : {
-          "checksum" : "56357754f1235d49a0847598a46ed88790b0f7905895010c0e684c38edbad31c",
+          "checksum" : "c3ca71808c6feb2a9fcb219a35afa84652c41fcee16b0fa4a6ab62cab23953ea",
           "type" : "remote",
-          "url" : "https://github.com/getsentry/sentry-cocoa/releases/download/8.57.0/Sentry-Dynamic-WithARM64e.xcframework.zip"
+          "url" : "https://github.com/getsentry/sentry-cocoa/releases/download/8.57.0/Sentry-WithoutUIKitOrAppKit.xcframework.zip"
         },
-        "targetName" : "Sentry-Dynamic-WithARM64e"
+        "targetName" : "Sentry-WithoutUIKitOrAppKit"
+      },
+      {
+        "kind" : {
+          "xcframework" : {
+
+          }
+        },
+        "packageRef" : {
+          "identity" : "sentry-cocoa",
+          "kind" : "remoteSourceControl",
+          "location" : "https://github.com/getsentry/sentry-cocoa",
+          "name" : "Sentry"
+        },
+        "path" : "/Users/asrawiee/Desktop/StreamHaven/.build/artifacts/sentry-cocoa/Sentry/Sentry.xcframework",
+        "source" : {
+          "checksum" : "2e7948d8fac8b7dfbcc24117c2ae02e79757a49ff3dfb15a06866fc405134a38",
+          "type" : "remote",
+          "url" : "https://github.com/getsentry/sentry-cocoa/releases/download/8.57.0/Sentry.xcframework.zip"
+        },
+        "targetName" : "Sentry"
       },
       {
         "kind" : {
@@ -73,33 +93,13 @@
           "location" : "https://github.com/getsentry/sentry-cocoa",
           "name" : "Sentry"
         },
-        "path" : "/Users/asrawiee/Desktop/StreamHaven/.build/artifacts/sentry-cocoa/Sentry-WithoutUIKitOrAppKit/Sentry-WithoutUIKitOrAppKit.xcframework",
+        "path" : "/Users/asrawiee/Desktop/StreamHaven/.build/artifacts/sentry-cocoa/Sentry-Dynamic-WithARM64e/Sentry-Dynamic-WithARM64e.xcframework",
         "source" : {
-          "checksum" : "c3ca71808c6feb2a9fcb219a35afa84652c41fcee16b0fa4a6ab62cab23953ea",
+          "checksum" : "56357754f1235d49a0847598a46ed88790b0f7905895010c0e684c38edbad31c",
           "type" : "remote",
-          "url" : "https://github.com/getsentry/sentry-cocoa/releases/download/8.57.0/Sentry-WithoutUIKitOrAppKit.xcframework.zip"
+          "url" : "https://github.com/getsentry/sentry-cocoa/releases/download/8.57.0/Sentry-Dynamic-WithARM64e.xcframework.zip"
         },
-        "targetName" : "Sentry-WithoutUIKitOrAppKit"
-      },
-      {
-        "kind" : {
-          "xcframework" : {
-
-          }
-        },
-        "packageRef" : {
-          "identity" : "sentry-cocoa",
-          "kind" : "remoteSourceControl",
-          "location" : "https://github.com/getsentry/sentry-cocoa",
-          "name" : "Sentry"
-        },
-        "path" : "/Users/asrawiee/Desktop/StreamHaven/.build/artifacts/sentry-cocoa/Sentry/Sentry.xcframework",
-        "source" : {
-          "checksum" : "2e7948d8fac8b7dfbcc24117c2ae02e79757a49ff3dfb15a06866fc405134a38",
-          "type" : "remote",
-          "url" : "https://github.com/getsentry/sentry-cocoa/releases/download/8.57.0/Sentry.xcframework.zip"
-        },
-        "targetName" : "Sentry"
+        "targetName" : "Sentry-Dynamic-WithARM64e"
       }
     ],
     "dependencies" : [

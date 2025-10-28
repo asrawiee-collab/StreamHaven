@@ -31,6 +31,8 @@ extension Movie {
     @NSManaged public var summary: String?
     /// The URL of the video stream for this movie.
     @NSManaged public var streamURL: String?
+    /// The URL of a preview or trailer clip for hover playback.
+    @NSManaged public var previewURL: String?
     /// The title of the movie.
     @NSManaged public var title: String?
     /// The IMDb ID of the movie (e.g., "tt1234567").

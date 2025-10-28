@@ -38,22 +38,30 @@ struct EditSourceView: View {
                 
                 Section("Details") {
                     TextField("Source Name", text: $name)
+#if os(iOS)
                         .textContentType(.name)
+#endif
                     
                     TextField(source.isM3U ? "Playlist URL" : "Server URL", text: $url)
+#if os(iOS)
                         .textContentType(.URL)
                         .keyboardType(.URL)
                         .autocapitalization(.none)
                         .autocorrectionDisabled()
+#endif
                     
                     if source.isXtream {
                         TextField("Username", text: $username)
+#if os(iOS)
                             .textContentType(.username)
                             .autocapitalization(.none)
                             .autocorrectionDisabled()
+#endif
                         
                         SecureField("Password", text: $password)
+#if os(iOS)
                             .textContentType(.password)
+#endif
                     }
                 }
                 
@@ -108,7 +116,9 @@ struct EditSourceView: View {
                 }
             }
             .navigationTitle("Edit Source")
+#if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+#endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {

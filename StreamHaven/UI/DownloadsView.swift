@@ -1,5 +1,7 @@
 import SwiftUI
 
+#if os(iOS)
+
 /// View for managing all downloads.
 public struct DownloadsView: View {
     @EnvironmentObject var downloadManager: DownloadManager
@@ -156,6 +158,18 @@ public struct DownloadsView: View {
         }
     }
 }
+
+#else
+
+public struct DownloadsView: View {
+    public init() {}
+    public var body: some View {
+        Text("Downloads are not available on this platform.")
+            .padding()
+    }
+}
+
+#endif
 
 // MARK: - Active Download Row
 

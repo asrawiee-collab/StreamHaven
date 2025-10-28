@@ -1,3 +1,5 @@
+#if os(iOS) || os(tvOS)
+import CoreData
 import SwiftUI
 
 /// A view that displays the details of a series.
@@ -118,48 +120,68 @@ public struct SeriesDetailView: View {
                 .fill(.black.opacity(0.6))
                 .ignoresSafeArea()
 
-            HStack(alignment: .top, spacing: 50) {
-                posterImage
-                    .scaledToFit()
-                    .frame(width: 400)
-                    .cornerRadius(10)
+            ScrollView {
+                HStack(alignment: .top, spacing: 50) {
+                    posterImage
+                        .scaledToFit()
+                        .frame(width: 400)
+                        .cornerRadius(10)
 
-                VStack(alignment: .leading, spacing: 30) {
-                    Text(series.title ?? "No Title")
-                        .font(.largeTitle)
+                    VStack(alignment: .leading, spacing: 30) {
+                        Text(series.title ?? "No Title")
+                            .font(.largeTitle)
 
-                    // Smart Summary (Free Tier) for tvOS
-                    if let summary = smartSummary {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("AI Summary")
-                                .font(.headline)
-                                .foregroundColor(.secondary)
-                            Text(summary)
+                        // Smart Summary (Free Tier) for tvOS
+                        if let summary = smartSummary {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("AI Summary")
+                                    .font(.headline)
+                                    .foregroundColor(.secondary)
+                                Text(summary)
+                                    .font(.body)
+                            }
+                        } else {
+                            Text(series.summary ?? "No summary available.")
                                 .font(.body)
                         }
-                    } else {
-                        Text(series.summary ?? "No summary available.")
-                            .font(.body)
+
+                        favoriteButton
+
+                        Button(action: { showingWatchlistPicker = true }) {
+                            Label(isInWatchlist ? "In Watchlists" : "Add to Watchlist", systemImage: isInWatchlist ? "checkmark.circle.fill" : "plus.circle")
+                                .font(.title2)
+                                .padding(.horizontal, 24)
+                                .padding(.vertical, 12)
+                                .background(isInWatchlist ? Color.green : Color.indigo)
+                                .foregroundColor(.white)
+                                .clipShape(Capsule())
+                        }
+
+                        episodeList
+                    }
+
+                    Spacer()
+                }
+                .padding(50)
+            }
+        }
         .fullScreenCover(isPresented: $showingPlayer) {
             if let player = playbackManager.player {
                 PlaybackViewController(player: player)
             }
         }
-        .onAppear(perform: {
+        .sheet(isPresented: $showingWatchlistPicker) {
+            WatchlistPickerSheet(content: series, isPresented: $showingWatchlistPicker)
+                .environmentObject(watchlistManager)
+                .environmentObject(profileManager)
+                .onDisappear {
+                    updateWatchlistStatus()
+                }
+        }
+        .onAppear {
             setup()
             generateSmartSummary()
-        })
-    }               Spacer()
-                }
-            }
-            .padding(50)
         }
-        .fullScreenCover(isPresented: $showingPlayer) {
-            if let player = playbackManager.player {
-                PlaybackViewController(player: player)
-            }
-        }
-        .onAppear(perform: setup)
     }
 
     // MARK: - Reusable Components
@@ -240,3 +262,4 @@ public struct SeriesDetailView: View {
         smartSummary = smartSummaryManager.getCachedSummary(cacheKey: cacheKey, fullPlot: fullPlot)
     }
 }
+#endif

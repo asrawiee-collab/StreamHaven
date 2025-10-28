@@ -52,7 +52,10 @@ public enum PerformanceLogger {
         if duration >= threshold {
             os_log("%{public}@ took %{public}.3f s", log: OSLog(subsystem: subsystem, category: "Performance"), type: .debug, label, duration)
 #if canImport(Sentry)
-            SentrySDK.addBreadcrumb(crumb: Breadcrumb(level: .info, category: "perf", type: "default", message: "\(label) took \(String(format: "%.3f", duration)) s"))
+            let breadcrumb = Breadcrumb(level: .info, category: "perf")
+            breadcrumb.type = "default"
+            breadcrumb.message = "\(label) took \(String(format: "%.3f", duration)) s"
+            SentrySDK.addBreadcrumb(breadcrumb)
 #endif
         }
         return result

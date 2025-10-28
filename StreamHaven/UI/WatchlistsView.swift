@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+#if os(iOS)
+
 // MARK: - Main Watchlists View
 
 struct WatchlistsView: View {
@@ -558,3 +560,14 @@ struct IconPickerSheet: View {
         }
     }
 }
+
+#else
+
+struct WatchlistsView: View {
+    var body: some View {
+        Text("Watchlists are not available on this platform.")
+            .padding()
+    }
+}
+
+#endif

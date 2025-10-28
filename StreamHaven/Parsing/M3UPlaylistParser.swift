@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 /// A parser for processing M3U playlists and importing their content into Core Data.
 public final class M3UPlaylistParser {
@@ -19,14 +19,24 @@ public final class M3UPlaylistParser {
     }
 
     // This regex handles attributes with double quotes, single quotes, or no quotes.
-    private static let attributeRegex: NSRegularExpression = {
+    private static let attributeRegex: NSRegularExpression? = {
         let pattern = "([\\w-]+)=(\"[^\"]*\"|'[^']*'|[^,\\s]+)"
         do {
             return try NSRegularExpression(pattern: pattern, options: .caseInsensitive)
         } catch {
             // Avoid crashing in production; fall back to a regex that matches nothing and log the issue.
             PerformanceLogger.logNetwork("M3UPlaylistParser: Failed to compile attribute regex: \(error)", level: .error)
-            return try! NSRegularExpression(pattern: "(?!)", options: [])
+            return nil
+        }
+    }()
+
+    private static let headerRegex: NSRegularExpression? = {
+        let pattern = #"url-tvg=(\"[^\"]*\"|'[^']*'|[^\s]+)"#
+        do {
+            return try NSRegularExpression(pattern: pattern, options: .caseInsensitive)
+        } catch {
+            PerformanceLogger.logNetwork("M3UPlaylistParser: Failed to compile header regex: \(error)", level: .error)
+            return nil
         }
     }()
 
@@ -37,85 +47,34 @@ public final class M3UPlaylistParser {
     ///   - sourceID: Optional source ID to associate with imported content.
     ///   - context: The `NSManagedObjectContext` to perform the import on.
     /// - Throws: An error if the data cannot be decoded or if there is a problem saving to Core Data.
+    @available(iOS 13.0, tvOS 13.0, macOS 10.15, *)
     public static func parse(data: Data, sourceID: UUID? = nil, context: NSManagedObjectContext) throws {
         guard let content = String(data: data, encoding: .utf8) else {
             throw PlaylistImportError.parsingFailed(NSError(domain: "M3UParser", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid data encoding"]))
         }
-        var lines: [String] = []
-        content.enumerateLines { line, _ in
-            lines.append(line)
-        }
+
         var movieItems: [M3UChannel] = []
         var channelItems: [M3UChannel] = []
         var currentChannelInfo: [String: String] = [:]
-        var epgURL: String? = nil
+        var epgURL: String?
 
-        // Look for #EXTM3U header with url-tvg
-        if let firstLine = lines.first, firstLine.uppercased().hasPrefix("#EXTM3U") {
-            let header = firstLine
-            let headerRegex = try? NSRegularExpression(pattern: "url-tvg=(\"[^\"]*\"|'[^']*'|[^\s]+)", options: .caseInsensitive)
-            if let headerRegex = headerRegex {
-                let matches = headerRegex.matches(in: header, range: NSRange(header.startIndex..., in: header))
-                for match in matches {
-                    if let valueRange = Range(match.range(at: 1), in: header) {
-                        var value = String(header[valueRange])
-                        if value.hasPrefix("\"") && value.hasSuffix("\"") || value.hasPrefix("'") && value.hasSuffix("'") {
-                            value = String(value.dropFirst().dropLast())
-                        }
-                        epgURL = value
-                    }
-                }
+        content.enumerateLines { rawLine, _ in
+            let line = rawLine.trimmingCharacters(in: .whitespaces)
+
+            if epgURL == nil, let headerURL = extractEPGURL(from: line) {
+                epgURL = headerURL
             }
-        }
 
-        for i in 0..<lines.count {
-            let line = lines[i].trimmingCharacters(in: .whitespaces)
+            if parseInfoLineIfNeeded(line, into: &currentChannelInfo) {
+                return
+            }
 
-            if line.uppercased().hasPrefix("#EXTINF:") {
-                currentChannelInfo = [:]
+            guard let channel = makeChannelIfNeeded(from: line, info: currentChannelInfo) else { return }
 
-                guard let infoString = line.split(separator: ",", maxSplits: 1).last.map(String.init) else { continue }
-
-                let matches = attributeRegex.matches(in: infoString, range: NSRange(infoString.startIndex..., in: infoString))
-
-                for match in matches {
-                    if let keyRange = Range(match.range(at: 1), in: infoString),
-                       let valueRange = Range(match.range(at: 2), in: infoString) {
-                        let key = String(infoString[keyRange])
-                        var value = String(infoString[valueRange])
-
-                        // Trim quotes
-                        if value.hasPrefix("\"") && value.hasSuffix("\"") || value.hasPrefix("'") && value.hasSuffix("'") {
-                            value = String(value.dropFirst().dropLast())
-                        }
-
-                        currentChannelInfo[key] = value
-                    }
-                }
-
-                if let commaIndex = infoString.lastIndex(of: ",") {
-                    let title = String(infoString.suffix(from: infoString.index(after: commaIndex))).trimmingCharacters(in: .whitespaces)
-                    currentChannelInfo["title"] = title
-                }
-
-            } else if !line.isEmpty && !line.hasPrefix("#") {
-                if var title = currentChannelInfo["title"] {
-                    if title.isEmpty {
-                        title = currentChannelInfo["tvg-name"] ?? "Unknown"
-                    }
-                    let logo = currentChannelInfo["tvg-logo"]
-                    let group = currentChannelInfo["group-title"]
-                    let url = line
-                    let tvgID = currentChannelInfo["tvg-id"]
-
-                    let channel = M3UChannel(title: title, logoURL: logo, group: group, url: url, tvgID: tvgID)
-
-                    if let groupTitle = channel.group, groupTitle.localizedCaseInsensitiveContains("Movie") {
-                        movieItems.append(channel)
-                    } else {
-                        channelItems.append(channel)
-                    }
-                }
+            if let groupTitle = channel.group, groupTitle.localizedCaseInsensitiveContains("Movie") {
+                movieItems.append(channel)
+            } else {
+                channelItems.append(channel)
             }
         }
 
@@ -141,6 +100,7 @@ public final class M3UPlaylistParser {
     }
 
     /// Streams a playlist file from disk to reduce memory footprint.
+    @available(iOS 13.0, tvOS 13.0, macOS 10.15, *)
     public static func parse(fileURL: URL, sourceID: UUID? = nil, context: NSManagedObjectContext) throws {
         guard let stream = InputStream(url: fileURL) else {
             throw PlaylistImportError.invalidURL
@@ -149,71 +109,33 @@ public final class M3UPlaylistParser {
         defer { stream.close() }
 
         let bufferSize = 64 * 1024
-        var buffer = Array<UInt8>(repeating: 0, count: bufferSize)
+        var buffer = [UInt8](repeating: 0, count: bufferSize)
         var remainder = Data()
         var movieItems: [M3UChannel] = []
         var channelItems: [M3UChannel] = []
         var currentChannelInfo: [String: String] = [:]
-        var epgURL: String? = nil
+        var epgURL: String?
         var isFirstChunk = true
 
         func processLine(_ line: String) {
             let trimmed = line.trimmingCharacters(in: .whitespaces)
             if isFirstChunk {
                 isFirstChunk = false
-                if trimmed.uppercased().hasPrefix("#EXTM3U") {
-                    let header = trimmed
-                    let headerRegex = try? NSRegularExpression(pattern: "url-tvg=(\"[^\"]*\"|'[^']*'|[^\s]+)", options: .caseInsensitive)
-                    if let headerRegex = headerRegex {
-                        let matches = headerRegex.matches(in: header, range: NSRange(header.startIndex..., in: header))
-                        for match in matches {
-                            if let valueRange = Range(match.range(at: 1), in: header) {
-                                var value = String(header[valueRange])
-                                if value.hasPrefix("\"") && value.hasSuffix("\"") || value.hasPrefix("'") && value.hasSuffix("'") {
-                                    value = String(value.dropFirst().dropLast())
-                                }
-                                epgURL = value
-                            }
-                        }
-                    }
+                if let headerURL = extractEPGURL(from: trimmed) {
+                    epgURL = headerURL
                 }
             }
 
-            if trimmed.uppercased().hasPrefix("#EXTINF:") {
-                currentChannelInfo = [:]
-                guard let infoString = trimmed.split(separator: ",", maxSplits: 1).last.map(String.init) else { return }
-                let matches = attributeRegex.matches(in: infoString, range: NSRange(infoString.startIndex..., in: infoString))
-                for match in matches {
-                    if let keyRange = Range(match.range(at: 1), in: infoString),
-                       let valueRange = Range(match.range(at: 2), in: infoString) {
-                        let key = String(infoString[keyRange])
-                        var value = String(infoString[valueRange])
-                        if value.hasPrefix("\"") && value.hasSuffix("\"") || value.hasPrefix("'") && value.hasSuffix("'") {
-                            value = String(value.dropFirst().dropLast())
-                        }
-                        currentChannelInfo[key] = value
-                    }
-                }
-                if let commaIndex = infoString.lastIndex(of: ",") {
-                    let title = String(infoString.suffix(from: infoString.index(after: commaIndex))).trimmingCharacters(in: .whitespaces)
-                    currentChannelInfo["title"] = title
-                }
-            } else if !trimmed.isEmpty && !trimmed.hasPrefix("#") {
-                if var title = currentChannelInfo["title"] {
-                    if title.isEmpty {
-                        title = currentChannelInfo["tvg-name"] ?? "Unknown"
-                    }
-                    let logo = currentChannelInfo["tvg-logo"]
-                    let group = currentChannelInfo["group-title"]
-                    let url = trimmed
-                    let tvgID = currentChannelInfo["tvg-id"]
-                    let channel = M3UChannel(title: title, logoURL: logo, group: group, url: url, tvgID: tvgID)
-                    if let groupTitle = channel.group, groupTitle.localizedCaseInsensitiveContains("Movie") {
-                        movieItems.append(channel)
-                    } else {
-                        channelItems.append(channel)
-                    }
-                }
+            if parseInfoLineIfNeeded(trimmed, into: &currentChannelInfo) {
+                return
+            }
+
+            guard let channel = makeChannelIfNeeded(from: trimmed, info: currentChannelInfo) else { return }
+
+            if let groupTitle = channel.group, groupTitle.localizedCaseInsensitiveContains("Movie") {
+                movieItems.append(channel)
+            } else {
+                channelItems.append(channel)
             }
         }
 
@@ -258,6 +180,86 @@ public final class M3UPlaylistParser {
         }
     }
 
+    private static func extractEPGURL(from line: String) -> String? {
+        guard line.uppercased().hasPrefix("#EXTM3U"), let headerRegex = headerRegex else {
+            return nil
+        }
+
+        let range = NSRange(line.startIndex..., in: line)
+        guard let match = headerRegex.firstMatch(in: line, range: range),
+              let valueRange = Range(match.range(at: 1), in: line) else {
+            return nil
+        }
+
+        return stripQuotes(String(line[valueRange]))
+    }
+
+    private static func parseInfoLineIfNeeded(_ line: String, into info: inout [String: String]) -> Bool {
+        guard line.uppercased().hasPrefix("#EXTINF:") else { return false }
+
+        info.removeAll(keepingCapacity: true)
+
+        let infoString = String(line.dropFirst("#EXTINF:".count))
+        let attributePortion: String
+
+        if let commaIndex = infoString.firstIndex(of: ",") {
+            attributePortion = String(infoString[..<commaIndex])
+            let title = infoString[infoString.index(after: commaIndex)...].trimmingCharacters(in: .whitespaces)
+            if !title.isEmpty {
+                info["title"] = title
+            }
+        } else {
+            attributePortion = infoString
+        }
+
+        guard let attributeRegex = attributeRegex else { return true }
+        let matches = attributeRegex.matches(in: attributePortion, range: NSRange(attributePortion.startIndex..., in: attributePortion))
+
+        for match in matches {
+            guard let keyRange = Range(match.range(at: 1), in: attributePortion),
+                  let valueRange = Range(match.range(at: 2), in: attributePortion) else { continue }
+
+            let key = String(attributePortion[keyRange])
+            let value = stripQuotes(String(attributePortion[valueRange]))
+            info[key] = value
+        }
+
+        if info["title"].map({ $0.isEmpty }) ?? true, let fallback = info["tvg-name"], !fallback.isEmpty {
+            info["title"] = fallback
+        }
+
+        return true
+    }
+
+    private static func makeChannelIfNeeded(from line: String, info: [String: String]) -> M3UChannel? {
+        guard !line.isEmpty, !line.hasPrefix("#") else { return nil }
+
+        var title = info["title"]?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if title.isEmpty {
+            title = info["tvg-name"]?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        }
+        if title.isEmpty {
+            title = "Unknown"
+        }
+
+        return M3UChannel(
+            title: title,
+            logoURL: info["tvg-logo"],
+            group: info["group-title"],
+            url: line,
+            tvgID: info["tvg-id"]
+        )
+    }
+
+    private static func stripQuotes(_ value: String) -> String {
+        guard !value.isEmpty else { return value }
+        if (value.hasPrefix("\"") && value.hasSuffix("\"")) || (value.hasPrefix("'") && value.hasSuffix("'")) {
+            return String(value.dropFirst().dropLast())
+        }
+        return value
+    }
+
+    @available(iOS 13.0, tvOS 13.0, macOS 10.15, *)
     private static func batchInsertMovies(items: [M3UChannel], sourceID: UUID? = nil, context: NSManagedObjectContext) throws {
         guard !items.isEmpty else { return }
 
@@ -293,6 +295,7 @@ public final class M3UPlaylistParser {
         }
     }
 
+    @available(iOS 13.0, tvOS 13.0, macOS 10.15, *)
     private static func importChannels(items: [M3UChannel], sourceID: UUID? = nil, context: NSManagedObjectContext) throws {
         guard !items.isEmpty else { return }
         

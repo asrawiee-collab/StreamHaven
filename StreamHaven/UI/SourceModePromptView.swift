@@ -1,3 +1,4 @@
+#if os(iOS) || os(tvOS)
 import SwiftUI
 
 /// View that prompts the user to choose between combined or single source mode when multiple sources are active.
@@ -197,3 +198,19 @@ struct SourceModeCard: View {
         sourceManager: PlaylistSourceManager()
     )
 }
+
+#else
+
+import SwiftUI
+
+struct SourceModePromptView: View {
+    let profile: Profile
+    let sourceManager: PlaylistSourceManager
+
+    var body: some View {
+        Text("Source mode selection is not available on this platform.")
+            .padding()
+    }
+}
+
+#endif

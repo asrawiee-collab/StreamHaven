@@ -1,5 +1,6 @@
-import SwiftUI
+#if os(iOS) || os(tvOS)
 import AVKit
+import SwiftUI
 
 /// A view that represents a playback view controller.
 public struct PlaybackViewController: UIViewControllerRepresentable {
@@ -338,3 +339,5 @@ public class CustomPlayerViewController: AVPlayerViewController {
         present(alert, animated: true)
     }
 }
+
+#endif

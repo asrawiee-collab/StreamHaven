@@ -10,6 +10,9 @@ import CoreData
 
 @objc(WatchlistItem)
 public class WatchlistItem: NSManagedObject {
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<WatchlistItem> {
+        NSFetchRequest<WatchlistItem>(entityName: "WatchlistItem")
+    }
     
     // MARK: - Content Type Enum
     
@@ -87,11 +90,11 @@ public class WatchlistItem: NSManagedObject {
         }
         
         if let movie = content as? Movie {
-            return movie.title
+            return movie.title ?? "Unknown"
         } else if let episode = content as? Episode {
-            return episode.title
+            return episode.title ?? "Unknown"
         } else if let series = content as? Series {
-            return series.title
+            return series.title ?? "Unknown"
         }
         
         return "Unknown"

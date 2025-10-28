@@ -6,7 +6,7 @@ import SwiftUI
 public struct ContentView: View {
     @StateObject private var profileManager: ProfileManager
     @StateObject private var dataManager: StreamHavenData
-    @StateObject private var settingsManager
+    @StateObject private var settingsManager: SettingsManager
     private let persistenceProvider: PersistenceProviding
 
     /// Initializes a new `ContentView`.

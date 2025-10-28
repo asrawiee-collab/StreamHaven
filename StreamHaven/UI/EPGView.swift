@@ -1,5 +1,11 @@
 import SwiftUI
 import CoreData
+#if canImport(UIKit)
+import UIKit
+#endif
+#if canImport(AppKit)
+import AppKit
+#endif
 
 /// A comprehensive Electronic Program Guide (EPG) view displaying a timeline grid of programs.
 @MainActor
@@ -37,7 +43,7 @@ public struct EPGView: View {
                         timeSlotHeader
                         
                         // Channel rows with programs
-                        ForEach(channels) { channel in
+                        ForEach(channels, id: \.objectID) { channel in
                             EPGTimelineRow(
                                 channel: channel,
                                 startTime: selectedTimeSlot,
@@ -134,7 +140,7 @@ public struct EPGView: View {
                 .background(isCurrentTime(time) ? Color.accentColor.opacity(0.1) : Color.clear)
             }
         }
-        .background(Color(UIColor.systemBackground))
+        .background(platformBackgroundColor)
     }
     
     private func isCurrentTime(_ time: Date) -> Bool {
@@ -166,9 +172,20 @@ public struct EPGView: View {
             }
         }
     }
+
+    private var platformBackgroundColor: Color {
+        #if canImport(UIKit)
+        Color(UIColor.systemBackground)
+        #elseif canImport(AppKit)
+        Color(NSColor.windowBackgroundColor)
+        #else
+        Color.clear
+        #endif
+    }
 }
 
 #if DEBUG
+@available(macOS 13.0, *)
 struct EPGView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {

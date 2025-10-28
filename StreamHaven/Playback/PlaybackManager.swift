@@ -1,12 +1,14 @@
 import AVKit
 import CoreData
 import Combine
+import CoreMedia
 import os.log
 #if canImport(Sentry)
 import Sentry
 #endif
 
 /// A class for managing media playback.
+@MainActor
 public final class PlaybackManager: NSObject, ObservableObject, PlaybackManaging, PreBufferDelegate {
 
     /// The `AVPlayer` instance.
@@ -86,6 +88,16 @@ public final class PlaybackManager: NSObject, ObservableObject, PlaybackManaging
     /// - Parameters:
     ///   - item: The `NSManagedObject` to play (e.g., `Movie`, `Episode`, `ChannelVariant`).
     ///   - profile: The `Profile` of the current user.
+    public func loadMedia(for item: NSManagedObject, profile: Profile) {
+        loadMedia(for: item, profile: profile, isOffline: false)
+    }
+
+    /// Loads media for a given item and profile.
+    ///
+    /// - Parameters:
+    ///   - item: The `NSManagedObject` to play (e.g., `Movie`, `Episode`, `ChannelVariant`).
+    ///   - profile: The `Profile` of the current user.
+    ///   - isOffline: Indicates whether the media should be loaded from an offline cache.
     public func loadMedia(for item: NSManagedObject, profile: Profile, isOffline: Bool = false) {
         stop()
 
@@ -115,7 +127,7 @@ public final class PlaybackManager: NSObject, ObservableObject, PlaybackManaging
             
             if self.player == nil {
                 self.player = AVPlayer(playerItem: playerItem)
-                setupPictureInPicture()
+                setupPiPController()
             } else {
                 self.player?.replaceCurrentItem(with: playerItem)
             }
@@ -137,13 +149,14 @@ public final class PlaybackManager: NSObject, ObservableObject, PlaybackManaging
         let playerItem = AVPlayerItem(url: streamURL)
         playerItem.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: [.new, .old], context: nil)
 
-        let subtitleRule = AVTextStyleRule(textMarkupAttributes: [kCMTextMarkupAttribute_FontSizePercentage as String: settingsManager.subtitleSize])
+        #if os(iOS) || os(tvOS)
+        let subtitleAttributes = [kCMTextMarkupAttribute_FontSizePercentage as String: settingsManager.subtitleSize]
+        let subtitleRule = AVTextStyleRule(textMarkupAttributes: subtitleAttributes)
         playerItem.textStyleRules = [subtitleRule]
+        #endif
 
         self.player = AVPlayer(playerItem: playerItem)
-        self.progressTracker = PlaybackProgressTracker(player: self.player, item: self.currentItem, watchHistoryManager: self.watchHistoryManager)
-        self.progressTracker?.preBufferDelegate = self
-        self.progressTracker?.preBufferTimeSeconds = settingsManager.preBufferTimeSeconds
+        setupPlaybackTracking()
         
         #if os(iOS)
         // Configure PiP if enabled
@@ -165,6 +178,14 @@ public final class PlaybackManager: NSObject, ObservableObject, PlaybackManaging
         setupPiPController()
         setupPlayerObservers()
         play()
+    }
+
+    private func setupPlaybackTracking() {
+        guard let player else { return }
+        progressTracker?.stopTracking()
+        progressTracker = PlaybackProgressTracker(player: player, item: currentItem, watchHistoryManager: watchHistoryManager)
+        progressTracker?.preBufferDelegate = self
+        progressTracker?.preBufferTimeSeconds = settingsManager.preBufferTimeSeconds
     }
 
     private func handlePlaybackFailure() {
@@ -206,11 +227,13 @@ public final class PlaybackManager: NSObject, ObservableObject, PlaybackManaging
         playbackState = .playing
         
         // Resume Live Activity if active
-        if settingsManager.enableLiveActivities {
+        #if os(iOS)
+        if settingsManager.enableLiveActivities, #available(iOS 16.1, *) {
             Task { @MainActor in
                 await liveActivityManager?.resumeActivity()
             }
         }
+        #endif
     }
 
     /// Pauses playback.
@@ -220,11 +243,13 @@ public final class PlaybackManager: NSObject, ObservableObject, PlaybackManaging
         playbackState = .paused
         
         // Pause Live Activity if active
-        if settingsManager.enableLiveActivities {
+        #if os(iOS)
+        if settingsManager.enableLiveActivities, #available(iOS 16.1, *) {
             Task { @MainActor in
                 await liveActivityManager?.pauseActivity()
             }
         }
+        #endif
     }
 
     /// Seeks to a specific time in the media.
@@ -250,11 +275,13 @@ public final class PlaybackManager: NSObject, ObservableObject, PlaybackManaging
         cancellables.removeAll()
         
         // End Live Activity when stopping playback
-        if settingsManager.enableLiveActivities {
+        #if os(iOS)
+        if settingsManager.enableLiveActivities, #available(iOS 16.1, *) {
             Task { @MainActor in
                 await liveActivityManager?.endActivity()
             }
         }
+        #endif
     }
 
     /// Sets up observers for player events.
@@ -274,7 +301,7 @@ public final class PlaybackManager: NSObject, ObservableObject, PlaybackManaging
                 // For series, try next episode first
                 if self.isNextEpisodeReady == true {
                     self.swapToNextEpisode()
-                } else if let nextEpisode = self.getNextEpisodeInSeries() {
+                } else if self.getNextEpisodeInSeries() != nil {
                     self.playNextEpisode()
                 } else {
                     // No next episode, check Up Next queue
@@ -423,23 +450,6 @@ extension PlaybackManager {
         loadNextEpisodeInBackground(nextEpisode)
     }
     
-    public func updateLiveActivityProgress() {
-        #if os(iOS)
-        guard settingsManager.enableLiveActivities,
-              #available(iOS 16.1, *),
-              let player = player,
-              let duration = player.currentItem?.duration,
-              duration.isNumeric && duration.seconds > 0 else { return }
-        
-        let currentTime = player.currentTime().seconds
-        let progress = currentTime / duration.seconds
-        
-        Task { @MainActor in
-            await liveActivityManager?.update(progress: progress)
-        }
-        #endif
-    }
-    
     /// Loads the next episode in a background player for seamless transition.
     /// - Parameter episode: The next episode to pre-buffer.
     private func loadNextEpisodeInBackground(_ episode: Episode) {
@@ -457,8 +467,11 @@ extension PlaybackManager {
         
         // Create background player with same settings
         let playerItem = AVPlayerItem(url: streamURL)
-        let subtitleRule = AVTextStyleRule(textMarkupAttributes: [kCMTextMarkupAttribute_FontSizePercentage as String: settingsManager.subtitleSize])
+        #if os(iOS) || os(tvOS)
+        let subtitleAttributes = [kCMTextMarkupAttribute_FontSizePercentage as String: settingsManager.subtitleSize]
+        let subtitleRule = AVTextStyleRule(textMarkupAttributes: subtitleAttributes)
         playerItem.textStyleRules = [subtitleRule]
+        #endif
         
         nextEpisodePlayer = AVPlayer(playerItem: playerItem)
         
@@ -547,6 +560,7 @@ extension PlaybackManager {
     // MARK: - Live Activity Management
     
     /// Starts a Live Activity for the current playback item
+    #if os(iOS)
     private func startLiveActivity(for item: NSManagedObject?) async {
         guard let item = item else { return }
         
@@ -599,22 +613,26 @@ extension PlaybackManager {
             ErrorReporter.log(error, context: "PlaybackManager.startLiveActivity")
         }
     }
+    #endif
     
     /// Updates the Live Activity with current playback progress
     /// Called periodically by PlaybackProgressTracker
     public func updateLiveActivityProgress() {
-        guard let player = player,
+        #if os(iOS)
+        guard settingsManager.enableLiveActivities,
+              #available(iOS 16.1, *),
+              let player,
               let currentTime = player.currentItem?.currentTime(),
               let duration = player.currentItem?.duration,
               !currentTime.isIndefinite,
               !duration.isIndefinite else {
             return
         }
-        
+
         let elapsed = CMTimeGetSeconds(currentTime)
         let total = CMTimeGetSeconds(duration)
         let progress = total > 0 ? elapsed / total : 0.0
-        
+
         Task { @MainActor in
             await liveActivityManager?.updateActivity(
                 progress: progress,
@@ -622,6 +640,7 @@ extension PlaybackManager {
                 elapsedSeconds: elapsed
             )
         }
+        #endif
     }
     
     private func logAccessLog() {
@@ -633,7 +652,10 @@ extension PlaybackManager {
             let rtt = last.transferDuration > 0 ? last.indicatedBitrate / last.transferDuration : 0
             PerformanceLogger.logPlayback("HLS metrics: bitrate=\(Int(bitrate))bps stalls=\(stalls) startup=\(String(format: "%.2fs", startup)) rtt=\(String(format: "%.2f", rtt))")
 #if canImport(Sentry)
-            let crumb = Breadcrumb(level: .info, category: "playback", type: "navigation")
+            let crumb = Breadcrumb()
+            crumb.level = .info
+            crumb.category = "playback"
+            crumb.type = "navigation"
             crumb.message = "HLS: bitrate=\(Int(bitrate)) stalls=\(stalls) startup=\(String(format: "%.2f", startup))"
             SentrySDK.addBreadcrumb(crumb)
 #endif

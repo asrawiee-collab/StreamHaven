@@ -6,7 +6,7 @@ import os.log
 /// Manages synchronization of Core Data entities with CloudKit.
 /// Handles profiles, favorites, and watch history across devices.
 @MainActor
-class CloudKitSyncManager: ObservableObject {
+public final class CloudKitSyncManager: ObservableObject {
     
     // MARK: - Published Properties
     
@@ -475,16 +475,17 @@ class CloudKitSyncManager: ObservableObject {
     }
     
     private func processPendingOperations() async throws {
-        guard !pendingOperations.isEmpty else { return }
-        
-        logger.info("Processing \(pendingOperations.count) pending operations")
-        
-        for operation in pendingOperations {
+        guard !self.pendingOperations.isEmpty else { return }
+
+        logger.info("Processing \(self.pendingOperations.count) pending operations")
+
+        for operation in self.pendingOperations {
+            logger.debug("Pending operation type=\(operation.type.rawValue) record=\(operation.recordName)")
             // Process each pending operation
             // Implementation depends on operation type
         }
-        
-        pendingOperations.removeAll()
+
+        self.pendingOperations.removeAll()
         savePendingOperations()
     }
     
@@ -553,9 +554,6 @@ class CloudKitSyncManager: ObservableObject {
 // MARK: - Core Data Extensions
 
 extension Profile {
-    @NSManaged var cloudKitRecordName: String?
-    @NSManaged var modifiedAt: Date?
-    
     var cloudKitRecordID: CKRecord.ID? {
         get {
             guard let recordName = cloudKitRecordName else { return nil }
@@ -568,9 +566,6 @@ extension Profile {
 }
 
 extension Favorite {
-    @NSManaged var cloudKitRecordName: String?
-    @NSManaged var modifiedAt: Date?
-    
     var cloudKitRecordID: CKRecord.ID? {
         get {
             guard let recordName = cloudKitRecordName else { return nil }
@@ -583,9 +578,6 @@ extension Favorite {
 }
 
 extension WatchHistory {
-    @NSManaged var cloudKitRecordName: String?
-    @NSManaged var modifiedAt: Date?
-    
     var cloudKitRecordID: CKRecord.ID? {
         get {
             guard let recordName = cloudKitRecordName else { return nil }

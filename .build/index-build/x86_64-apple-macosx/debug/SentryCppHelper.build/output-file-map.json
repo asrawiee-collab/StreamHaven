@@ -1,0 +1,12 @@
+{
+  "": {
+    "swift-dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentryCppHelper.build/master.swiftdeps"
+  },
+  "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentryCppHelper/SentryCppHelper.swift": {
+    "dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentryCppHelper.build/SentryCppHelper.d",
+    "object": "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentryCppHelper.build/SentryCppHelper.swift.o",
+    "swiftmodule": "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentryCppHelper.build/SentryCppHelper~partial.swiftmodule",
+    "swift-dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentryCppHelper.build/SentryCppHelper.swiftdeps",
+    "diagnostics": "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentryCppHelper.build/SentryCppHelper.dia"
+  }
+}

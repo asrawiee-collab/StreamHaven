@@ -36,7 +36,7 @@ public struct SubtitleDownloadResponse: Decodable {
 
 /// A class for interacting with the OpenSubtitles API.
 @MainActor
-public final class SubtitleManager: SubtitleManaging {
+public final class SubtitleManager: ObservableObject, SubtitleManaging {
 
     private var apiKey: String? // Loaded from Keychain or injected
     private let apiBaseURL = "https://api.opensubtitles.com/api/v1"

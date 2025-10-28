@@ -2,7 +2,8 @@ import Foundation
 import CoreData
 
 /// Manages all data operations for the StreamHaven application, including importing playlists and managing the Core Data stack.
-public final class StreamHavenData {
+@MainActor
+public final class StreamHavenData: ObservableObject {
 
     /// The persistence provider for the Core Data stack.
     private let persistenceProvider: PersistenceProviding
@@ -17,7 +18,7 @@ public final class StreamHavenData {
     /// - Parameter persistenceProvider: The `PersistenceProviding` to use for Core Data operations.
     public init(persistenceProvider: PersistenceProviding) {
         self.persistenceProvider = persistenceProvider
-            self.denormalizationManager = DenormalizationManager(persistenceProvider: persistenceProvider)
+        self.denormalizationManager = DenormalizationManager(persistenceProvider: persistenceProvider)
         self.backgroundContext = persistenceProvider.container.newBackgroundContext()
         self.backgroundContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
 
@@ -45,20 +46,20 @@ public final class StreamHavenData {
     ///   - url: The URL of the playlist to import.
     ///   - progress: A closure that is called with status updates during the import process.
     /// - Throws: A `PlaylistImportError` if the import fails at any stage.
-    public func importPlaylist(from url: URL, progress: @escaping (String) -> Void) async throws {
+    public func importPlaylist(from url: URL, epgURL: URL? = nil, progress: @escaping (String) -> Void) async throws {
         progress(NSLocalizedString("Downloading...", comment: "Playlist import status"))
         let (data, _) = try await URLSession.shared.data(from: url)
 
+        progress(NSLocalizedString("Caching playlist...", comment: "Playlist import status"))
         try await backgroundContext.perform {
-            progress(NSLocalizedString("Caching playlist...", comment: "Playlist import status"))
-            _ = PlaylistCacheManager.cachePlaylist(url: url, data: data, context: self.backgroundContext)
-
-            progress(NSLocalizedString("Parsing playlist...", comment: "Playlist import status"))
-            try await PlaylistParser.parse(url: url, context: self.backgroundContext)
-            
-                progress(NSLocalizedString("Updating indexes...", comment: "Playlist import status"))
-                try await self.denormalizationManager.rebuildDenormalizedFields()
+            _ = PlaylistCacheManager.cachePlaylist(url: url, data: data, context: self.backgroundContext, epgURL: epgURL)
         }
+
+        progress(NSLocalizedString("Parsing playlist...", comment: "Playlist import status"))
+        try await PlaylistParser.parse(url: url, context: backgroundContext, data: data)
+
+        progress(NSLocalizedString("Updating indexes...", comment: "Playlist import status"))
+        try await denormalizationManager.rebuildDenormalizedFields()
     }
     
     /// Imports multiple playlists concurrently with optimized resource usage.
@@ -115,14 +116,14 @@ public final class StreamHavenData {
             progress(url, NSLocalizedString("Downloading...", comment: ""))
             let (data, _) = try await URLSession.shared.data(from: url)
             
+            progress(url, NSLocalizedString("Caching...", comment: ""))
             try await isolatedContext.perform {
-                progress(url, NSLocalizedString("Caching...", comment: ""))
                 _ = PlaylistCacheManager.cachePlaylist(url: url, data: data, context: isolatedContext)
-                
-                progress(url, NSLocalizedString("Parsing...", comment: ""))
-                try await PlaylistParser.parse(url: url, context: isolatedContext)
             }
-            
+
+            progress(url, NSLocalizedString("Parsing...", comment: ""))
+            try await PlaylistParser.parse(url: url, context: isolatedContext, data: data)
+
             progress(url, NSLocalizedString("Complete", comment: ""))
             return (url, .success(()))
         } catch {
@@ -146,7 +147,7 @@ public final class StreamHavenData {
         // Only M3U supports incremental parsing
         guard type == .m3u else {
             // Fall back to standard import for non-M3U
-            return try await importPlaylist(from: url, progress: progress)
+            return try await importPlaylist(from: url, epgURL: nil, progress: progress)
         }
         
         progress(NSLocalizedString("Connecting...", comment: ""))
@@ -196,16 +197,17 @@ public final class StreamHavenData {
         
         outputStream.close()
         
-        // Cache the downloaded file
+        progress(NSLocalizedString("Caching playlist...", comment: ""))
+        let cachedData = try Data(contentsOf: tempURL)
         try await backgroundContext.perform {
-            progress(NSLocalizedString("Caching playlist...", comment: ""))
-            let data = try Data(contentsOf: tempURL)
-            _ = PlaylistCacheManager.cachePlaylist(url: url, data: data, context: self.backgroundContext)
-            
-            progress(NSLocalizedString("Parsing playlist...", comment: ""))
-            try M3UPlaylistParser.parse(fileURL: tempURL, context: self.backgroundContext)
-            
-            progress(NSLocalizedString("Complete", comment: ""))
+            _ = PlaylistCacheManager.cachePlaylist(url: url, data: cachedData, context: self.backgroundContext, epgURL: nil)
         }
+
+        progress(NSLocalizedString("Parsing playlist...", comment: ""))
+        try await backgroundContext.perform {
+            try M3UPlaylistParser.parse(fileURL: tempURL, context: self.backgroundContext)
+        }
+
+        progress(NSLocalizedString("Complete", comment: ""))
     }
 }

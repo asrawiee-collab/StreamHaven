@@ -2,6 +2,7 @@ import Foundation
 
 /// Central manager that uses a StoreKitProviding implementation to load products,
 /// purchase/restore, and compute current entitlements.
+@available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
 public actor StoreKitManager {
     private let provider: StoreKitProviding
     private let subscriptionIDs: [String]
@@ -11,16 +12,13 @@ public actor StoreKitManager {
     public init(provider: StoreKitProviding, subscriptionIDs: [String]) {
         self.provider = provider
         self.subscriptionIDs = subscriptionIDs
-        observeTransactions()
+        Task { await observeTransactions() }
     }
     
-    private func observeTransactions() {
-        Task.detached { [weak self] in
-            guard let self else { return }
-            for await update in self.provider.transactionUpdates {
-                // On any transaction change, refresh entitlements for consumers.
-                _ = await self.currentEntitlementProductIds()
-            }
+    private func observeTransactions() async {
+        for await _ in provider.transactionUpdates {
+            // On any transaction change, refresh entitlements for consumers.
+            _ = await currentEntitlementProductIds()
         }
     }
     

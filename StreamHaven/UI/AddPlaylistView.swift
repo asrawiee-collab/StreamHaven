@@ -1,5 +1,7 @@
 import SwiftUI
 
+#if os(iOS)
+
 /// A view for adding a new playlist from a URL.
 public struct AddPlaylistView: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -147,3 +149,5 @@ public struct ErrorAlert: Identifiable {
     /// An optional action to perform when the user taps the retry button.
     public var retryAction: (() -> Void)? = nil
 }
+
+#endif

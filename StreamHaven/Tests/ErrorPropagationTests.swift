@@ -21,7 +21,7 @@ final class ErrorPropagationTests: XCTestCase {
             guard let url = URL(string: "https://example.com/fail.m3u") else {
                 return XCTFail("Invalid URL")
             }
-            try await manager.importPlaylist(from: url) { _ in }
+            try await manager.importPlaylist(from: url, epgURL: nil) { _ in }
             XCTFail("Expected error to be thrown")
         } catch {
             // Assert: we receive an error and can log it

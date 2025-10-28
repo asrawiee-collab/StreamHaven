@@ -18,8 +18,12 @@ public final class NetworkLoggerURLProtocol: URLProtocol {
 
     public override func startLoading() {
         startTime = CFAbsoluteTimeGetCurrent()
-        var newRequest = self.request
-        URLProtocol.setProperty(true, forKey: "NetworkLoggerHandled", in: &newRequest)
+        guard let mutableRequest = (self.request as NSURLRequest).mutableCopy() as? NSMutableURLRequest else {
+            client?.urlProtocol(self, didFailWithError: URLError(.badURL))
+            return
+        }
+        URLProtocol.setProperty(true, forKey: "NetworkLoggerHandled", in: mutableRequest)
+        let newRequest = mutableRequest as URLRequest
 
         PerformanceLogger.logNetwork("➡️ Request: \(newRequest.httpMethod ?? "GET") \(newRequest.url?.absoluteString ?? "-")")
 

@@ -1,3 +1,4 @@
+#if os(iOS) || os(tvOS)
 import SwiftUI
 import AVKit
 
@@ -348,3 +349,4 @@ public struct SettingsView: View {
         }
     }
 }
+#endif

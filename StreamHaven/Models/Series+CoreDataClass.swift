@@ -31,6 +31,8 @@ extension Series {
     @NSManaged public var summary: String?
     /// The title of the series.
     @NSManaged public var title: String?
+    /// The URL of a preview or trailer clip for hover playback.
+    @NSManaged public var previewURL: String?
     /// A stable UUID string for cross-table references and FTS mapping.
     @NSManaged public var stableID: String?
     /// The unique identifier of the source this series came from.

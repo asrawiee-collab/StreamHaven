@@ -1,5 +1,7 @@
 import SwiftUI
 
+#if os(iOS)
+
 /// View for adding a new playlist source.
 struct AddSourceView: View {
     @Environment(\.dismiss) private var dismiss
@@ -139,3 +141,5 @@ struct AddSourceView: View {
         sourceManager: PlaylistSourceManager()
     )
 }
+
+#endif

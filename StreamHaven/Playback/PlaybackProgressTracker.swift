@@ -1,7 +1,9 @@
 import AVKit
 import CoreData
+import CoreMedia
 
 /// Delegate protocol for pre-buffering next episode.
+@MainActor
 public protocol PreBufferDelegate: AnyObject {
     /// Called when it's time to start pre-buffering the next episode.
     /// - Parameter timeRemaining: Seconds remaining in current episode.
@@ -11,21 +13,23 @@ public protocol PreBufferDelegate: AnyObject {
     func updateLiveActivityProgress()
 }
 
-/// A class for tracking playback progress and updating watch history.
+/// Tracks playback progress, updates watch history, and coordinates pre-buffering.
+@MainActor
 public final class PlaybackProgressTracker {
 
-    private var player: AVPlayer?
+    private weak var player: AVPlayer?
     private var timeObserver: Any?
-
-    private var currentItem: NSManagedObject?
+    private weak var currentItem: NSManagedObject?
     private var watchHistoryManager: WatchHistoryManager?
-    
+
     /// Delegate for pre-buffer notifications.
     public weak var preBufferDelegate: PreBufferDelegate?
     /// Pre-buffer time threshold in seconds (default: 120 seconds).
     public var preBufferTimeSeconds: Double = 120.0
     /// Flag to ensure pre-buffer is triggered only once per episode.
-    private var hasTriggeredPreBuffer: Bool = false
+    private var hasTriggeredPreBuffer = false
+    /// Interval at which we sample the player's progress.
+    private let observationInterval = CMTime(seconds: 1.0, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
 
     /// Initializes a new `PlaybackProgressTracker`.
     ///
@@ -37,21 +41,18 @@ public final class PlaybackProgressTracker {
         self.player = player
         self.currentItem = item
         self.watchHistoryManager = watchHistoryManager
-
         setupProgressObserver()
-    }
-
-    deinit {
-        stopTracking()
     }
 
     /// Sets up an observer to periodically update the watch history.
     private func setupProgressObserver() {
-        guard let player = player else { return }
-        timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
-            self?.updateWatchHistory(with: time)
-            self?.checkPreBufferTiming(currentTime: time)
-            self?.updateLiveActivity()
+        guard let player else { return }
+
+        timeObserver = player.addPeriodicTimeObserver(forInterval: observationInterval, queue: .main) { [weak self] time in
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                self.handlePeriodicUpdate(with: time)
+            }
         }
     }
 
@@ -68,34 +69,40 @@ public final class PlaybackProgressTracker {
     /// - Parameter time: The current playback time.
     private func updateWatchHistory(with time: CMTime) {
         guard let item = currentItem else { return }
+        let seconds = CMTimeGetSeconds(time)
+        guard seconds.isFinite else { return }
 
-        let progress = Float(CMTimeGetSeconds(time))
+        let progress = Float(seconds)
         watchHistoryManager?.updateWatchHistory(for: item, progress: progress)
     }
     
-    /// Updates the Live Activity with current playback progress.
+    /// Notifies the delegate to refresh Live Activity progress.
     private func updateLiveActivity() {
         preBufferDelegate?.updateLiveActivityProgress()
     }
-        let progress = Float(CMTimeGetSeconds(time))
-        watchHistoryManager?.updateWatchHistory(for: item, progress: progress)
+    
+    private func handlePeriodicUpdate(with time: CMTime) {
+        updateWatchHistory(with: time)
+        checkPreBufferTiming(currentTime: time)
+        updateLiveActivity()
     }
     
     /// Checks if it's time to pre-buffer the next episode.
     /// - Parameter currentTime: The current playback time.
     private func checkPreBufferTiming(currentTime: CMTime) {
         guard !hasTriggeredPreBuffer,
-              let player = player,
+              let player,
               let duration = player.currentItem?.duration,
               duration.isValid,
               !duration.isIndefinite else { return }
-        
+
         let currentSeconds = CMTimeGetSeconds(currentTime)
         let totalSeconds = CMTimeGetSeconds(duration)
         let timeRemaining = totalSeconds - currentSeconds
-        
-        // Trigger pre-buffer when time remaining is less than threshold
-        if timeRemaining > 0 && timeRemaining <= preBufferTimeSeconds {
+
+        guard timeRemaining.isFinite else { return }
+
+        if timeRemaining > 0, timeRemaining <= preBufferTimeSeconds {
             hasTriggeredPreBuffer = true
             preBufferDelegate?.shouldPreBufferNextEpisode(timeRemaining: timeRemaining)
             PerformanceLogger.logPlayback("Pre-buffer triggered: \(String(format: "%.1f", timeRemaining))s remaining")

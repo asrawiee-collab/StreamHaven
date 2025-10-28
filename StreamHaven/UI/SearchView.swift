@@ -1,3 +1,4 @@
+#if os(iOS) || os(tvOS)
 import SwiftUI
 import CoreData
 import Combine
@@ -389,3 +390,4 @@ struct FilterSheet: View {
         }
     }
 }
+#endif

@@ -12,6 +12,12 @@ public struct StreamHavenApp: App {
     let persistenceProvider: PersistenceProviding
 
     /// The body of the app.
+    @MainActor
+    public init() {
+        self.init(persistenceProvider: nil)
+    }
+
+    @MainActor
     public init(persistenceProvider: PersistenceProviding? = nil) {
         // Create PersistenceController and provider if not injected
         if let persistenceProvider = persistenceProvider {
@@ -33,7 +39,9 @@ public struct StreamHavenApp: App {
                 options.dsn = dsn
                 options.enableAppHangTracking = true
                 options.enableAutoBreadcrumbTracking = true
+#if os(iOS)
                 options.enableUIViewControllerTracing = true
+#endif
                 options.tracesSampleRate = 0.2 // adjust as needed
                 options.enableNetworkTracking = true
                 options.enableCoreDataTracing = true

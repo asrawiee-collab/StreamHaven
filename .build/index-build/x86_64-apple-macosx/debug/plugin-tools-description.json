@@ -1,0 +1,2845 @@
+{
+  "builtTestProducts" : [
+    {
+      "binaryPath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenPackageTests.xctest/Contents/MacOS/StreamHavenPackageTests",
+      "packagePath" : "/Users/asrawiee/Desktop/StreamHaven",
+      "productName" : "StreamHavenPackageTests"
+    }
+  ],
+  "copyCommands" : {
+    "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven_StreamHaven.bundle/Media.xcassets" : {
+      "inputs" : [
+        {
+          "kind" : "directory",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Resources/Media.xcassets"
+        }
+      ],
+      "outputs" : [
+        {
+          "kind" : "directory",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven_StreamHaven.bundle/Media.xcassets"
+        }
+      ]
+    },
+    "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven_StreamHaven.bundle/StreamHaven.xcdatamodeld" : {
+      "inputs" : [
+        {
+          "kind" : "directory",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Resources/StreamHaven.xcdatamodeld"
+        }
+      ],
+      "outputs" : [
+        {
+          "kind" : "directory",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven_StreamHaven.bundle/StreamHaven.xcdatamodeld"
+        }
+      ]
+    }
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.SentryCppHelper-x86_64-apple-macosx15.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentryCppHelper.build/sources",
+      "importPath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentryCppHelper/SentryCppHelper.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "directory",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Sentry.framework"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentryCppHelper.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "SentryCppHelper",
+      "moduleOutputPath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Modules/SentryCppHelper.swiftmodule",
+      "objects" : [
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentryCppHelper.build/SentryCppHelper.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "x86_64-apple-macosx10.13",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-Onone",
+        "-enable-testing",
+        "-j20",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-I",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/artifacts/sentry-cocoa/Sentry/Sentry.xcframework/macos-arm64_arm64e_x86_64",
+        "-Xcc",
+        "-I",
+        "-Xcc",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/artifacts/sentry-cocoa/Sentry/Sentry.xcframework/macos-arm64_arm64e_x86_64",
+        "-module-cache-path",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-F",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentryCppHelper.build/include/SentryCppHelper-Swift.h",
+        "-swift-version",
+        "5",
+        "-Xfrontend",
+        "-experimental-lazy-typecheck",
+        "-Xfrontend",
+        "-experimental-skip-all-function-bodies",
+        "-Xfrontend",
+        "-experimental-allow-module-with-compiler-errors",
+        "-Xfrontend",
+        "-empty-abi-descriptor",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-suppress-warnings"
+      ],
+      "outputFileMapPath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentryCppHelper.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Modules/SentryCppHelper.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : true,
+      "sources" : [
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentryCppHelper/SentryCppHelper.swift"
+      ],
+      "tempsPath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentryCppHelper.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.SentrySwiftUI-x86_64-apple-macosx15.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentrySwiftUI.build/sources",
+      "importPath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/Preview/PreviewRedactOptions.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/Preview/SentryReplayMaskPreview.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/Preview/SentryReplayMaskPreviewUIView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/SentryReplayView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/SentrySpanOperation.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/SentryTraceOrigin.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/SentryTracedView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/SentryInternal/SentryInternal.h"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/SentrySwiftUI.h"
+        },
+        {
+          "kind" : "directory",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Sentry.framework"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentrySwiftUI.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "SentrySwiftUI",
+      "moduleOutputPath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Modules/SentrySwiftUI.swiftmodule",
+      "objects" : [
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentrySwiftUI.build/PreviewRedactOptions.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentrySwiftUI.build/SentryReplayMaskPreview.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentrySwiftUI.build/SentryReplayMaskPreviewUIView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentrySwiftUI.build/SentryReplayView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentrySwiftUI.build/SentrySpanOperation.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentrySwiftUI.build/SentryTraceOrigin.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentrySwiftUI.build/SentryTracedView.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "x86_64-apple-macosx10.13",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-Onone",
+        "-enable-testing",
+        "-j20",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-I",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/artifacts/sentry-cocoa/Sentry/Sentry.xcframework/macos-arm64_arm64e_x86_64",
+        "-Xcc",
+        "-I",
+        "-Xcc",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/artifacts/sentry-cocoa/Sentry/Sentry.xcframework/macos-arm64_arm64e_x86_64",
+        "-Xcc",
+        "-fmodule-map-file=/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentryInternal.build/module.modulemap",
+        "-Xcc",
+        "-I",
+        "-Xcc",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/SentryInternal",
+        "-module-cache-path",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-F",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentrySwiftUI.build/include/SentrySwiftUI-Swift.h",
+        "-swift-version",
+        "5",
+        "-Xfrontend",
+        "-experimental-lazy-typecheck",
+        "-Xfrontend",
+        "-experimental-skip-all-function-bodies",
+        "-Xfrontend",
+        "-experimental-allow-module-with-compiler-errors",
+        "-Xfrontend",
+        "-empty-abi-descriptor",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-suppress-warnings"
+      ],
+      "outputFileMapPath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentrySwiftUI.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Modules/SentrySwiftUI.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : true,
+      "sources" : [
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/Preview/PreviewRedactOptions.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/Preview/SentryReplayMaskPreview.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/Preview/SentryReplayMaskPreviewUIView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/SentryReplayView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/SentrySpanOperation.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/SentryTraceOrigin.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/SentryTracedView.swift"
+      ],
+      "tempsPath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentrySwiftUI.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.StreamHaven-x86_64-apple-macosx15.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/sources",
+      "importPath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/App/StreamHavenApp.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/App/StreamHavenTVApp.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Channel+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/ChannelVariant+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Download+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/EPGEntry+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Episode+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Favorite+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Movie+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/PlaylistCache+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/PlaylistSource+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Profile+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Season+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Series+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/StreamCache+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/StreamCache+CoreDataProperties.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/UpNextQueueItem+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/WatchHistory+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Watchlist+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/WatchlistItem+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Monetization/MonetizationConfig.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Monetization/StoreKitManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Monetization/StoreKitProviding.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Monetization/SubscriptionUtilities.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/AdultContentDetector.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/EPGParser.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/FranchiseGroupingManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/M3UPlaylistParser.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/PlaylistParser.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/TMDbManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/VODOrderingManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/XtreamCodesParser.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/CloudKitSyncManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/DenormalizationExtensions.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/DownloadManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/EPGCacheManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/FullTextSearchManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/OptimizedFetchRequests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/PersistenceController.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/PlaylistCacheManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/SearchIndexSync.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/StreamCacheManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/StreamHavenData.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/AudioSubtitleManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/HoverPreviewManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/LiveActivityManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/PiPManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/PlaybackManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/PlaybackProgressTracker.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/SubtitleManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Protocols/ManagerProtocols.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/AddPlaylistView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/AddSourceView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/CardView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/ContentView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/DownloadsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/EPGTimelineRow.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/EPGView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/EditSourceView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/EmptyStateView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/FavoritesView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/HomeView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/MainView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/MovieDetailView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/MultiSourceContentView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/NavigationCoordinator.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/PlaybackViewController.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/PlaylistSourcesView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/PreviewVideoView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/ProfileSelectionView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/SearchView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/SeriesDetailView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/SettingsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/SourceModePromptView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/UpNextView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/Views-tvOS/HomeView-tvOS.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/WatchlistsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/iPadContainerView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/FavoritesManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/MultiSourceContentManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/PlaylistSourceManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/ProfileManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/SettingsManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/SubscriptionManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/UpNextQueueManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/WatchHistoryManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/WatchlistManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/ErrorReporter.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/Errors.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/IntroSkipperManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/KeychainHelper.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/LiveActivityHelper.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/NetworkLoggerURLProtocol.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/PerformanceLogger.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/RateLimiter.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/Rating.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/SecureSession.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/SmartSummaryManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/DerivedSources/resource_bundle_accessor.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "virtual",
+          "name" : "<StreamHaven-x86_64-apple-macosx15.0-debug.module-resources>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Modules/SentryCppHelper.swiftmodule"
+        },
+        {
+          "kind" : "directory",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Sentry.framework"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "StreamHaven",
+      "moduleOutputPath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Modules/StreamHaven.swiftmodule",
+      "objects" : [
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/StreamHavenApp.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/StreamHavenTVApp.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/Channel+CoreDataClass.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/ChannelVariant+CoreDataClass.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/Download+CoreDataClass.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/EPGEntry+CoreDataClass.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/Episode+CoreDataClass.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/Favorite+CoreDataClass.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/Movie+CoreDataClass.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/PlaylistCache+CoreDataClass.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/PlaylistSource+CoreDataClass.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/Profile+CoreDataClass.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/Season+CoreDataClass.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/Series+CoreDataClass.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/StreamCache+CoreDataClass.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/StreamCache+CoreDataProperties.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/UpNextQueueItem+CoreDataClass.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/WatchHistory+CoreDataClass.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/Watchlist+CoreDataClass.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/WatchlistItem+CoreDataClass.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/MonetizationConfig.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/StoreKitManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/StoreKitProviding.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/SubscriptionUtilities.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/AdultContentDetector.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/EPGParser.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/FranchiseGroupingManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/M3UPlaylistParser.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/PlaylistParser.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/TMDbManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/VODOrderingManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/XtreamCodesParser.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/CloudKitSyncManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/DenormalizationExtensions.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/DownloadManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/EPGCacheManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/FullTextSearchManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/OptimizedFetchRequests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/PersistenceController.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/PlaylistCacheManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/SearchIndexSync.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/StreamCacheManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/StreamHavenData.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/AudioSubtitleManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/HoverPreviewManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/LiveActivityManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/PiPManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/PlaybackManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/PlaybackProgressTracker.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/SubtitleManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/ManagerProtocols.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/AddPlaylistView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/AddSourceView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/CardView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/ContentView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/DownloadsView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/EPGTimelineRow.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/EPGView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/EditSourceView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/EmptyStateView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/FavoritesView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/HomeView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/MainView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/MovieDetailView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/MultiSourceContentView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/NavigationCoordinator.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/PlaybackViewController.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/PlaylistSourcesView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/PreviewVideoView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/ProfileSelectionView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/SearchView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/SeriesDetailView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/SettingsView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/SourceModePromptView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/UpNextView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/HomeView-tvOS.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/WatchlistsView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/iPadContainerView.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/FavoritesManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/MultiSourceContentManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/PlaylistSourceManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/ProfileManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/SettingsManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/SubscriptionManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/UpNextQueueManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/WatchHistoryManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/WatchlistManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/ErrorReporter.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/Errors.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/IntroSkipperManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/KeychainHelper.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/LiveActivityHelper.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/NetworkLoggerURLProtocol.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/PerformanceLogger.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/RateLimiter.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/Rating.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/SecureSession.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/SmartSummaryManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/resource_bundle_accessor.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "x86_64-apple-macosx13.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-Onone",
+        "-enable-testing",
+        "-j20",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_AVAILABLE",
+        "-I",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/artifacts/sentry-cocoa/Sentry/Sentry.xcframework/macos-arm64_arm64e_x86_64",
+        "-Xcc",
+        "-I",
+        "-Xcc",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/artifacts/sentry-cocoa/Sentry/Sentry.xcframework/macos-arm64_arm64e_x86_64",
+        "-module-cache-path",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-F",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/include/StreamHaven-Swift.h",
+        "-swift-version",
+        "5",
+        "-Xfrontend",
+        "-experimental-lazy-typecheck",
+        "-Xfrontend",
+        "-experimental-skip-all-function-bodies",
+        "-Xfrontend",
+        "-experimental-allow-module-with-compiler-errors",
+        "-Xfrontend",
+        "-empty-abi-descriptor",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "streamhaven"
+      ],
+      "outputFileMapPath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Modules/StreamHaven.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : true,
+      "sources" : [
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/App/StreamHavenApp.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/App/StreamHavenTVApp.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Channel+CoreDataClass.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/ChannelVariant+CoreDataClass.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Download+CoreDataClass.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/EPGEntry+CoreDataClass.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Episode+CoreDataClass.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Favorite+CoreDataClass.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Movie+CoreDataClass.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/PlaylistCache+CoreDataClass.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/PlaylistSource+CoreDataClass.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Profile+CoreDataClass.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Season+CoreDataClass.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Series+CoreDataClass.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/StreamCache+CoreDataClass.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/StreamCache+CoreDataProperties.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/UpNextQueueItem+CoreDataClass.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/WatchHistory+CoreDataClass.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Watchlist+CoreDataClass.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/WatchlistItem+CoreDataClass.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Monetization/MonetizationConfig.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Monetization/StoreKitManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Monetization/StoreKitProviding.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Monetization/SubscriptionUtilities.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/AdultContentDetector.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/EPGParser.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/FranchiseGroupingManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/M3UPlaylistParser.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/PlaylistParser.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/TMDbManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/VODOrderingManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/XtreamCodesParser.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/CloudKitSyncManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/DenormalizationExtensions.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/DownloadManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/EPGCacheManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/FullTextSearchManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/OptimizedFetchRequests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/PersistenceController.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/PlaylistCacheManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/SearchIndexSync.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/StreamCacheManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/StreamHavenData.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/AudioSubtitleManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/HoverPreviewManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/LiveActivityManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/PiPManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/PlaybackManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/PlaybackProgressTracker.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/SubtitleManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Protocols/ManagerProtocols.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/AddPlaylistView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/AddSourceView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/CardView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/ContentView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/DownloadsView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/EPGTimelineRow.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/EPGView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/EditSourceView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/EmptyStateView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/FavoritesView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/HomeView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/MainView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/MovieDetailView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/MultiSourceContentView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/NavigationCoordinator.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/PlaybackViewController.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/PlaylistSourcesView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/PreviewVideoView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/ProfileSelectionView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/SearchView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/SeriesDetailView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/SettingsView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/SourceModePromptView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/UpNextView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/Views-tvOS/HomeView-tvOS.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/WatchlistsView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/iPadContainerView.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/FavoritesManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/MultiSourceContentManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/PlaylistSourceManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/ProfileManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/SettingsManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/SubscriptionManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/UpNextQueueManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/WatchHistoryManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/WatchlistManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/ErrorReporter.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/Errors.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/IntroSkipperManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/KeychainHelper.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/LiveActivityHelper.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/NetworkLoggerURLProtocol.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/PerformanceLogger.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/RateLimiter.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/Rating.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/SecureSession.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/SmartSummaryManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/DerivedSources/resource_bundle_accessor.swift"
+      ],
+      "tempsPath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.StreamHavenPackageTests-x86_64-apple-macosx15.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenPackageTests.build/sources",
+      "importPath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenPackageTests.derived/runner.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Modules/StreamHavenTests.swiftmodule"
+        },
+        {
+          "kind" : "directory",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Sentry.framework"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenPackageTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "StreamHavenPackageTests",
+      "moduleOutputPath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Modules/StreamHavenPackageTests.swiftmodule",
+      "objects" : [
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenPackageTests.build/runner.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "x86_64-apple-macosx13.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-Onone",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j20",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-I",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/artifacts/sentry-cocoa/Sentry/Sentry.xcframework/macos-arm64_arm64e_x86_64",
+        "-Xcc",
+        "-I",
+        "-Xcc",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/artifacts/sentry-cocoa/Sentry/Sentry.xcframework/macos-arm64_arm64e_x86_64",
+        "-module-cache-path",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-F",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenPackageTests.build/include/StreamHavenPackageTests-Swift.h",
+        "-Xfrontend",
+        "-experimental-lazy-typecheck",
+        "-Xfrontend",
+        "-experimental-skip-all-function-bodies",
+        "-Xfrontend",
+        "-experimental-allow-module-with-compiler-errors",
+        "-Xfrontend",
+        "-empty-abi-descriptor",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "streamhaven"
+      ],
+      "outputFileMapPath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenPackageTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Modules/StreamHavenPackageTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : true,
+      "sources" : [
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenPackageTests.derived/runner.swift"
+      ],
+      "tempsPath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenPackageTests.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.StreamHavenTests-x86_64-apple-macosx15.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/sources",
+      "importPath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/AccessibilityModeTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/AdultContentDetectionTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/AdultContentFilterTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/AudioSubtitleManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/CardViewTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/CloudKitSyncTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/DenormalizationTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/DownloadTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/EPGCacheManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/EPGParserTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/ErrorPropagationTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/FTSTriggerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/FavoritesManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/FranchiseGroupingTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/FullTextSearchManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/Helpers/MockManagers.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/Helpers/MockURLProtocol.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/HoverPreviewTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/IntegrationTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/KeychainHelperTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/LiveActivityTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/M3UPlaylistParserEdgeCasesTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/M3UPlaylistParserTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/MultiSourceSystemTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/NavigationCoordinatorTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/OptimizedFetchTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/ParserPerformanceTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PerformanceRegressionTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PersistenceIntegrationTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PiPSupportTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PlaybackManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PlaybackProgressTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PlaylistCacheManagerStressTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PreBufferTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/RecommendationsTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SearchFiltersTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SearchIndexTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SettingsManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SkipIntroTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SmartSummaryManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/StreamCacheManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SubscriptionManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SubtitleManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/TMDbManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/UpNextQueueTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/VODOrderingTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/WatchlistTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/XtreamCodesEdgeCasesTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/XtreamCodesParserTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/XtreamParserTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Modules/StreamHaven.swiftmodule"
+        },
+        {
+          "kind" : "directory",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Sentry.framework"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "StreamHavenTests",
+      "moduleOutputPath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Modules/StreamHavenTests.swiftmodule",
+      "objects" : [
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/AccessibilityModeTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/AdultContentDetectionTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/AdultContentFilterTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/AudioSubtitleManagerTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/CardViewTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/CloudKitSyncTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/DenormalizationTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/DownloadTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/EPGCacheManagerTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/EPGParserTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/ErrorPropagationTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/FTSTriggerTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/FavoritesManagerTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/FranchiseGroupingTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/FullTextSearchManagerTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/MockManagers.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/MockURLProtocol.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/HoverPreviewTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/IntegrationTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/KeychainHelperTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/LiveActivityTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/M3UPlaylistParserEdgeCasesTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/M3UPlaylistParserTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/MultiSourceSystemTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/NavigationCoordinatorTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/OptimizedFetchTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/ParserPerformanceTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/PerformanceRegressionTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/PersistenceIntegrationTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/PiPSupportTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/PlaybackManagerTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/PlaybackProgressTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/PlaylistCacheManagerStressTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/PreBufferTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/RecommendationsTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/SearchFiltersTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/SearchIndexTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/SettingsManagerTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/SkipIntroTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/SmartSummaryManagerTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/StreamCacheManagerTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/SubscriptionManagerTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/SubtitleManagerTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/TMDbManagerTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/UpNextQueueTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/VODOrderingTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/WatchlistTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/XtreamCodesEdgeCasesTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/XtreamCodesParserTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/XtreamParserTests.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "x86_64-apple-macosx14.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-Onone",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j20",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-I",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/artifacts/sentry-cocoa/Sentry/Sentry.xcframework/macos-arm64_arm64e_x86_64",
+        "-Xcc",
+        "-I",
+        "-Xcc",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/artifacts/sentry-cocoa/Sentry/Sentry.xcframework/macos-arm64_arm64e_x86_64",
+        "-module-cache-path",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-F",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug",
+        "-swift-version",
+        "5",
+        "-Xfrontend",
+        "-experimental-lazy-typecheck",
+        "-Xfrontend",
+        "-experimental-skip-all-function-bodies",
+        "-Xfrontend",
+        "-experimental-allow-module-with-compiler-errors",
+        "-Xfrontend",
+        "-empty-abi-descriptor",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "streamhaven"
+      ],
+      "outputFileMapPath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Modules/StreamHavenTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : true,
+      "sources" : [
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/AccessibilityModeTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/AdultContentDetectionTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/AdultContentFilterTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/AudioSubtitleManagerTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/CardViewTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/CloudKitSyncTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/DenormalizationTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/DownloadTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/EPGCacheManagerTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/EPGParserTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/ErrorPropagationTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/FTSTriggerTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/FavoritesManagerTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/FranchiseGroupingTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/FullTextSearchManagerTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/Helpers/MockManagers.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/Helpers/MockURLProtocol.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/HoverPreviewTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/IntegrationTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/KeychainHelperTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/LiveActivityTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/M3UPlaylistParserEdgeCasesTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/M3UPlaylistParserTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/MultiSourceSystemTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/NavigationCoordinatorTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/OptimizedFetchTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/ParserPerformanceTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PerformanceRegressionTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PersistenceIntegrationTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PiPSupportTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PlaybackManagerTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PlaybackProgressTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PlaylistCacheManagerStressTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PreBufferTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/RecommendationsTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SearchFiltersTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SearchIndexTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SettingsManagerTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SkipIntroTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SmartSummaryManagerTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/StreamCacheManagerTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SubscriptionManagerTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SubtitleManagerTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/TMDbManagerTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/UpNextQueueTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/VODOrderingTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/WatchlistTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/XtreamCodesEdgeCasesTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/XtreamCodesParserTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/XtreamParserTests.swift"
+      ],
+      "tempsPath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build",
+      "wholeModuleOptimization" : false
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "SentryCppHelper" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "SentryCppHelper",
+      "-c",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentryCppHelper/SentryCppHelper.swift",
+      "-I",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Modules",
+      "-target",
+      "x86_64-apple-macosx10.13",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-Onone",
+      "-enable-testing",
+      "-j20",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-I",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/artifacts/sentry-cocoa/Sentry/Sentry.xcframework/macos-arm64_arm64e_x86_64",
+      "-Xcc",
+      "-I",
+      "-Xcc",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/artifacts/sentry-cocoa/Sentry/Sentry.xcframework/macos-arm64_arm64e_x86_64",
+      "-module-cache-path",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-F",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentryCppHelper.build/include/SentryCppHelper-Swift.h",
+      "-swift-version",
+      "5",
+      "-Xfrontend",
+      "-experimental-lazy-typecheck",
+      "-Xfrontend",
+      "-experimental-skip-all-function-bodies",
+      "-Xfrontend",
+      "-experimental-allow-module-with-compiler-errors",
+      "-Xfrontend",
+      "-empty-abi-descriptor",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-suppress-warnings",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "SentrySwiftUI" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "SentrySwiftUI",
+      "-c",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/Preview/PreviewRedactOptions.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/Preview/SentryReplayMaskPreview.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/Preview/SentryReplayMaskPreviewUIView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/SentryReplayView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/SentrySpanOperation.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/SentryTraceOrigin.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/SentryTracedView.swift",
+      "-I",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Modules",
+      "-target",
+      "x86_64-apple-macosx10.13",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-Onone",
+      "-enable-testing",
+      "-j20",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-I",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/artifacts/sentry-cocoa/Sentry/Sentry.xcframework/macos-arm64_arm64e_x86_64",
+      "-Xcc",
+      "-I",
+      "-Xcc",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/artifacts/sentry-cocoa/Sentry/Sentry.xcframework/macos-arm64_arm64e_x86_64",
+      "-Xcc",
+      "-fmodule-map-file=/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentryInternal.build/module.modulemap",
+      "-Xcc",
+      "-I",
+      "-Xcc",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/SentryInternal",
+      "-module-cache-path",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-F",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentrySwiftUI.build/include/SentrySwiftUI-Swift.h",
+      "-swift-version",
+      "5",
+      "-Xfrontend",
+      "-experimental-lazy-typecheck",
+      "-Xfrontend",
+      "-experimental-skip-all-function-bodies",
+      "-Xfrontend",
+      "-experimental-allow-module-with-compiler-errors",
+      "-Xfrontend",
+      "-empty-abi-descriptor",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-suppress-warnings",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "StreamHaven" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "StreamHaven",
+      "-package-name",
+      "streamhaven",
+      "-c",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/App/StreamHavenApp.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/App/StreamHavenTVApp.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Channel+CoreDataClass.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/ChannelVariant+CoreDataClass.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Download+CoreDataClass.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/EPGEntry+CoreDataClass.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Episode+CoreDataClass.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Favorite+CoreDataClass.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Movie+CoreDataClass.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/PlaylistCache+CoreDataClass.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/PlaylistSource+CoreDataClass.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Profile+CoreDataClass.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Season+CoreDataClass.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Series+CoreDataClass.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/StreamCache+CoreDataClass.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/StreamCache+CoreDataProperties.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/UpNextQueueItem+CoreDataClass.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/WatchHistory+CoreDataClass.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Watchlist+CoreDataClass.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/WatchlistItem+CoreDataClass.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Monetization/MonetizationConfig.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Monetization/StoreKitManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Monetization/StoreKitProviding.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Monetization/SubscriptionUtilities.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/AdultContentDetector.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/EPGParser.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/FranchiseGroupingManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/M3UPlaylistParser.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/PlaylistParser.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/TMDbManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/VODOrderingManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/XtreamCodesParser.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/CloudKitSyncManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/DenormalizationExtensions.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/DownloadManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/EPGCacheManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/FullTextSearchManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/OptimizedFetchRequests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/PersistenceController.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/PlaylistCacheManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/SearchIndexSync.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/StreamCacheManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/StreamHavenData.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/AudioSubtitleManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/HoverPreviewManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/LiveActivityManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/PiPManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/PlaybackManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/PlaybackProgressTracker.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/SubtitleManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Protocols/ManagerProtocols.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/AddPlaylistView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/AddSourceView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/CardView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/ContentView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/DownloadsView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/EPGTimelineRow.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/EPGView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/EditSourceView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/EmptyStateView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/FavoritesView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/HomeView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/MainView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/MovieDetailView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/MultiSourceContentView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/NavigationCoordinator.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/PlaybackViewController.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/PlaylistSourcesView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/PreviewVideoView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/ProfileSelectionView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/SearchView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/SeriesDetailView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/SettingsView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/SourceModePromptView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/UpNextView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/Views-tvOS/HomeView-tvOS.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/WatchlistsView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/iPadContainerView.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/FavoritesManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/MultiSourceContentManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/PlaylistSourceManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/ProfileManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/SettingsManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/SubscriptionManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/UpNextQueueManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/WatchHistoryManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/WatchlistManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/ErrorReporter.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/Errors.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/IntroSkipperManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/KeychainHelper.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/LiveActivityHelper.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/NetworkLoggerURLProtocol.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/PerformanceLogger.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/RateLimiter.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/Rating.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/SecureSession.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/SmartSummaryManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/DerivedSources/resource_bundle_accessor.swift",
+      "-I",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Modules",
+      "-target",
+      "x86_64-apple-macosx13.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-Onone",
+      "-enable-testing",
+      "-j20",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_AVAILABLE",
+      "-I",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/artifacts/sentry-cocoa/Sentry/Sentry.xcframework/macos-arm64_arm64e_x86_64",
+      "-Xcc",
+      "-I",
+      "-Xcc",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/artifacts/sentry-cocoa/Sentry/Sentry.xcframework/macos-arm64_arm64e_x86_64",
+      "-module-cache-path",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-F",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/include/StreamHaven-Swift.h",
+      "-swift-version",
+      "5",
+      "-Xfrontend",
+      "-experimental-lazy-typecheck",
+      "-Xfrontend",
+      "-experimental-skip-all-function-bodies",
+      "-Xfrontend",
+      "-experimental-allow-module-with-compiler-errors",
+      "-Xfrontend",
+      "-empty-abi-descriptor",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "streamhaven",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "StreamHavenPackageTests" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "StreamHavenPackageTests",
+      "-package-name",
+      "streamhaven",
+      "-c",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenPackageTests.derived/runner.swift",
+      "-I",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Modules",
+      "-target",
+      "x86_64-apple-macosx13.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-Onone",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j20",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-I",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/artifacts/sentry-cocoa/Sentry/Sentry.xcframework/macos-arm64_arm64e_x86_64",
+      "-Xcc",
+      "-I",
+      "-Xcc",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/artifacts/sentry-cocoa/Sentry/Sentry.xcframework/macos-arm64_arm64e_x86_64",
+      "-module-cache-path",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-F",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenPackageTests.build/include/StreamHavenPackageTests-Swift.h",
+      "-Xfrontend",
+      "-experimental-lazy-typecheck",
+      "-Xfrontend",
+      "-experimental-skip-all-function-bodies",
+      "-Xfrontend",
+      "-experimental-allow-module-with-compiler-errors",
+      "-Xfrontend",
+      "-empty-abi-descriptor",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "streamhaven",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "StreamHavenTests" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "StreamHavenTests",
+      "-package-name",
+      "streamhaven",
+      "-c",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/AccessibilityModeTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/AdultContentDetectionTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/AdultContentFilterTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/AudioSubtitleManagerTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/CardViewTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/CloudKitSyncTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/DenormalizationTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/DownloadTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/EPGCacheManagerTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/EPGParserTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/ErrorPropagationTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/FTSTriggerTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/FavoritesManagerTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/FranchiseGroupingTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/FullTextSearchManagerTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/Helpers/MockManagers.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/Helpers/MockURLProtocol.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/HoverPreviewTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/IntegrationTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/KeychainHelperTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/LiveActivityTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/M3UPlaylistParserEdgeCasesTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/M3UPlaylistParserTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/MultiSourceSystemTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/NavigationCoordinatorTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/OptimizedFetchTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/ParserPerformanceTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PerformanceRegressionTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PersistenceIntegrationTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PiPSupportTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PlaybackManagerTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PlaybackProgressTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PlaylistCacheManagerStressTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PreBufferTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/RecommendationsTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SearchFiltersTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SearchIndexTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SettingsManagerTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SkipIntroTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SmartSummaryManagerTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/StreamCacheManagerTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SubscriptionManagerTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SubtitleManagerTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/TMDbManagerTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/UpNextQueueTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/VODOrderingTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/WatchlistTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/XtreamCodesEdgeCasesTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/XtreamCodesParserTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/XtreamParserTests.swift",
+      "-I",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/Modules",
+      "-target",
+      "x86_64-apple-macosx14.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-Onone",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j20",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-I",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/artifacts/sentry-cocoa/Sentry/Sentry.xcframework/macos-arm64_arm64e_x86_64",
+      "-Xcc",
+      "-I",
+      "-Xcc",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/artifacts/sentry-cocoa/Sentry/Sentry.xcframework/macos-arm64_arm64e_x86_64",
+      "-module-cache-path",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-F",
+      "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug",
+      "-swift-version",
+      "5",
+      "-Xfrontend",
+      "-experimental-lazy-typecheck",
+      "-Xfrontend",
+      "-experimental-skip-all-function-bodies",
+      "-Xfrontend",
+      "-experimental-allow-module-with-compiler-errors",
+      "-Xfrontend",
+      "-empty-abi-descriptor",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "streamhaven",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "SentryCppHelper" : [
+      "Sentry"
+    ],
+    "SentryInternal" : [
+
+    ],
+    "SentrySwiftUI" : [
+      "SentryInternal",
+      "Sentry"
+    ],
+    "StreamHaven" : [
+      "SentryCppHelper",
+      "Sentry"
+    ],
+    "StreamHavenPackageTests" : [
+      "StreamHavenTests",
+      "StreamHaven",
+      "SentryCppHelper",
+      "Sentry"
+    ],
+    "StreamHavenTests" : [
+      "StreamHaven",
+      "SentryCppHelper",
+      "Sentry"
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+
+  },
+  "traitConfiguration" : {
+    "default" : {
+
+    }
+  },
+  "writeCommands" : {
+    "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentryCppHelper.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentryCppHelper/SentryCppHelper.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentryCppHelper.build/sources"
+    },
+    "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentrySwiftUI.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/Preview/PreviewRedactOptions.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/Preview/SentryReplayMaskPreview.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/Preview/SentryReplayMaskPreviewUIView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/SentryReplayView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/SentrySpanOperation.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/SentryTraceOrigin.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/SentryTracedView.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/SentrySwiftUI.build/sources"
+    },
+    "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/App/StreamHavenApp.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/App/StreamHavenTVApp.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Channel+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/ChannelVariant+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Download+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/EPGEntry+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Episode+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Favorite+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Movie+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/PlaylistCache+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/PlaylistSource+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Profile+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Season+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Series+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/StreamCache+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/StreamCache+CoreDataProperties.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/UpNextQueueItem+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/WatchHistory+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/Watchlist+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Models/WatchlistItem+CoreDataClass.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Monetization/MonetizationConfig.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Monetization/StoreKitManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Monetization/StoreKitProviding.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Monetization/SubscriptionUtilities.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/AdultContentDetector.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/EPGParser.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/FranchiseGroupingManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/M3UPlaylistParser.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/PlaylistParser.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/TMDbManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/VODOrderingManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Parsing/XtreamCodesParser.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/CloudKitSyncManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/DenormalizationExtensions.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/DownloadManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/EPGCacheManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/FullTextSearchManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/OptimizedFetchRequests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/PersistenceController.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/PlaylistCacheManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/SearchIndexSync.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/StreamCacheManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/StreamHavenData.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/AudioSubtitleManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/HoverPreviewManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/LiveActivityManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/PiPManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/PlaybackManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/PlaybackProgressTracker.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Playback/SubtitleManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Protocols/ManagerProtocols.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/AddPlaylistView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/AddSourceView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/CardView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/ContentView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/DownloadsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/EPGTimelineRow.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/EPGView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/EditSourceView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/EmptyStateView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/FavoritesView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/HomeView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/MainView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/MovieDetailView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/MultiSourceContentView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/NavigationCoordinator.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/PlaybackViewController.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/PlaylistSourcesView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/PreviewVideoView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/ProfileSelectionView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/SearchView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/SeriesDetailView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/SettingsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/SourceModePromptView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/UpNextView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/Views-tvOS/HomeView-tvOS.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/WatchlistsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/UI/iPadContainerView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/FavoritesManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/MultiSourceContentManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/PlaylistSourceManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/ProfileManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/SettingsManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/SubscriptionManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/UpNextQueueManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/WatchHistoryManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/User/WatchlistManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/ErrorReporter.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/Errors.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/IntroSkipperManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/KeychainHelper.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/LiveActivityHelper.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/NetworkLoggerURLProtocol.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/PerformanceLogger.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/RateLimiter.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/Rating.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/SecureSession.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Utilities/SmartSummaryManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/DerivedSources/resource_bundle_accessor.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/sources"
+    },
+    "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenPackageTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenPackageTests.derived/runner.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenPackageTests.build/sources"
+    },
+    "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/AccessibilityModeTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/AdultContentDetectionTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/AdultContentFilterTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/AudioSubtitleManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/CardViewTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/CloudKitSyncTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/DenormalizationTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/DownloadTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/EPGCacheManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/EPGParserTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/ErrorPropagationTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/FTSTriggerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/FavoritesManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/FranchiseGroupingTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/FullTextSearchManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/Helpers/MockManagers.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/Helpers/MockURLProtocol.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/HoverPreviewTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/IntegrationTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/KeychainHelperTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/LiveActivityTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/M3UPlaylistParserEdgeCasesTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/M3UPlaylistParserTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/MultiSourceSystemTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/NavigationCoordinatorTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/OptimizedFetchTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/ParserPerformanceTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PerformanceRegressionTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PersistenceIntegrationTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PiPSupportTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PlaybackManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PlaybackProgressTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PlaylistCacheManagerStressTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/PreBufferTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/RecommendationsTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SearchFiltersTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SearchIndexTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SettingsManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SkipIntroTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SmartSummaryManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/StreamCacheManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SubscriptionManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SubtitleManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/TMDbManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/UpNextQueueTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/VODOrderingTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/WatchlistTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/XtreamCodesEdgeCasesTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/XtreamCodesParserTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/XtreamParserTests.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/sources"
+    },
+    "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+    }
+  }
+}

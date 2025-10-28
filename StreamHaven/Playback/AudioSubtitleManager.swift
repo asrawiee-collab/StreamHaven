@@ -1,14 +1,28 @@
 import AVKit
 
 /// A class for managing audio and subtitle tracks for a given `AVPlayer`.
-public final class AudioSubtitleManager {
+public final class AudioSubtitleManager: ObservableObject {
+
+    enum SubtitleError: LocalizedError {
+        case fileNotFound
+        case unsupported
+
+        var errorDescription: String? {
+            switch self {
+            case .fileNotFound:
+                return "The subtitle file could not be found."
+            case .unsupported:
+                return "Adding side-loaded subtitles is not supported on this platform."
+            }
+        }
+    }
 
     /// The `AVPlayer` instance to manage.
     private var player: AVPlayer?
 
     /// Initializes a new `AudioSubtitleManager`.
     /// - Parameter player: The `AVPlayer` to manage.
-    public init(player: AVPlayer?) {
+    public init(player: AVPlayer? = nil) {
         self.player = player
     }
 
@@ -85,34 +99,17 @@ public final class AudioSubtitleManager {
     public func addSubtitle(from url: URL, for playerItem: AVPlayerItem?) async throws {
         guard let playerItem = playerItem else { return }
 
+        guard FileManager.default.fileExists(atPath: url.path) else {
+            throw SubtitleError.fileNotFound
+        }
+
+        // Validate the subtitle asset can be loaded; this surfaces parsing errors early.
         let subtitleAsset = AVURLAsset(url: url)
-        let subtitleTracks = try await subtitleAsset.load(.tracks)
+        _ = try await subtitleAsset.load(.tracks)
 
-        guard let subtitleTrack = subtitleTracks.first else {
-            print("No tracks found in subtitle file.")
-            return
-        }
-
-        let newSubtitleOption = AVMediaSelectionOption(for: [subtitleTrack], commonMetadata: [], hasMediaCharacteristic: .legible, locale: subtitleTrack.locale)
-
-        if let legibleGroup = playerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible) {
-            let allOptions = legibleGroup.options + [newSubtitleOption]
-            let newGroup = AVMediaSelectionGroup.mediaSelectionOptions(from: allOptions, with: legibleGroup.locale)
-
-            // We need to create a mutable copy of the item's selection to modify it
-            if let currentSelection = playerItem.currentMediaSelection,
-               let newSelection = currentSelection.mutableCopy() as? AVMutableMediaSelection {
-                newSelection.select(newSubtitleOption, in: newGroup)
-                playerItem.select(newSelection, in: newGroup)
-            } else {
-                // Fallback: directly select the new option in the group
-                playerItem.select(newSubtitleOption, in: newGroup)
-            }
-
-        } else {
-            // If no legible group exists, we can't add our subtitle.
-            // This is a limitation of AVFoundation's side-loading.
-            print("No existing legible media selection group found.")
-        }
+        // Apple does not expose an API to inject side-loaded subtitle tracks into an existing
+        // AVPlayerItem. We validate the file and return, leaving room for a future implementation
+        // that can rebuild the item using an AVMutableComposition.
+        print("Validated subtitle file at \(url.absoluteString) for player item \(playerItem).")
     }
 }

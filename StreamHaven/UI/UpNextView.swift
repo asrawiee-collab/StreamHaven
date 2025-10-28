@@ -1,6 +1,9 @@
+#if os(iOS) || os(tvOS)
+import CoreData
 import SwiftUI
 
 /// View displaying the Up Next queue with management controls.
+@available(iOS 16.0, tvOS 16.0, *)
 public struct UpNextView: View {
     @EnvironmentObject var queueManager: UpNextQueueManager
     @EnvironmentObject var profileManager: ProfileManager
@@ -88,6 +91,7 @@ public struct UpNextView: View {
     
     // MARK: - Empty State
     
+    @available(iOS 16.0, tvOS 16.0, *)
     private var emptyState: some View {
         Section {
             VStack(spacing: 16) {
@@ -170,6 +174,7 @@ public struct UpNextView: View {
 
 // MARK: - Queue Item Row
 
+@available(iOS 16.0, tvOS 16.0, *)
 struct UpNextQueueItemRow: View {
     @ObservedObject var item: UpNextQueueItem
     @Environment(\.managedObjectContext) private var context
@@ -272,6 +277,7 @@ struct UpNextQueueItemRow: View {
 
 // MARK: - Up Next Preview (for HomeView)
 
+@available(iOS 16.0, tvOS 16.0, *)
 public struct UpNextPreview: View {
     @EnvironmentObject var queueManager: UpNextQueueManager
     @Environment(\.managedObjectContext) private var context
@@ -306,6 +312,7 @@ public struct UpNextPreview: View {
     }
 }
 
+@available(iOS 16.0, tvOS 16.0, *)
 struct UpNextPreviewCard: View {
     @ObservedObject var item: UpNextQueueItem
     @Environment(\.managedObjectContext) private var context
@@ -393,3 +400,5 @@ struct UpNextPreviewCard: View {
         }
     }
 }
+
+#endif

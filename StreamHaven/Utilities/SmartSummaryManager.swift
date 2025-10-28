@@ -50,38 +50,9 @@ public class SmartSummaryManager: ObservableObject {
             return fullPlot
         }
         
-        // Use NLSummarizer for extractive summarization (available iOS 16+, tvOS 16+)
-        if #available(iOS 16.0, tvOS 16.0, *) {
-            do {
-                let summarizer = try NLSummarizer(unit: .sentence)
-                summarizer.string = fullPlot
-                
-                // Request top N sentences
-                let summaryRange = summarizer.summarySentences(count: maxSentences)
-                
-                guard !summaryRange.isEmpty else {
-                    logger.warning("Summarizer returned empty results, falling back to truncation")
-                    return truncateToSentences(fullPlot, count: maxSentences)
-                }
-                
-                // Extract summary sentences in original order
-                let summary = summaryRange
-                    .sorted { $0.lowerBound < $1.lowerBound }
-                    .map { String(fullPlot[$0]) }
-                    .joined(separator: " ")
-                
-                logger.info("Generated \(summaryRange.count)-sentence summary from \(sentenceCount) sentences")
-                return summary
-                
-            } catch {
-                logger.error("NLSummarizer failed: \(error.localizedDescription)")
-                return truncateToSentences(fullPlot, count: maxSentences)
-            }
-        } else {
-            // Fallback for older OS versions: simple truncation
-            logger.warning("NLSummarizer unavailable (iOS/tvOS < 16), using truncation fallback")
-            return truncateToSentences(fullPlot, count: maxSentences)
-        }
+        // NLSummarizer is not available on all build targets; use deterministic truncation fallback.
+        logger.info("Using fallback summarization (first \(maxSentences) sentences)")
+        return truncateToSentences(fullPlot, count: maxSentences)
     }
     
     // MARK: - Fallback Methods

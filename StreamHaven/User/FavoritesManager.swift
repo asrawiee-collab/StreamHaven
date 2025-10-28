@@ -1,89 +1,79 @@
-import Foundation
 import CoreData
-import SwiftUI
+import Foundation
 
-/// A class for managing a user's favorites.
-public class FavoritesManager: ObservableObject, FavoritesManaging {
+/// Handles adding and removing favorites for a given profile.
+public final class FavoritesManager: ObservableObject, FavoritesManaging {
     private let context: NSManagedObjectContext
     private let profile: Profile
-    private var cloudKitSyncManager: CloudKitSyncManager?
+    private let cloudKitSyncManager: CloudKitSyncManager?
 
-    /// Initializes a new `FavoritesManager`.
-    ///
-    /// - Parameters:
-    ///   - context: The `NSManagedObjectContext` to use for Core Data operations.
-    ///   - profile: The `Profile` for which to manage favorites.
-    ///   - cloudKitSyncManager: Optional CloudKit sync manager for cross-device sync.
     public init(context: NSManagedObjectContext, profile: Profile, cloudKitSyncManager: CloudKitSyncManager? = nil) {
         self.context = context
         self.profile = profile
         self.cloudKitSyncManager = cloudKitSyncManager
     }
 
-    /// Checks if an item is a favorite.
-    ///
-    /// - Parameter item: The `NSManagedObject` to check (e.g., `Movie`, `Series`, `Channel`).
-    /// - Returns: `true` if the item is a favorite, `false` otherwise.
     public func isFavorite(item: NSManagedObject) -> Bool {
-    /// Toggles the favorite status of an item.
-    ///
-    /// - Parameter item: The `NSManagedObject` to toggle (e.g., `Movie`, `Series`, `Channel`).
+        findFavorite(for: item) != nil
+    }
+
     public func toggleFavorite(for item: NSManagedObject) {
         if let favorite = findFavorite(for: item) {
-            // It is a favorite, so remove it
-            
-            // Delete from CloudKit first
-            Task { @MainActor in
-                try? await cloudKitSyncManager?.deleteFavorite(favorite)
-            }
-            
-            context.delete(favorite)
+            removeFavorite(favorite)
         } else {
-            // It is not a favorite, so add it
-            let newFavorite = Favorite(context: context)
-            newFavorite.favoritedDate = Date()
-            newFavorite.modifiedAt = Date()
-            newFavorite.profile = profile
+            addFavorite(for: item)
+        }
+    }
 
-            if let movie = item as? Movie {
-                newFavorite.movie = movie
-            } else if let series = item as? Series {
-                newFavorite.series = series
-            } else if let channel = item as? Channel {
-                newFavorite.channel = channel
-            }
-            
-            saveContext()
-            
-            // Sync to CloudKit if enabled
-            Task { @MainActor in
-                try? await cloudKitSyncManager?.syncFavorite(newFavorite)
-            }
+    // MARK: - Private helpers
+
+    private func addFavorite(for item: NSManagedObject) {
+        let favorite = Favorite(context: context)
+        favorite.profile = profile
+        favorite.favoritedDate = Date()
+        favorite.modifiedAt = Date()
+
+        switch item {
+        case let movie as Movie:
+            favorite.movie = movie
+        case let series as Series:
+            favorite.series = series
+        case let channel as Channel:
+            favorite.channel = channel
+        default:
+            context.delete(favorite)
             return
         }
 
-        saveContext()
-    }   }
+        persistChanges(contextMessage: "FavoritesManager.addFavorite.save")
 
-        saveContext()
+        Task { @MainActor in
+            try? await cloudKitSyncManager?.syncFavorite(favorite)
+        }
     }
 
-    /// Finds the `Favorite` object for a given item.
-    ///
-    /// - Parameter item: The `NSManagedObject` to find the favorite for.
-    /// - Returns: The `Favorite` object, or `nil` if the item is not a favorite.
+    private func removeFavorite(_ favorite: Favorite) {
+        Task { @MainActor in
+            try? await cloudKitSyncManager?.deleteFavorite(favorite)
+        }
+
+        context.delete(favorite)
+        persistChanges(contextMessage: "FavoritesManager.removeFavorite.save")
+    }
+
     private func findFavorite(for item: NSManagedObject) -> Favorite? {
         let request: NSFetchRequest<Favorite> = Favorite.fetchRequest()
         var predicates: [NSPredicate] = [NSPredicate(format: "profile == %@", profile)]
 
-        if let movie = item as? Movie {
+        switch item {
+        case let movie as Movie:
             predicates.append(NSPredicate(format: "movie == %@", movie))
-        } else if let series = item as? Series {
+        case let series as Series:
             predicates.append(NSPredicate(format: "series == %@", series))
-        } else if let channel = item as? Channel {
+        case let channel as Channel:
             predicates.append(NSPredicate(format: "channel == %@", channel))
-        } else {
-            return nil // Unsupported type
+        default:
+            return nil
         }
 
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
@@ -92,18 +82,19 @@ public class FavoritesManager: ObservableObject, FavoritesManaging {
         do {
             return try context.fetch(request).first
         } catch {
-            ErrorReporter.log(error, context: "FavoritesManager.findFavorite")
+            ErrorReporter.log(error, context: "FavoritesManager.findFavorite.fetch")
             return nil
         }
     }
 
-    /// Saves the context if there are changes.
-    private func saveContext() {
+    private func persistChanges(contextMessage: String) {
         guard context.hasChanges else { return }
+
         do {
             try context.save()
         } catch {
-            ErrorReporter.log(error, context: "FavoritesManager.saveContext")
+            ErrorReporter.log(error, context: contextMessage)
         }
     }
+
 }

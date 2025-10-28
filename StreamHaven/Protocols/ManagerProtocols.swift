@@ -55,6 +55,7 @@ public protocol FavoritesManaging {
 // MARK: - Watch History Protocol
 
 /// Protocol for managing user watch history.
+@MainActor
 public protocol WatchHistoryManaging {
     /// Finds the `WatchHistory` object for a given item.
     ///
@@ -73,6 +74,7 @@ public protocol WatchHistoryManaging {
 // MARK: - Playback Protocol
 
 /// Protocol for managing media playback.
+@MainActor
 public protocol PlaybackManaging: AnyObject, ObservableObject {
     /// The `AVPlayer` instance.
     var player: AVPlayer? { get }

@@ -10,6 +10,9 @@ import CoreData
 
 @objc(Watchlist)
 public class Watchlist: NSManagedObject {
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<Watchlist> {
+        NSFetchRequest<Watchlist>(entityName: "Watchlist")
+    }
     
     // MARK: - Computed Properties
     

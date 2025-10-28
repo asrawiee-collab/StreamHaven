@@ -41,7 +41,14 @@ public class SettingsManager: ObservableObject {
     /// A boolean indicating whether iCloud sync is enabled.
     @AppStorage("enableCloudSync") public var enableCloudSync: Bool = false
     /// Last successful iCloud sync timestamp.
+#if os(iOS) || os(tvOS)
     @AppStorage("lastCloudSyncDate") public var lastCloudSyncDate: Date?
+#else
+    public var lastCloudSyncDate: Date? {
+        get { UserDefaults.standard.object(forKey: "lastCloudSyncDate") as? Date }
+        set { UserDefaults.standard.set(newValue, forKey: "lastCloudSyncDate") }
+    }
+#endif
     /// A boolean indicating whether Live Activities are enabled (iOS 16.1+).
     @AppStorage("enableLiveActivities") public var enableLiveActivities: Bool = true
     

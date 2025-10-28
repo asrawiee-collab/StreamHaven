@@ -4,8 +4,8 @@ import Sentry
 #endif
 import os.log
 
-/// A struct that manages the Core Data stack for the application.
-public struct PersistenceController {
+/// Manages the Core Data stack for the application.
+public final class PersistenceController {
     /// The persistent container for the Core Data stack.
     public let container: NSPersistentContainer
 
@@ -60,12 +60,16 @@ public struct DefaultPersistenceProvider: PersistenceProviding {
     public init(controller: PersistenceController) {
         self.container = controller.container
     }
+
+    public init() {
+        self.container = PersistenceController.shared.container
+    }
 }
 
 private extension PersistenceController {
     func destroyStore(at url: URL) throws {
         let coordinator = container.persistentStoreCoordinator
-        if let store = coordinator.persistentStore(for: url) {
+        if coordinator.persistentStore(for: url) != nil {
             try coordinator.destroyPersistentStore(at: url, ofType: NSSQLiteStoreType, options: nil)
         } else {
             // Remove SQLite files if present
@@ -75,4 +79,14 @@ private extension PersistenceController {
             try? fm.removeItem(at: url.appendingPathExtension("-wal"))
         }
     }
+}
+
+public extension PersistenceController {
+    static let shared: PersistenceController = {
+        PersistenceController()
+    }()
+
+    static let preview: PersistenceController = {
+        PersistenceController(inMemory: true)
+    }()
 }

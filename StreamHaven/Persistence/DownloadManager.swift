@@ -116,18 +116,23 @@ public class DownloadManager: NSObject, ObservableObject {
         
         // Start download task
         let options = createDownloadOptions()
-        let task = downloadSession.makeAssetDownloadTask(
+        guard let task = downloadSession.makeAssetDownloadTask(
             asset: asset,
             assetTitle: title,
             assetArtworkData: nil,
             options: options
-        )
-        
+        ) else {
+            download.downloadStatus = .failed
+            try context.save()
+            throw DownloadError.notSupported
+        }
+
+        task.taskDescription = streamURL
         activeDownloadTasks[streamURL] = task
         download.downloadStatus = .downloading
         try context.save()
-        
-        task?.resume()
+
+        task.resume()
         
         loadDownloads()
         logger.info("Started download: \(title)")
@@ -310,6 +315,72 @@ public class DownloadManager: NSObject, ObservableObject {
         }
         return nil
     }
+
+    // MARK: - Delegate Helpers
+
+    @MainActor
+    private func handleDownloadCompletion(streamURL: String, location: URL) {
+        let fetchRequest: NSFetchRequest<Download> = Download.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "streamURL == %@", streamURL)
+
+        guard let download = try? context.fetch(fetchRequest).first else {
+            return
+        }
+
+        download.filePath = location.path
+        download.downloadStatus = .completed
+        download.progress = 1.0
+        download.downloadedAt = Date()
+
+        download.expiresAt = Calendar.current.date(byAdding: .day, value: 30, to: Date())
+
+        if let attributes = try? FileManager.default.attributesOfItem(atPath: location.path),
+           let size = attributes[.size] as? Int64 {
+            download.fileSize = size
+        }
+
+        try? context.save()
+
+        activeDownloadTasks.removeValue(forKey: streamURL)
+        loadDownloads()
+        calculateStorageUsed()
+
+        let title = download.contentTitle ?? "Unknown"
+        logger.info("Download completed: \(title, privacy: .public)")
+    }
+
+    @MainActor
+    private func handleDownloadProgress(streamURL: String, percentComplete: Double) {
+        let fetchRequest: NSFetchRequest<Download> = Download.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "streamURL == %@", streamURL)
+
+        guard let download = try? context.fetch(fetchRequest).first else {
+            return
+        }
+
+        download.progress = Float(percentComplete)
+        try? context.save()
+    }
+
+    @MainActor
+    private func handleDownloadFailure(streamURL: String, error: NSError) {
+        let fetchRequest: NSFetchRequest<Download> = Download.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "streamURL == %@", streamURL)
+
+        guard let download = try? context.fetch(fetchRequest).first else {
+            return
+        }
+
+        download.downloadStatus = .failed
+        try? context.save()
+
+        activeDownloadTasks.removeValue(forKey: streamURL)
+        loadDownloads()
+
+        downloadError = error
+        let title = download.contentTitle ?? "Unknown"
+        logger.error("Download failed: \(title, privacy: .public) - \(error.localizedDescription, privacy: .public)")
+    }
     
     private func calculateStorageUsed() {
         let fetchRequest: NSFetchRequest<Download> = Download.fetchRequest()
@@ -348,87 +419,42 @@ public class DownloadManager: NSObject, ObservableObject {
 
 // MARK: - AVAssetDownloadDelegate
 
-extension DownloadManager: AVAssetDownloadDelegate {
+@available(iOS 15.0, macOS 11.0, *)
+extension DownloadManager: AVAssetDownloadDelegate, URLSessionTaskDelegate {
     
-    public func urlSession(_ session: URLSession, assetDownloadTask: AVAssetDownloadTask, didFinishDownloadingTo location: URL) {
-        guard let streamURL = assetDownloadTask.taskDescription ?? assetDownloadTask.originalRequest?.url?.absoluteString else {
-            return
+    nonisolated public func urlSession(_ session: URLSession, assetDownloadTask: AVAssetDownloadTask, didFinishDownloadingTo location: URL) {
+        let streamURL = assetDownloadTask.taskDescription ?? assetDownloadTask.urlAsset.url.absoluteString
+        guard !streamURL.isEmpty else { return }
+
+        Task { @MainActor [weak self] in
+            self?.handleDownloadCompletion(streamURL: streamURL, location: location)
         }
-        
-        let fetchRequest: NSFetchRequest<Download> = Download.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "streamURL == %@", streamURL)
-        
-        guard let download = try? context.fetch(fetchRequest).first else {
-            return
-        }
-        
-        download.filePath = location.path
-        download.downloadStatus = .completed
-        download.progress = 1.0
-        download.downloadedAt = Date()
-        
-        // Set expiration (30 days from now)
-        download.expiresAt = Calendar.current.date(byAdding: .day, value: 30, to: Date())
-        
-        // Calculate file size
-        if let attributes = try? FileManager.default.attributesOfItem(atPath: location.path),
-           let size = attributes[.size] as? Int64 {
-            download.fileSize = size
-        }
-        
-        try? context.save()
-        
-        activeDownloadTasks.removeValue(forKey: streamURL)
-        loadDownloads()
-        calculateStorageUsed()
-        
-        logger.info("Download completed: \(download.contentTitle ?? "Unknown")")
     }
     
-    public func urlSession(_ session: URLSession, assetDownloadTask: AVAssetDownloadTask, didLoad timeRange: CMTimeRange, totalTimeRangesLoaded loadedTimeRanges: [NSValue], timeRangeExpectedToLoad: CMTimeRange) {
-        guard let streamURL = assetDownloadTask.taskDescription ?? assetDownloadTask.originalRequest?.url?.absoluteString else {
-            return
-        }
-        
-        let fetchRequest: NSFetchRequest<Download> = Download.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "streamURL == %@", streamURL)
-        
-        guard let download = try? context.fetch(fetchRequest).first else {
-            return
-        }
-        
+    nonisolated public func urlSession(_ session: URLSession, assetDownloadTask: AVAssetDownloadTask, didLoad timeRange: CMTimeRange, totalTimeRangesLoaded loadedTimeRanges: [NSValue], timeRangeExpectedToLoad expectedTimeRange: CMTimeRange) {
+        let streamURL = assetDownloadTask.taskDescription ?? assetDownloadTask.urlAsset.url.absoluteString
+        guard !streamURL.isEmpty else { return }
+
         var percentComplete: Double = 0.0
         for value in loadedTimeRanges {
             let loadedRange = value.timeRangeValue
-            percentComplete += CMTimeGetSeconds(loadedRange.duration) / CMTimeGetSeconds(timeRangeExpectedToLoad.duration)
+            percentComplete += CMTimeGetSeconds(loadedRange.duration) / CMTimeGetSeconds(expectedTimeRange.duration)
         }
-        
-        download.progress = Float(percentComplete)
-        try? context.save()
+
+        Task { @MainActor [weak self] in
+            self?.handleDownloadProgress(streamURL: streamURL, percentComplete: percentComplete)
+        }
     }
     
-    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        guard let error = error else { return }
-        
-        guard let streamURL = task.taskDescription ?? task.originalRequest?.url?.absoluteString else {
-            return
+    nonisolated public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        guard let error else { return }
+        let streamURL = task.taskDescription ?? task.originalRequest?.url?.absoluteString ?? ""
+        guard !streamURL.isEmpty else { return }
+
+        let nsError = error as NSError
+        Task { @MainActor [weak self] in
+            self?.handleDownloadFailure(streamURL: streamURL, error: nsError)
         }
-        
-        let fetchRequest: NSFetchRequest<Download> = Download.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "streamURL == %@", streamURL)
-        
-        guard let download = try? context.fetch(fetchRequest).first else {
-            return
-        }
-        
-        download.downloadStatus = .failed
-        try? context.save()
-        
-        activeDownloadTasks.removeValue(forKey: streamURL)
-        loadDownloads()
-        
-        downloadError = error
-        logger.error("Download failed: \(download.contentTitle ?? "Unknown") - \(error.localizedDescription)")
     }
 }
 

@@ -34,29 +34,44 @@ public final class PlaylistParser {
     /// - Parameters:
     ///   - url: The URL of the playlist.
     ///   - context: The `NSManagedObjectContext` to perform the import on.
-    public static func parse(url: URL, context: NSManagedObjectContext) async throws {
+    ///   - data: Optional pre-fetched playlist data to avoid downloading twice for M3U sources.
+    public static func parse(url: URL, context: NSManagedObjectContext, data: Data? = nil) async throws {
         let type = detectPlaylistType(from: url)
 
-        let (data, _) = try await URLSession.shared.data(from: url)
+        let payload: Data
+        if let data {
+            payload = data
+        } else {
+            let (downloadedData, _) = try await URLSession.shared.data(from: url)
+            payload = downloadedData
+        }
 
-        try await context.perform {
-            switch type {
-            case .m3u:
-                try M3UPlaylistParser.parse(data: data, context: context)
-            case .xtreamCodes:
-                guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-                      let username = components.queryItems?.first(where: { $0.name == "username" })?.value,
-                      let password = components.queryItems?.first(where: { $0.name == "password" })?.value else {
-                    throw PlaylistImportError.invalidURL
+        switch type {
+        case .m3u:
+            var parseError: Error?
+            context.performAndWait {
+                do {
+                    try M3UPlaylistParser.parse(data: payload, context: context)
+                } catch {
+                    parseError = error
                 }
-
-                let service = "StreamHaven.XtreamCodes"
-                KeychainHelper.savePassword(password: password, for: username, service: service)
-
-                try await XtreamCodesParser.parse(url: url, username: username, password: password, context: context)
-            case .unknown:
-                throw PlaylistImportError.unsupportedPlaylistType
             }
+            if let parseError {
+                throw parseError
+            }
+        case .xtreamCodes:
+            guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+                  let username = components.queryItems?.first(where: { $0.name == "username" })?.value,
+                  let password = components.queryItems?.first(where: { $0.name == "password" })?.value else {
+                throw PlaylistImportError.invalidURL
+            }
+
+            let service = "StreamHaven.XtreamCodes"
+            KeychainHelper.savePassword(password: password, for: username, service: service)
+
+            try await XtreamCodesParser.parse(url: url, username: username, password: password, context: context)
+        case .unknown:
+            throw PlaylistImportError.unsupportedPlaylistType
         }
     }
 }

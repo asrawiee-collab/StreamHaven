@@ -37,6 +37,8 @@ public struct iPadContainerView: View {
     }
 
     /// The body of the view.
+    public var body: some View {
+        NavigationSplitView {
             List(selection: $selectedTab) {
                 Label(SidebarTab.home.rawValue, systemImage: "house").tag(SidebarTab.home)
                 Label(SidebarTab.favorites.rawValue, systemImage: "heart").tag(SidebarTab.favorites)
@@ -44,9 +46,8 @@ public struct iPadContainerView: View {
                 Label(SidebarTab.search.rawValue, systemImage: "magnifyingglass").tag(SidebarTab.search)
                 Label(SidebarTab.settings.rawValue, systemImage: "gear").tag(SidebarTab.settings)
             }
-            .navigationTitle("StreamHaven")awValue, systemImage: "gear").tag(SidebarTab.settings)
-            }
             .navigationTitle("StreamHaven")
+        } content: {
             switch selectedTab {
             case .home:
                 HomeView(profileManager: profileManager, onItemSelected: { selectedDetail = $0 })
@@ -61,7 +62,6 @@ public struct iPadContainerView: View {
                 SettingsView()
             case nil:
                 Text("Select a category")
-            }   Text("Select a category")
             }
         } detail: {
             if let selectedDetail = selectedDetail {

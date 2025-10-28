@@ -21,6 +21,7 @@ public struct TransactionUpdate {
     public let isRevoked: Bool
 }
 
+@available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
 public protocol StoreKitProviding {
     func loadProducts(ids: [String]) async throws -> [ProductInfo]
     func purchase(productId: String) async throws -> PurchaseResult
@@ -74,7 +75,7 @@ public final class AppleStoreKitProvider: StoreKitProviding {
         return storeProducts.map { p in
             let period = (p.subscription?.subscriptionPeriod)
             let unit: String? = period.map { period in
-                switch period.unit { case .day: return "day"; case .week: return "week"; case .month: return "month"; case .year: return "year"; @unknown default: return nil }
+                switch period.unit { case .day: return "day"; case .week: return "week"; case .month: return "month"; case .year: return "year"; @unknown default: return "unknown" }
             }
             let value: Int? = period?.value
             return ProductInfo(

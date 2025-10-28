@@ -1,0 +1,4 @@
+module SentryInternal {
+    umbrella header "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/checkouts/sentry-cocoa/Sources/SentrySwiftUI/SentryInternal/SentryInternal.h"
+    export *
+}

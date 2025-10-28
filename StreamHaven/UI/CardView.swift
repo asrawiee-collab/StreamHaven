@@ -22,9 +22,9 @@ public struct CardView: View {
             ZStack(alignment: .bottomLeading) {
                 AsyncImage(url: url) { image in
                     image
-                        .accessibilityLabel(Text(title))
                         .resizable()
                         .aspectRatio(contentMode: .fill)
+                        .accessibilityLabel(Text(title))
                 } placeholder: {
                     ZStack {
                         Color.gray
@@ -32,6 +32,8 @@ public struct CardView: View {
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
                             .padding()
+                    }
+                }
                 .frame(width: 180, height: 270)
                 .cornerRadius(10)
 #if os(tvOS)
@@ -41,8 +43,6 @@ public struct CardView: View {
                         .stroke(isFocused && settingsManager.accessibilityModeEnabled ? Color.yellow : Color.clear, lineWidth: 4)
                 )
 #endif
-                .frame(width: 180, height: 270)
-                .cornerRadius(10)
 
                 // Now/Next overlay (if available)
                 if let now = nowProgram {
@@ -64,16 +64,13 @@ public struct CardView: View {
                                 .cornerRadius(4)
                         }
                     }
+                    .padding(.bottom, 8)
+                    .padding(.leading, 8)
+                }
+            }
         }
 #if os(tvOS)
         .scaleEffect(isFocused ? (settingsManager.accessibilityModeEnabled ? 1.15 : 1.1) : 1.0)
-        .shadow(color: .black.opacity(0.7), radius: isFocused ? 20 : 0, x: 0, y: 10)
-        .animation(.easeInOut(duration: 0.2), value: isFocused)
-#endif
-    }
-}
-#if os(tvOS)
-        .scaleEffect(isFocused ? 1.1 : 1.0)
         .shadow(color: .black.opacity(0.7), radius: isFocused ? 20 : 0, x: 0, y: 10)
         .animation(.easeInOut(duration: 0.2), value: isFocused)
 #endif

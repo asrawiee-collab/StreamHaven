@@ -5,7 +5,8 @@ let package = Package(
     name: "StreamHaven",
     platforms: [
         .iOS(.v17),
-        .tvOS(.v17)
+        .tvOS(.v17),
+        .macOS(.v13)
     ],
     products: [
         // Library product for modular reuse

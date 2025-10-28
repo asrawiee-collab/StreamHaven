@@ -27,7 +27,7 @@ public final class PlaylistCacheManager {
     ///   - context: The `NSManagedObjectContext` to perform the save on.
     /// - Returns: The file path of the cached playlist, or `nil` if caching failed.
     /// - Important: This method performs file I/O and should be called on a background context.
-    public static func cachePlaylist(url: URL, data: Data, sourceID: UUID? = nil, context: NSManagedObjectContext) -> String? {
+    public static func cachePlaylist(url: URL, data: Data, context: NSManagedObjectContext, epgURL: URL? = nil, sourceID: UUID? = nil) -> String? {
         // Ensure we're not on the main thread for file I/O
         precondition(!Thread.isMainThread, "PlaylistCacheManager.cachePlaylist should not be called on the main thread")
         
@@ -62,6 +62,7 @@ public final class PlaylistCacheManager {
 
             cacheEntry.filePath = fileURL.path
             cacheEntry.lastRefreshed = Date()
+            cacheEntry.epgURL = epgURL?.absoluteString
 
             try context.save()
             print("Successfully cached playlist from \(url.absoluteString) to \(fileURL.path) for source \(sourceID?.uuidString ?? "unknown")")

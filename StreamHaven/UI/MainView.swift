@@ -1,5 +1,7 @@
 import SwiftUI
 
+#if os(iOS) || os(tvOS)
+
 /// The main view of the application, which contains the tab bar for iPhone and the split view for iPad.
 /// This view is only displayed after a profile has been selected, deferring the creation of
 /// heavy services like SubtitleManager, AudioSubtitleManager, and TMDbManager until they're needed.
@@ -180,3 +182,24 @@ public struct MainView: View {
         }
     }
 }
+
+#else
+
+public struct MainView: View {
+    @ObservedObject var profileManager: ProfileManager
+    @ObservedObject var settingsManager: SettingsManager
+    private let persistenceProvider: PersistenceProviding
+
+    public init(profileManager: ProfileManager, settingsManager: SettingsManager, persistenceProvider: PersistenceProviding = DefaultPersistenceProvider()) {
+        self.profileManager = profileManager
+        self.settingsManager = settingsManager
+        self.persistenceProvider = persistenceProvider
+    }
+
+    public var body: some View {
+        Text("MainView is not available on this platform.")
+            .padding()
+    }
+}
+
+#endif

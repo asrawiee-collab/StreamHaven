@@ -292,10 +292,14 @@ final class UpNextQueueTests: XCTestCase {
             context: context
         )
         
-        XCTAssertNotNil(item)
-        XCTAssertEqual(item?.queueContentType, .movie)
-        XCTAssertEqual(item?.position, 0)
-        XCTAssertFalse(item?.autoAdded ?? true)
+        guard let item = item else {
+            XCTFail("Failed to create UpNextQueueItem")
+            return
+        }
+        
+        XCTAssertEqual(item.queueContentType, .movie)
+        XCTAssertEqual(item.position, 0)
+        XCTAssertFalse(item.autoAdded)
     }
     
     func testQueueItemFetchContent() throws {
@@ -307,9 +311,14 @@ final class UpNextQueueTests: XCTestCase {
             context: context
         )
         
+        guard let item = item else {
+            XCTFail("Failed to create UpNextQueueItem")
+            return
+        }
+        
         try context.save()
         
-        let fetchedContent = item?.fetchContent(context: context)
+        let fetchedContent = item.fetchContent(context: context)
         
         // Note: fetchContent may not work in test due to objectID URI handling
         // In real app, this would return the movie
@@ -376,9 +385,9 @@ final class UpNextQueueTests: XCTestCase {
         queueManager.loadQueue(for: testProfile)
         
         // Manually change positions
-        queueManager.queueItems[0].position = 10
-        queueManager.queueItems[1].position = 20
-        queueManager.queueItems[2].position = 5
+        queueManager.queueItems[0].position = 2
+        queueManager.queueItems[1].position = 0
+        queueManager.queueItems[2].position = 1
         
         // Reorder should fix positions
         queueManager.reorderQueue(profile: testProfile)
@@ -386,8 +395,8 @@ final class UpNextQueueTests: XCTestCase {
         queueManager.loadQueue(for: testProfile)
         
         // Positions should be 0, 1, 2
-        XCTAssertEqual(queueManager.queueItems[0].position, 0)
-        XCTAssertEqual(queueManager.queueItems[1].position, 1)
-        XCTAssertEqual(queueManager.queueItems[2].position, 2)
+        XCTAssertEqual(queueManager.queueItems[0].contentID, testMovie2.objectID.uriRepresentation().absoluteString)
+        XCTAssertEqual(queueManager.queueItems[1].contentID, testMovie3.objectID.uriRepresentation().absoluteString)
+        XCTAssertEqual(queueManager.queueItems[2].contentID, testMovie1.objectID.uriRepresentation().absoluteString)
     }
 }

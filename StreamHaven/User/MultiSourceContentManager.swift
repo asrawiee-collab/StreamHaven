@@ -3,7 +3,7 @@ import CoreData
 
 /// Manages content grouping and source selection for multi-source playlists.
 @MainActor
-class MultiSourceContentManager {
+final class MultiSourceContentManager: ObservableObject {
     
     // MARK: - Types
     
