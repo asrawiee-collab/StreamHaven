@@ -2,12 +2,13 @@ import XCTest
 import CoreData
 @testable import StreamHaven
 
+@MainActor
 class PersistenceIntegrationTests: XCTestCase {
 
-    var persistenceController: PersistenceController?
-    var persistenceProvider: PersistenceProviding?
-    var context: NSManagedObjectContext?
-    var dataManager: StreamHavenData?
+    var persistenceController: PersistenceController? 
+    var persistenceProvider: PersistenceProviding? 
+    var context: NSManagedObjectContext? 
+    var dataManager: StreamHavenData? 
 
     override func setUp() {
         super.setUp()
@@ -53,7 +54,7 @@ class PersistenceIntegrationTests: XCTestCase {
             do {
                 try backgroundContext.save()
             } catch {
-                XCTFail("Failed to save background context: \\(error)")
+                XCTFail("Failed to save background context: \(error)")
             }
 
             context.perform {

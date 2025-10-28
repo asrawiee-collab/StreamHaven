@@ -20,56 +20,54 @@ final class AudioSubtitleManagerTests: XCTestCase {
         XCTAssertNotNil(managerWithNilPlayer)
     }
 
-    func testGetAvailableAudioTracksReturnsEmptyWithoutPlayerItem() {
-        let tracks = manager.getAvailableAudioTracks()
+    func testGetAvailableAudioTracksReturnsEmptyWithoutPlayerItem() async {
+        let tracks = await manager.getAvailableAudioTracks()
         XCTAssertTrue(tracks.isEmpty)
     }
 
-    func testGetAvailableSubtitleTracksReturnsEmptyWithoutPlayerItem() {
-        let tracks = manager.getAvailableSubtitleTracks()
+    func testGetAvailableSubtitleTracksReturnsEmptyWithoutPlayerItem() async {
+        let tracks = await manager.getAvailableSubtitleTracks()
         XCTAssertTrue(tracks.isEmpty)
     }
 
-    func testGetCurrentAudioTrackReturnsNilWithoutPlayerItem() {
-        let track = manager.getCurrentAudioTrack()
+    func testGetCurrentAudioTrackReturnsNilWithoutPlayerItem() async {
+        let track = await manager.getCurrentAudioTrack()
         XCTAssertNil(track)
     }
 
-    func testGetCurrentSubtitleTrackReturnsNilWithoutPlayerItem() {
-        let track = manager.getCurrentSubtitleTrack()
+    func testGetCurrentSubtitleTrackReturnsNilWithoutPlayerItem() async {
+        let track = await manager.getCurrentSubtitleTrack()
         XCTAssertNil(track)
     }
 
-    func testSelectAudioTrackHandlesNoPlayerItem() {
+    func testSelectAudioTrackHandlesNoPlayerItem() async {
         // Should not crash when no player item
-        XCTAssertNoThrow({
-            // Create a mock option - in real scenario would come from getAvailableAudioTracks()
-            let asset = AVURLAsset(url: URL(string: "https://example.com/video.m3u8")!)
-            if let group = asset.mediaSelectionGroup(forMediaCharacteristic: .audible),
-               let option = group.options.first {
-                manager.selectAudioTrack(option)
-            }
-        }())
+        // Create a mock option - in real scenario would come from getAvailableAudioTracks()
+        let asset = AVURLAsset(url: URL(string: "https://example.com/video.m3u8")!)
+        if let group = try? await asset.loadMediaSelectionGroup(for: .audible),
+           let option = group.options.first {
+            await manager.selectAudioTrack(option)
+        }
     }
 
-    func testSelectSubtitleTrackHandlesNoPlayerItem() {
+    func testSelectSubtitleTrackHandlesNoPlayerItem() async {
         // Should not crash when no player item
-        manager.selectSubtitleTrack(nil)
+        await manager.selectSubtitleTrack(nil)
         XCTAssertTrue(true) // No crash = success
     }
 
-    func testDisableSubtitles() {
-        manager.disableSubtitles()
+    func testDisableSubtitles() async {
+        await manager.disableSubtitles()
         
         // Should complete without error
         XCTAssertTrue(true)
     }
 
-    func testDisableSubtitlesCallsSelectWithNil() {
+    func testDisableSubtitlesCallsSelectWithNil() async {
         // Verify that disableSubtitles internally calls selectSubtitleTrack(nil)
-        manager.disableSubtitles()
+        await manager.disableSubtitles()
         
-        let currentTrack = manager.getCurrentSubtitleTrack()
+        let currentTrack = await manager.getCurrentSubtitleTrack()
         XCTAssertNil(currentTrack)
     }
 
@@ -115,13 +113,13 @@ final class AudioSubtitleManagerTests: XCTestCase {
         statusObserver.invalidate()
         
         // Now test audio track operations
-        let audioTracks = manager.getAvailableAudioTracks()
+        let audioTracks = await manager.getAvailableAudioTracks()
         // May or may not have tracks depending on the stream
         XCTAssertTrue(audioTracks.count >= 0)
         
         if let firstTrack = audioTracks.first {
-            manager.selectAudioTrack(firstTrack)
-            let current = manager.getCurrentAudioTrack()
+            await manager.selectAudioTrack(firstTrack)
+            let current = await manager.getCurrentAudioTrack()
             XCTAssertNotNil(current)
         }
     }
@@ -141,12 +139,12 @@ final class AudioSubtitleManagerTests: XCTestCase {
         await fulfillment(of: [expectation], timeout: 5.0)
         statusObserver.invalidate()
         
-        let subtitleTracks = manager.getAvailableSubtitleTracks()
+        let subtitleTracks = await manager.getAvailableSubtitleTracks()
         XCTAssertTrue(subtitleTracks.count >= 0)
         
         // Test disable
-        manager.disableSubtitles()
-        let currentAfterDisable = manager.getCurrentSubtitleTrack()
+        await manager.disableSubtitles()
+        let currentAfterDisable = await manager.getCurrentSubtitleTrack()
         XCTAssertNil(currentAfterDisable)
     }
 }

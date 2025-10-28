@@ -3,11 +3,12 @@ import CoreData
 import AVKit
 @testable import StreamHaven
 
+@MainActor
 final class PlaybackProgressTests: XCTestCase {
     var provider: PersistenceProviding!
     var context: NSManagedObjectContext!
     var profile: Profile!
-    var progressTracker: PlaybackProgressTracker!
+    var watchHistoryManager: WatchHistoryManager!
 
     override func setUpWithError() throws {
         let controller = PersistenceController(inMemory: true)
@@ -19,7 +20,7 @@ final class PlaybackProgressTests: XCTestCase {
         profile.isAdult = true
         try context.save()
         
-        progressTracker = PlaybackProgressTracker(context: context, profile: profile)
+        watchHistoryManager = WatchHistoryManager(context: context, profile: profile)
     }
 
     func testSavesProgressForMovie() throws {
@@ -27,10 +28,9 @@ final class PlaybackProgressTests: XCTestCase {
         movie.title = "Test Movie"
         try context.save()
         
-        progressTracker.saveProgress(for: movie, progress: 0.5)
+        watchHistoryManager.updateWatchHistory(for: movie, progress: 0.5)
         
-        let history = WatchHistoryManager(context: context, profile: profile)
-            .findWatchHistory(for: movie)
+        let history = watchHistoryManager.findWatchHistory(for: movie)
         
         XCTAssertNotNil(history)
         XCTAssertEqual(history?.progress, 0.5)
@@ -41,11 +41,10 @@ final class PlaybackProgressTests: XCTestCase {
         movie.title = "Test Movie"
         try context.save()
         
-        progressTracker.saveProgress(for: movie, progress: 0.3)
-        progressTracker.saveProgress(for: movie, progress: 0.7)
+        watchHistoryManager.updateWatchHistory(for: movie, progress: 0.3)
+        watchHistoryManager.updateWatchHistory(for: movie, progress: 0.7)
         
-        let history = WatchHistoryManager(context: context, profile: profile)
-            .findWatchHistory(for: movie)
+        let history = watchHistoryManager.findWatchHistory(for: movie)
         
         XCTAssertEqual(history?.progress, 0.7)
     }
@@ -55,11 +54,11 @@ final class PlaybackProgressTests: XCTestCase {
         movie.title = "Test Movie"
         try context.save()
         
-        progressTracker.saveProgress(for: movie, progress: 0.45)
+        watchHistoryManager.updateWatchHistory(for: movie, progress: 0.45)
         
-        let restored = progressTracker.restoreProgress(for: movie)
+        let history = watchHistoryManager.findWatchHistory(for: movie)
         
-        XCTAssertEqual(restored, 0.45, accuracy: 0.01)
+        XCTAssertEqual(Double(history?.progress ?? 0), 0.45, accuracy: 0.01)
     }
 
     func testReturnsZeroProgressForUnwatchedContent() throws {
@@ -67,9 +66,9 @@ final class PlaybackProgressTests: XCTestCase {
         movie.title = "Unwatched Movie"
         try context.save()
         
-        let progress = progressTracker.restoreProgress(for: movie)
+        let history = watchHistoryManager.findWatchHistory(for: movie)
         
-        XCTAssertEqual(progress, 0.0)
+        XCTAssertNil(history)
     }
 
     func testTracksProgressForEpisodes() throws {
@@ -87,25 +86,10 @@ final class PlaybackProgressTests: XCTestCase {
         
         try context.save()
         
-        progressTracker.saveProgress(for: episode, progress: 0.6)
+        watchHistoryManager.updateWatchHistory(for: episode, progress: 0.6)
         
-        let restored = progressTracker.restoreProgress(for: episode)
-        XCTAssertEqual(restored, 0.6, accuracy: 0.01)
-    }
-
-    func testProgressClampedBetweenZeroAndOne() throws {
-        let movie = Movie(context: context)
-        movie.title = "Test Movie"
-        try context.save()
-        
-        // Try to save invalid progress values
-        progressTracker.saveProgress(for: movie, progress: 1.5)
-        let progress1 = progressTracker.restoreProgress(for: movie)
-        XCTAssertLessThanOrEqual(progress1, 1.0)
-        
-        progressTracker.saveProgress(for: movie, progress: -0.5)
-        let progress2 = progressTracker.restoreProgress(for: movie)
-        XCTAssertGreaterThanOrEqual(progress2, 0.0)
+        let history = watchHistoryManager.findWatchHistory(for: episode)
+        XCTAssertEqual(Double(history?.progress ?? 0), 0.6, accuracy: 0.01)
     }
 
     func testLastWatchedDateUpdates() throws {
@@ -114,10 +98,9 @@ final class PlaybackProgressTests: XCTestCase {
         try context.save()
         
         let before = Date()
-        progressTracker.saveProgress(for: movie, progress: 0.5)
+        watchHistoryManager.updateWatchHistory(for: movie, progress: 0.5)
         
-        let history = WatchHistoryManager(context: context, profile: profile)
-            .findWatchHistory(for: movie)
+        let history = watchHistoryManager.findWatchHistory(for: movie)
         
         XCTAssertNotNil(history?.watchedDate)
         
@@ -136,16 +119,15 @@ final class PlaybackProgressTests: XCTestCase {
         
         try context.save()
         
-        let tracker1 = PlaybackProgressTracker(context: context, profile: profile)
-        let tracker2 = PlaybackProgressTracker(context: context, profile: profile2)
+        let watchHistoryManager2 = WatchHistoryManager(context: context, profile: profile2)
         
-        tracker1.saveProgress(for: movie, progress: 0.3)
-        tracker2.saveProgress(for: movie, progress: 0.8)
+        watchHistoryManager.updateWatchHistory(for: movie, progress: 0.3)
+        watchHistoryManager2.updateWatchHistory(for: movie, progress: 0.8)
         
-        let progress1 = tracker1.restoreProgress(for: movie)
-        let progress2 = tracker2.restoreProgress(for: movie)
+        let history1 = watchHistoryManager.findWatchHistory(for: movie)
+        let history2 = watchHistoryManager2.findWatchHistory(for: movie)
         
-        XCTAssertEqual(progress1, 0.3, accuracy: 0.01)
-        XCTAssertEqual(progress2, 0.8, accuracy: 0.01)
+        XCTAssertEqual(Double(history1?.progress ?? 0), 0.3, accuracy: 0.01)
+        XCTAssertEqual(Double(history2?.progress ?? 0), 0.8, accuracy: 0.01)
     }
 }

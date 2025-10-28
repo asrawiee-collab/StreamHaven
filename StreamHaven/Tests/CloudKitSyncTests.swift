@@ -270,7 +270,7 @@ final class CloudKitSyncTests: XCTestCase {
     
     // MARK: - WatchHistoryManager Integration Tests
     
-    func testWatchHistoryManagerAddsTimestamp() throws {
+    func testWatchHistoryManagerAddsTimestamp() async throws {
         let profile = Profile(context: context)
         profile.name = "Test Profile"
         
@@ -299,7 +299,7 @@ final class CloudKitSyncTests: XCTestCase {
         XCTAssertNotNil(history?.watchedDate, "Watch history should have watchedDate")
     }
     
-    func testWatchHistoryManagerUpdatesProgress() throws {
+    func testWatchHistoryManagerUpdatesProgress() async throws {
         let profile = Profile(context: context)
         profile.name = "Test Profile"
         

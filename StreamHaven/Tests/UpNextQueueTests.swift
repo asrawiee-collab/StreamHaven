@@ -3,6 +3,7 @@ import CoreData
 @testable import StreamHaven
 
 /// Tests for the Up Next Queue Manager.
+@MainActor
 final class UpNextQueueTests: XCTestCase {
     
     var context: NSManagedObjectContext!
@@ -22,7 +23,7 @@ final class UpNextQueueTests: XCTestCase {
         try super.setUpWithError()
         
         // Setup in-memory Core Data stack
-        let container = NSPersistentContainer(name: "StreamHaven", managedObjectModel: NSManagedObjectModel())
+        let container = NSPersistentContainer(name: "StreamHaven", managedObjectModel: PersistenceController.shared.container.managedObjectModel)
         let description = NSPersistentStoreDescription()
         description.type = NSInMemoryStoreType
         container.persistentStoreDescriptions = [description]
@@ -243,7 +244,7 @@ final class UpNextQueueTests: XCTestCase {
     
     // MARK: - Auto-Queue Tests
     
-    func testGenerateSuggestionsDisabled() throws {
+    func testGenerateSuggestionsDisabled() {
         queueManager.enableAutoQueue = false
         
         queueManager.generateSuggestions(for: testProfile)
@@ -251,7 +252,7 @@ final class UpNextQueueTests: XCTestCase {
         XCTAssertEqual(queueManager.queueItems.count, 0)
     }
     
-    func testGenerateSuggestionsWithWatchHistory() throws {
+    func testGenerateSuggestionsWithWatchHistory() {
         queueManager.enableAutoQueue = true
         queueManager.autoQueueSuggestions = 2
         
@@ -322,6 +323,7 @@ final class UpNextQueueTests: XCTestCase {
         
         // Note: fetchContent may not work in test due to objectID URI handling
         // In real app, this would return the movie
+        _ = fetchedContent
     }
     
     func testQueueItemContentTypes() {

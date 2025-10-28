@@ -105,7 +105,7 @@ public struct TMDbVideosResponse: Decodable {
 public final class TMDbManager: TMDbManaging {
 
     /// The TMDb API key.
-    private var apiKey: String?
+    public var apiKey: String?
     /// The base URL for the TMDb API.
     private let apiBaseURL = "https://api.themoviedb.org/3"
     
@@ -125,8 +125,6 @@ public final class TMDbManager: TMDbManaging {
             PerformanceLogger.logNetwork("TMDb API Key not found in Keychain. IMDb ID fetching disabled.")
         }
     }
-
-    /// Fetches the IMDb ID for a movie from the TMDb API and saves it to the Core Data object.
     ///
     /// - Parameters:
     ///   - movie: The `Movie` object to fetch the IMDb ID for.

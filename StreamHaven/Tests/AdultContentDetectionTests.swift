@@ -11,7 +11,7 @@ final class AdultContentDetectionTests: XCTestCase {
         ]
         
         for title in explicitTitles {
-            let isAdult = AdultContentDetector.isAdultContent(title: title, categoryName: nil)
+            let isAdult = AdultContentDetector.isAdultContent(title: title)
             XCTAssertTrue(isAdult, "Should detect '\(title)' as adult content")
         }
     }

@@ -11,6 +11,19 @@ public class Movie: NSManagedObject {
             self.stableID = UUID().uuidString
         }
     }
+
+    public override func willSave() {
+        super.willSave()
+        syncReleaseYearWithReleaseDate()
+    }
+
+    private func syncReleaseYearWithReleaseDate() {
+        guard let releaseDate else { return }
+        let year = Calendar.current.component(.year, from: releaseDate)
+        if releaseYear != year {
+            releaseYear = year
+        }
+    }
 }
 
 extension Movie {
@@ -29,6 +42,8 @@ extension Movie {
     @NSManaged public var releaseDate: Date?
     /// A short summary or description of the movie.
     @NSManaged public var summary: String?
+    /// Comma-separated genre list for the movie.
+    @NSManaged public var genres: String?
     /// The URL of the video stream for this movie.
     @NSManaged public var streamURL: String?
     /// The URL of a preview or trailer clip for hover playback.
@@ -45,5 +60,13 @@ extension Movie {
     @NSManaged public var watchHistory: WatchHistory?
     /// The `Favorite` object if the movie is marked as a favorite.
     @NSManaged public var favorite: Favorite?
+    /// Stored release year backing value (NSNumber to allow nil).
+    @NSManaged private var releaseYearValue: NSNumber?
+
+    /// The release year extracted or provided independently of full release date.
+    public var releaseYear: Int? {
+        get { releaseYearValue?.intValue }
+        set { releaseYearValue = newValue.map { NSNumber(value: $0) } }
+    }
 
 }

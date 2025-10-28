@@ -28,7 +28,7 @@ final class VODOrderingTests: XCTestCase {
             return [movie1, movie2, movie3]
         }
         
-        let ordered = VODOrderingManager.orderByReleaseDate(movies: movies)
+        let ordered = VODOrderingManager.orderMovies(movies: movies, by: .releaseDate)
         
         XCTAssertEqual(ordered.count, 3)
         XCTAssertEqual(ordered[0].title, "Newer Movie")
@@ -49,7 +49,7 @@ final class VODOrderingTests: XCTestCase {
             return [movieWithDate, movieNoDate]
         }
         
-        let ordered = VODOrderingManager.orderByReleaseDate(movies: movies)
+        let ordered = VODOrderingManager.orderMovies(movies: movies, by: .releaseDate)
         
         // Should not crash and should include all movies
         XCTAssertEqual(ordered.count, 2)
@@ -69,10 +69,12 @@ final class VODOrderingTests: XCTestCase {
             return [movie1, movie2]
         }
         
-        let ordered = VODOrderingManager.orderByPopularity(movies: movies)
+        let ordered = VODOrderingManager.orderMovies(movies: movies, by: .popularity)
         
         // Should order based on internal popularity metrics
         XCTAssertEqual(ordered.count, 2)
+        XCTAssertEqual(ordered[0].title, "Popular")
+        XCTAssertEqual(ordered[1].title, "Less Popular")
     }
 
     func testOrderByTitleAlphabetically() throws {
@@ -90,7 +92,7 @@ final class VODOrderingTests: XCTestCase {
             return [movie1, movie2, movie3]
         }
         
-        let ordered = VODOrderingManager.orderByTitle(movies: movies)
+        let ordered = VODOrderingManager.orderMovies(movies: movies, by: .alphabetical)
         
         XCTAssertEqual(ordered[0].title, "Apple Movie")
         XCTAssertEqual(ordered[1].title, "Banana Movie")
@@ -98,7 +100,7 @@ final class VODOrderingTests: XCTestCase {
     }
 
     func testHandlesEmptyArray() {
-        let ordered = VODOrderingManager.orderByReleaseDate(movies: [])
+        let ordered = VODOrderingManager.orderMovies(movies: [], by: .releaseDate)
         XCTAssertTrue(ordered.isEmpty)
     }
 
@@ -110,7 +112,7 @@ final class VODOrderingTests: XCTestCase {
             return [movie]
         }
         
-        let ordered = VODOrderingManager.orderByReleaseDate(movies: movies)
+        let ordered = VODOrderingManager.orderMovies(movies: movies, by: .releaseDate)
         
         XCTAssertEqual(ordered.count, 1)
         XCTAssertEqual(ordered[0].title, "Only Movie")
@@ -134,10 +136,13 @@ final class VODOrderingTests: XCTestCase {
             return [movie1, movie2, movie3]
         }
         
-        let ordered = VODOrderingManager.orderByRating(movies: movies)
+        let ordered = VODOrderingManager.orderMovies(movies: movies, by: .rating)
         
         // Should order by rating severity
         XCTAssertEqual(ordered.count, 3)
+        XCTAssertEqual(ordered[0].title, "G Rated")
+        XCTAssertEqual(ordered[1].title, "PG Rated")
+        XCTAssertEqual(ordered[2].title, "R Rated")
     }
 
     func testHandlesNilTitles() throws {
@@ -152,7 +157,7 @@ final class VODOrderingTests: XCTestCase {
             return [movie1, movie2]
         }
         
-        let ordered = VODOrderingManager.orderByTitle(movies: movies)
+        let ordered = VODOrderingManager.orderMovies(movies: movies, by: .alphabetical)
         
         // Should handle nil titles gracefully
         XCTAssertEqual(ordered.count, 2)

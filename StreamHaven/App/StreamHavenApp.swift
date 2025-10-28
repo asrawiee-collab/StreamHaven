@@ -6,7 +6,9 @@ import Sentry
 import os.log
 
 /// The main entry point of the StreamHaven application.
+#if !os(macOS)
 @main
+#endif
 public struct StreamHavenApp: App {
     /// Persistence provider for Core Data (injectable for tests/previews)
     let persistenceProvider: PersistenceProviding

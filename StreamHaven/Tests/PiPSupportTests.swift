@@ -22,7 +22,7 @@ final class PiPSupportTests: XCTestCase {
         try await super.setUp()
         
         // Create in-memory Core Data context
-        let container = NSPersistentContainer(name: "StreamHaven", managedObjectModel: PersistenceController.shared.managedObjectModel)
+        let container = NSPersistentContainer(name: "StreamHaven", managedObjectModel: PersistenceController.shared.container.managedObjectModel)
         let description = NSPersistentStoreDescription()
         description.type = NSInMemoryStoreType
         container.persistentStoreDescriptions = [description]
@@ -41,7 +41,7 @@ final class PiPSupportTests: XCTestCase {
         
         // Initialize managers
         settingsManager = SettingsManager()
-        watchHistoryManager = WatchHistoryManager(context: context)
+        watchHistoryManager = WatchHistoryManager(context: context, profile: profile)
         playbackManager = PlaybackManager(
             context: context,
             settingsManager: settingsManager,

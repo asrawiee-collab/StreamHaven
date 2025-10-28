@@ -11,6 +11,19 @@ public class Series: NSManagedObject {
             self.stableID = UUID().uuidString
         }
     }
+
+    public override func willSave() {
+        super.willSave()
+        syncReleaseYearWithReleaseDate()
+    }
+
+    private func syncReleaseYearWithReleaseDate() {
+        guard let releaseDate else { return }
+        let year = Calendar.current.component(.year, from: releaseDate)
+        if releaseYear != year {
+            releaseYear = year
+        }
+    }
 }
 
 extension Series {
@@ -29,6 +42,8 @@ extension Series {
     @NSManaged public var releaseDate: Date?
     /// A short summary or description of the series.
     @NSManaged public var summary: String?
+    /// Comma-separated genre list for the series.
+    @NSManaged public var genres: String?
     /// The title of the series.
     @NSManaged public var title: String?
     /// The URL of a preview or trailer clip for hover playback.
@@ -41,6 +56,14 @@ extension Series {
     @NSManaged public var seasons: NSSet?
     /// The `Favorite` object if the series is marked as a favorite.
     @NSManaged public var favorite: Favorite?
+    /// Stored release year backing value (NSNumber to allow nil).
+    @NSManaged private var releaseYearValue: NSNumber?
+
+    /// The release year extracted or provided independently of first air date.
+    public var releaseYear: Int? {
+        get { releaseYearValue?.intValue }
+        set { releaseYearValue = newValue.map { NSNumber(value: $0) } }
+    }
 
 }
 

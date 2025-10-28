@@ -16,7 +16,7 @@ class FavoritesManagerTests: XCTestCase {
 
         guard let context = context else { XCTFail("Missing context"); return }
         profile = Profile(context: context)
-        profile.name = "Test Profile"
+        profile?.name = "Test Profile"
 
         if let profile = profile {
             favoritesManager = FavoritesManager(context: context, profile: profile)

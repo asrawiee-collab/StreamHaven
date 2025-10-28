@@ -3,6 +3,7 @@ import CoreData
 @testable import StreamHaven
 
 /// Tests for the adult content filtering functionality.
+@MainActor
 final class AdultContentFilterTests: XCTestCase {
     
     var persistenceController: PersistenceController!
@@ -14,7 +15,7 @@ final class AdultContentFilterTests: XCTestCase {
         persistenceController = PersistenceController(inMemory: true)
         context = persistenceController.container.viewContext
         settingsManager = SettingsManager()
-        profileManager = ProfileManager(persistence: persistenceController)
+        profileManager = ProfileManager(context: context)
         
         // Reset settings
         settingsManager.hideAdultContent = false
@@ -31,7 +32,6 @@ final class AdultContentFilterTests: XCTestCase {
     
     func createMovie(title: String, rating: Rating) -> Movie {
         let movie = Movie(context: context)
-        movie.id = UUID()
         movie.title = title
         movie.rating = rating.rawValue
         movie.releaseDate = Date()
@@ -40,7 +40,6 @@ final class AdultContentFilterTests: XCTestCase {
     
     func createProfile(name: String, isAdult: Bool) -> Profile {
         let profile = Profile(context: context)
-        profile.id = UUID()
         profile.name = name
         profile.isAdult = isAdult
         return profile

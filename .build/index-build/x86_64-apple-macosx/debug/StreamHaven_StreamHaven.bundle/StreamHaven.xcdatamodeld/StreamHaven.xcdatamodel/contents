@@ -51,6 +51,8 @@
         <attribute name="summary" type="String"/>
         <attribute name="streamURL" type="String"/>
         <attribute name="title" type="String" userInfo="spotlight=true"/>
+            <attribute name="genres" optional="YES" attributeType="String"/>
+            <attribute name="releaseYearValue" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
             <attribute name="hasBeenWatched" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
             <attribute name="watchProgressPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
             <attribute name="isFavorite" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
@@ -161,6 +163,8 @@
         <attribute name="releaseDate" type="Date"/>
         <attribute name="summary" type="String"/>
         <attribute name="title" type="String" userInfo="spotlight=true"/>
+            <attribute name="genres" optional="YES" attributeType="String"/>
+            <attribute name="releaseYearValue" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
             <attribute name="totalEpisodeCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
             <attribute name="seasonCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
             <attribute name="isFavorite" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>

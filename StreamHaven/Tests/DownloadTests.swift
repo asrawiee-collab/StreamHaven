@@ -4,6 +4,7 @@ import AVFoundation
 @testable import StreamHaven
 
 /// Tests for the DownloadManager.
+@MainActor
 final class DownloadTests: XCTestCase {
     
     var context: NSManagedObjectContext!
@@ -15,7 +16,7 @@ final class DownloadTests: XCTestCase {
         try super.setUpWithError()
         
         // Setup in-memory Core Data stack
-        let container = NSPersistentContainer(name: "StreamHaven", managedObjectModel: NSManagedObjectModel())
+        let container = NSPersistentContainer(name: "StreamHaven", managedObjectModel: PersistenceController.shared.container.managedObjectModel)
         let description = NSPersistentStoreDescription()
         description.type = NSInMemoryStoreType
         container.persistentStoreDescriptions = [description]
@@ -64,7 +65,7 @@ final class DownloadTests: XCTestCase {
     
     // MARK: - Download Creation Tests
     
-    func testStartDownload() throws {
+    func testStartDownload() async throws {
         // Test starting a download
         try downloadManager.startDownload(for: testMovie, title: "Test Movie", thumbnailURL: "https://example.com/poster.jpg")
         
@@ -82,7 +83,7 @@ final class DownloadTests: XCTestCase {
         XCTAssertTrue(download.downloadStatus == .queued || download.downloadStatus == .downloading)
     }
     
-    func testStartDownloadForEpisode() throws {
+    func testStartDownloadForEpisode() async throws {
         // Test starting a download for an episode
         try downloadManager.startDownload(for: testEpisode, title: "Test Episode")
         
@@ -105,7 +106,7 @@ final class DownloadTests: XCTestCase {
         }
     }
     
-    func testAlreadyDownloadedError() throws {
+    func testAlreadyDownloadedError() async throws {
         // Create completed download
         let download = Download(context: context)
         download.streamURL = testMovie.streamURL
@@ -117,12 +118,17 @@ final class DownloadTests: XCTestCase {
         try context.save()
         
         // Try to download again
-        XCTAssertThrowsError(try downloadManager.startDownload(for: testMovie, title: "Test Movie")) { error in
-            XCTAssertEqual(error as? DownloadError, .alreadyDownloaded)
+        do {
+            try downloadManager.startDownload(for: testMovie, title: "Test Movie")
+            XCTFail("Expected alreadyDownloaded error")
+        } catch let error as DownloadError {
+            XCTAssertEqual(error, .alreadyDownloaded)
+        } catch {
+            XCTFail("Unexpected error: \(error)")
         }
     }
     
-    func testAlreadyDownloadingError() throws {
+    func testAlreadyDownloadingError() async throws {
         // Create downloading
         let download = Download(context: context)
         download.streamURL = testMovie.streamURL
@@ -133,14 +139,19 @@ final class DownloadTests: XCTestCase {
         try context.save()
         
         // Try to download again
-        XCTAssertThrowsError(try downloadManager.startDownload(for: testMovie, title: "Test Movie")) { error in
-            XCTAssertEqual(error as? DownloadError, .alreadyDownloading)
+        do {
+            try downloadManager.startDownload(for: testMovie, title: "Test Movie")
+            XCTFail("Expected alreadyDownloading error")
+        } catch let error as DownloadError {
+            XCTAssertEqual(error, .alreadyDownloading)
+        } catch {
+            XCTFail("Unexpected error: \(error)")
         }
     }
     
     // MARK: - Download State Management Tests
     
-    func testPauseDownload() throws {
+    func testPauseDownload() async throws {
         // Create active download
         let download = Download(context: context)
         download.streamURL = testMovie.streamURL
@@ -156,7 +167,7 @@ final class DownloadTests: XCTestCase {
         XCTAssertEqual(download.downloadStatus, .paused)
     }
     
-    func testResumeDownload() throws {
+    func testResumeDownload() async throws {
         // Create paused download
         let download = Download(context: context)
         download.streamURL = testMovie.streamURL
@@ -172,7 +183,7 @@ final class DownloadTests: XCTestCase {
         XCTAssertEqual(download.downloadStatus, .downloading)
     }
     
-    func testCancelDownload() throws {
+    func testCancelDownload() async throws {
         // Create active download
         let download = Download(context: context)
         download.streamURL = testMovie.streamURL
@@ -191,7 +202,7 @@ final class DownloadTests: XCTestCase {
         XCTAssertEqual(downloads.count, 0)
     }
     
-    func testDeleteDownload() throws {
+    func testDeleteDownload() async throws {
         // Create completed download
         let download = Download(context: context)
         download.streamURL = testMovie.streamURL
@@ -213,12 +224,13 @@ final class DownloadTests: XCTestCase {
         XCTAssertEqual(downloads.count, 0)
         
         // Verify storage is updated
-        XCTAssertLessThan(downloadManager.totalStorageUsed, initialStorage)
+        let updatedStorage = downloadManager.totalStorageUsed
+        XCTAssertLessThan(updatedStorage, initialStorage)
     }
     
     // MARK: - Download Status Tests
     
-    func testIsDownloaded() throws {
+    func testIsDownloaded() async throws {
         // Create completed download with file
         let download = Download(context: context)
         download.streamURL = testMovie.streamURL
@@ -235,7 +247,7 @@ final class DownloadTests: XCTestCase {
         XCTAssertFalse(isDownloaded) // False because file doesn't exist in test
     }
     
-    func testGetLocalFilePath() throws {
+    func testGetLocalFilePath() async throws {
         // Create completed download
         let download = Download(context: context)
         download.streamURL = testMovie.streamURL
@@ -252,7 +264,7 @@ final class DownloadTests: XCTestCase {
         XCTAssertNil(filePath) // Nil because file doesn't exist
     }
     
-    func testGetLocalFilePathNotDownloaded() {
+    func testGetLocalFilePathNotDownloaded() async {
         let filePath = downloadManager.getLocalFilePath(for: testMovie)
         XCTAssertNil(filePath)
     }
@@ -285,7 +297,7 @@ final class DownloadTests: XCTestCase {
         // In real app this would be 3GB
     }
     
-    func testStorageQuotaExceeded() throws {
+    func testStorageQuotaExceeded() async throws {
         // Set small quota
         downloadManager.maxStorageBytes = 1_000_000_000 // 1 GB
         
@@ -310,7 +322,7 @@ final class DownloadTests: XCTestCase {
     
     // MARK: - Cleanup Tests
     
-    func testCleanupExpiredDownloads() throws {
+    func testCleanupExpiredDownloads() async throws {
         // Create expired download
         let expiredDownload = Download(context: context)
         expiredDownload.streamURL = "https://example.com/expired.m3u8"
@@ -339,7 +351,7 @@ final class DownloadTests: XCTestCase {
         XCTAssertEqual(downloads[0].contentTitle, "Valid Movie")
     }
     
-    func testCleanupWatchedDownloadsDisabled() throws {
+    func testCleanupWatchedDownloadsDisabled() async throws {
         // Disable auto-delete
         downloadManager.autoDeleteWatched = false
         
@@ -361,7 +373,7 @@ final class DownloadTests: XCTestCase {
         XCTAssertEqual(downloads.count, 1)
     }
     
-    func testCleanupWatchedDownloadsEnabled() throws {
+    func testCleanupWatchedDownloadsEnabled() async throws {
         // Enable auto-delete
         downloadManager.autoDeleteWatched = true
         

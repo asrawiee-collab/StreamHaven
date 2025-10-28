@@ -10,10 +10,10 @@ final class FullTextSearchManagerTests: XCTestCase {
         provider = DefaultPersistenceProvider(controller: controller)
     }
 
-    func testFTSSetupIsIdempotent() async throws {
+    func testFTSSetupIsIdempotent() throws {
         let fts = FullTextSearchManager(persistenceProvider: provider)
-        try await fts.setupFullTextSearch()
+        try fts.initializeFullTextSearch()
         // Calling again should not throw
-        try await fts.setupFullTextSearch()
+        try fts.initializeFullTextSearch()
     }
 }

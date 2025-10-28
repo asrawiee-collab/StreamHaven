@@ -129,8 +129,7 @@ final class LiveActivityTests: XCTestCase {
         let playbackManager = PlaybackManager(
             context: context,
             settingsManager: settingsManager,
-            watchHistoryManager: watchHistoryManager,
-            liveActivityManager: liveActivityManager
+            watchHistoryManager: watchHistoryManager
         )
         
         XCTAssertNotNil(playbackManager, "PlaybackManager should initialize with LiveActivityManager")
@@ -146,8 +145,7 @@ final class LiveActivityTests: XCTestCase {
         let playbackManager = PlaybackManager(
             context: context,
             settingsManager: settingsManager,
-            watchHistoryManager: watchHistoryManager,
-            liveActivityManager: nil
+            watchHistoryManager: watchHistoryManager
         )
         
         XCTAssertNotNil(playbackManager, "PlaybackManager should work without LiveActivityManager")
@@ -400,8 +398,7 @@ final class LiveActivityTests: XCTestCase {
         let playbackManager = PlaybackManager(
             context: context,
             settingsManager: settingsManager,
-            watchHistoryManager: watchHistoryManager,
-            liveActivityManager: liveActivityManager
+            watchHistoryManager: watchHistoryManager
         )
         
         XCTAssertNotNil(playbackManager)

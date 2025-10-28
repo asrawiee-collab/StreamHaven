@@ -12,6 +12,10 @@ public final class VODOrderingManager {
         case chronological
         /// Sorts alphabetically.
         case alphabetical
+        /// Sorts by popularity.
+        case popularity
+        /// Sorts by rating.
+        case rating
     }
 
     /// Orders an array of movies based on the specified sort order.
@@ -23,23 +27,17 @@ public final class VODOrderingManager {
     public static func orderMovies(movies: [Movie], by order: SortOrder = .releaseDate) -> [Movie] {
         switch order {
         case .releaseDate:
-            return movies.sorted {
-                guard let date1 = $0.releaseDate else { return false }
-                guard let date2 = $1.releaseDate else { return true }
-                return date1 < date2
-            }
+            return movies.sorted { ($0.releaseDate ?? .distantPast) > ($1.releaseDate ?? .distantPast) }
         case .chronological:
-            return movies.sorted {
-                guard let date1 = $0.releaseDate else { return false }
-                guard let date2 = $1.releaseDate else { return true }
-                return date1 < date2
-            }
+            return movies.sorted { ($0.releaseDate ?? .distantFuture) < ($1.releaseDate ?? .distantFuture) }
         case .alphabetical:
-            return movies.sorted {
-                guard let title1 = $0.title else { return false }
-                guard let title2 = $1.title else { return true }
-                return title1.localizedCaseInsensitiveCompare(title2) == .orderedAscending
-            }
+            return movies.sorted { ($0.title ?? "") < ($1.title ?? "") }
+        case .popularity:
+            // Assuming popularity is based on rating, descending
+            return movies.sorted { (Rating(rawValue: $0.rating ?? "") ?? .unrated) > (Rating(rawValue: $1.rating ?? "") ?? .unrated) }
+        case .rating:
+            // Sort by rating, ascending
+            return movies.sorted { (Rating(rawValue: $0.rating ?? "") ?? .unrated) < (Rating(rawValue: $1.rating ?? "") ?? .unrated) }
         }
     }
 }

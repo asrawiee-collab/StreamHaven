@@ -6,6 +6,7 @@
 //
 
 import XCTest
+import NaturalLanguage
 @testable import StreamHaven
 
 @MainActor

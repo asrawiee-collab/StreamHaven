@@ -27,7 +27,7 @@ class XtreamParserTests: XCTestCase {
 
         do {
             guard let context = context else { XCTFail("Missing context"); return }
-            try await XtreamCodesParser.parse(url: invalidURL, context: context)
+            try await XtreamCodesParser.parse(url: invalidURL, username: "test", password: "test", context: context)
             XCTFail("Parser should have thrown an error for an invalid URL")
         } catch {
             XCTAssertNotNil(error)

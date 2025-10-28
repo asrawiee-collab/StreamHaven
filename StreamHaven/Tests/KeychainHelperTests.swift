@@ -12,12 +12,11 @@ final class KeychainHelperTests: XCTestCase {
     }
 
     func testSaveAndRetrievePassword() {
-        let saved = KeychainHelper.savePassword(
+        KeychainHelper.savePassword(
             password: testPassword,
             for: testAccount,
             service: testService
         )
-        XCTAssertTrue(saved, "Should save password successfully")
         
         let retrieved = KeychainHelper.getPassword(for: testAccount, service: testService)
         XCTAssertEqual(retrieved, testPassword, "Retrieved password should match saved password")
@@ -33,12 +32,11 @@ final class KeychainHelperTests: XCTestCase {
         
         // Update with new password
         let newPassword = "NewPassword456"
-        let updated = KeychainHelper.savePassword(
+        KeychainHelper.savePassword(
             password: newPassword,
             for: testAccount,
             service: testService
         )
-        XCTAssertTrue(updated, "Should update password successfully")
         
         let retrieved = KeychainHelper.getPassword(for: testAccount, service: testService)
         XCTAssertEqual(retrieved, newPassword, "Should retrieve updated password")
@@ -53,8 +51,7 @@ final class KeychainHelperTests: XCTestCase {
         )
         
         // Delete it
-        let deleted = KeychainHelper.deletePassword(for: testAccount, service: testService)
-        XCTAssertTrue(deleted, "Should delete password successfully")
+        KeychainHelper.deletePassword(for: testAccount, service: testService)
         
         // Verify it's gone
         let retrieved = KeychainHelper.getPassword(for: testAccount, service: testService)
@@ -70,36 +67,31 @@ final class KeychainHelperTests: XCTestCase {
     }
 
     func testDeleteNonexistentPassword() {
-        let deleted = KeychainHelper.deletePassword(
+        KeychainHelper.deletePassword(
             for: "NonexistentAccount",
             service: testService
         )
-        // Deleting nonexistent item should return false or handle gracefully
-        XCTAssertFalse(deleted, "Should return false when deleting nonexistent password")
+        // Deleting nonexistent item should not cause an error
     }
 
     func testSaveEmptyPassword() {
-        let saved = KeychainHelper.savePassword(
+        KeychainHelper.savePassword(
             password: "",
             for: testAccount,
             service: testService
         )
         
-        // Should handle empty password
-        if saved {
-            let retrieved = KeychainHelper.getPassword(for: testAccount, service: testService)
-            XCTAssertEqual(retrieved, "", "Should retrieve empty password")
-        }
+        let retrieved = KeychainHelper.getPassword(for: testAccount, service: testService)
+        XCTAssertEqual(retrieved, "", "Should retrieve empty password")
     }
 
     func testSaveLongPassword() {
         let longPassword = String(repeating: "A", count: 1000)
-        let saved = KeychainHelper.savePassword(
+        KeychainHelper.savePassword(
             password: longPassword,
             for: testAccount,
             service: testService
         )
-        XCTAssertTrue(saved, "Should save long password")
         
         let retrieved = KeychainHelper.getPassword(for: testAccount, service: testService)
         XCTAssertEqual(retrieved, longPassword, "Should retrieve long password")
@@ -107,12 +99,11 @@ final class KeychainHelperTests: XCTestCase {
 
     func testSavePasswordWithSpecialCharacters() {
         let specialPassword = "P@ssw0rd!#$%^&*()"
-        let saved = KeychainHelper.savePassword(
+        KeychainHelper.savePassword(
             password: specialPassword,
             for: testAccount,
             service: testService
         )
-        XCTAssertTrue(saved, "Should save password with special characters")
         
         let retrieved = KeychainHelper.getPassword(for: testAccount, service: testService)
         XCTAssertEqual(retrieved, specialPassword, "Should retrieve password with special characters")

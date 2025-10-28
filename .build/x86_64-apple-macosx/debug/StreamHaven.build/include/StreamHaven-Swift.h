@@ -564,6 +564,7 @@ SWIFT_CLASS_NAMED("Favorite")
 SWIFT_CLASS_NAMED("Movie")
 @interface Movie : NSManagedObject
 - (void)awakeFromInsert;
+- (void)willSave;
 - (nonnull instancetype)initWithEntity:(NSEntityDescription * _Nonnull)entity insertIntoManagedObjectContext:(NSManagedObjectContext * _Nullable)context OBJC_DESIGNATED_INITIALIZER;
 @end
 
@@ -587,6 +588,8 @@ SWIFT_CLASS_NAMED("Movie")
 @property (nonatomic, copy) NSDate * _Nullable releaseDate;
 /// A short summary or description of the movie.
 @property (nonatomic, copy) NSString * _Nullable summary;
+/// Comma-separated genre list for the movie.
+@property (nonatomic, copy) NSString * _Nullable genres;
 /// The URL of the video stream for this movie.
 @property (nonatomic, copy) NSString * _Nullable streamURL;
 /// The URL of a preview or trailer clip for hover playback.
@@ -807,6 +810,7 @@ SWIFT_CLASS_NAMED("Season")
 SWIFT_CLASS_NAMED("Series")
 @interface Series : NSManagedObject
 - (void)awakeFromInsert;
+- (void)willSave;
 - (nonnull instancetype)initWithEntity:(NSEntityDescription * _Nonnull)entity insertIntoManagedObjectContext:(NSManagedObjectContext * _Nullable)context OBJC_DESIGNATED_INITIALIZER;
 @end
 
@@ -849,6 +853,8 @@ SWIFT_CLASS_NAMED("Series")
 @property (nonatomic, copy) NSDate * _Nullable releaseDate;
 /// A short summary or description of the series.
 @property (nonatomic, copy) NSString * _Nullable summary;
+/// Comma-separated genre list for the series.
+@property (nonatomic, copy) NSString * _Nullable genres;
 /// The title of the series.
 @property (nonatomic, copy) NSString * _Nullable title;
 /// The URL of a preview or trailer clip for hover playback.

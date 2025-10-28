@@ -21,7 +21,7 @@ final class RecommendationsTests: XCTestCase {
         tmdbManager = TMDbManager(apiKey: ProcessInfo.processInfo.environment["TMDB_API_KEY"])
         
         // Create in-memory Core Data context
-        let container = NSPersistentContainer(name: "StreamHaven", managedObjectModel: PersistenceController.shared.managedObjectModel)
+        let container = NSPersistentContainer(name: "StreamHaven", managedObjectModel: PersistenceController.shared.container.managedObjectModel)
         let description = NSPersistentStoreDescription()
         description.type = NSInMemoryStoreType
         container.persistentStoreDescriptions = [description]

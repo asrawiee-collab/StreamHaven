@@ -2,6 +2,7 @@ import XCTest
 import CoreData
 @testable import StreamHaven
 
+@MainActor
 final class ErrorPropagationTests: XCTestCase {
     func testImportPlaylistNetworkErrorPropagates() async {
         // Arrange a manager with isolated provider

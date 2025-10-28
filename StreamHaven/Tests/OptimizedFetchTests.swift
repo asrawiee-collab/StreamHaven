@@ -185,9 +185,9 @@ final class OptimizedFetchTests: XCTestCase {
             try context.save()
             
             let stats = try context.fetchContentStatistics()
-            XCTAssertEqual(stats["movieCount"] as? Int, 3)
-            XCTAssertEqual(stats["seriesCount"] as? Int, 2)
-            XCTAssertEqual(stats["channelCount"] as? Int, 5)
+            XCTAssertEqual(stats.totalMovies, 3)
+            XCTAssertEqual(stats.totalSeries, 2)
+            XCTAssertEqual(stats.totalChannels, 5)
         }
     }
 }

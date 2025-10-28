@@ -3,6 +3,7 @@ import CoreData
 import Combine
 @testable import StreamHaven
 
+@MainActor
 class PlaybackManagerTests: XCTestCase {
 
     var persistenceController: PersistenceController?
@@ -11,21 +12,23 @@ class PlaybackManagerTests: XCTestCase {
     var watchHistoryManager: WatchHistoryManager?
     private var cancellables: Set<AnyCancellable>!
 
-    @MainActor
     override func setUp() {
         super.setUp()
         persistenceController = PersistenceController(inMemory: true)
         context = persistenceController?.container.viewContext
         
+        guard let context = context else {
+            XCTFail("Failed to create context")
+            return
+        }
+        
         let profile = Profile(context: context)
         profile.name = "Test Profile"
-        do { try context?.save() } catch { XCTFail("Save failed: \(error)") }
+        do { try context.save() } catch { XCTFail("Save failed: \(error)") }
         
-        if let context = context {
-            watchHistoryManager = WatchHistoryManager(context: context, profile: profile)
-            if let watchHistoryManager = watchHistoryManager {
-                playbackManager = PlaybackManager(context: context, settingsManager: SettingsManager(), watchHistoryManager: watchHistoryManager)
-            }
+        watchHistoryManager = WatchHistoryManager(context: context, profile: profile)
+        if let watchHistoryManager = watchHistoryManager {
+            playbackManager = PlaybackManager(context: context, settingsManager: SettingsManager(), watchHistoryManager: watchHistoryManager)
         }
         cancellables = []
     }
@@ -38,7 +41,7 @@ class PlaybackManagerTests: XCTestCase {
         super.tearDown()
     }
 
-    func testLoadMedia_withValidEpisode_shouldCreatePlayer() {
+    func testLoadMedia_withValidEpisode_shouldCreatePlayer() async {
         // Given
         guard let playbackManager = playbackManager, let context = context else { XCTFail("Missing dependencies"); return }
         let profile = Profile(context: context)
@@ -48,41 +51,41 @@ class PlaybackManagerTests: XCTestCase {
         episode.streamURL = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
 
         // When
-        playbackManager.loadMedia(for: episode, profile: profile)
+        await playbackManager.loadMedia(for: episode, profile: profile)
 
         // Then
         XCTAssertNotNil(playbackManager.player, "Player should be created for a valid media item.")
         XCTAssertTrue(playbackManager.isPlaying, "Playback should start automatically.")
     }
 
-    func testLoadMedia_withValidMovie_shouldCreatePlayer() {
+    func testLoadMedia_withValidMovie_shouldCreatePlayer() async {
         // Given
         guard let playbackManager2 = playbackManager, let context2 = context else { XCTFail("Missing dependencies"); return }
         let profile = Profile(context: context2)
         profile.name = "Adult"
 
-        let movie = Movie(context: context)
+        let movie = Movie(context: context!)
         movie.streamURL = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
 
         // When
-        playbackManager2.loadMedia(for: movie, profile: profile)
+        await playbackManager2.loadMedia(for: movie, profile: profile)
 
         // Then
         XCTAssertNotNil(playbackManager2.player, "Player should be created for a valid movie item.")
         XCTAssertTrue(playbackManager2.isPlaying, "Playback should start automatically for movies.")
     }
 
-    func testPlaybackState_whenPaused_shouldUpdateState() {
+    func testPlaybackState_whenPaused_shouldUpdateState() async {
         // Given
         guard let playbackManager3 = playbackManager, let context3 = context else { XCTFail("Missing dependencies"); return }
         let profile = Profile(context: context3)
         let episode = Episode(context: context3)
         episode.streamURL = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
-        playbackManager3.loadMedia(for: episode, profile: profile)
+        await playbackManager3.loadMedia(for: episode, profile: profile)
 
         let expectation = XCTestExpectation(description: "Playback state updates to paused")
 
-        playbackManager.$playbackState
+        playbackManager?.$playbackState
             .dropFirst()
             .sink { state in
                 if case .paused = state {
@@ -92,24 +95,24 @@ class PlaybackManagerTests: XCTestCase {
             .store(in: &cancellables)
 
         // When
-        playbackManager3.pause()
+        await playbackManager3.pause()
 
         // Then
         wait(for: [expectation], timeout: 5.0)
         XCTAssertFalse(playbackManager3.isPlaying, "isPlaying should be false when paused.")
     }
 
-    func testStop_shouldResetPlayback() {
+    func testStop_shouldResetPlayback() async {
         // Given
         guard let playbackManager4 = playbackManager, let context4 = context else { XCTFail("Missing dependencies"); return }
         let profile = Profile(context: context4)
         let episode = Episode(context: context4)
         episode.streamURL = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
-        playbackManager4.loadMedia(for: episode, profile: profile)
+        await playbackManager4.loadMedia(for: episode, profile: profile)
 
         let expectation = XCTestExpectation(description: "Playback state updates to stopped")
 
-        playbackManager.$playbackState
+        playbackManager?.$playbackState
             .dropFirst()
             .sink { state in
                 if case .stopped = state {
@@ -119,7 +122,7 @@ class PlaybackManagerTests: XCTestCase {
             .store(in: &cancellables)
 
         // When
-        playbackManager4.stop()
+        await playbackManager4.stop()
 
         // Then
         wait(for: [expectation], timeout: 5.0)

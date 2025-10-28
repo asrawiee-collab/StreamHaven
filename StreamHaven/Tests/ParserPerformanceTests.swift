@@ -130,6 +130,7 @@ class ParserPerformanceTests: XCTestCase {
     
     func testBatchInsertAvoidseDuplicates() throws {
         let m3uContent = generateM3UPlaylist(channelCount: 50, movieCount: 25)
+        guard let context = context else { XCTFail("Missing context"); return }
         guard let data = m3uContent.data(using: .utf8) else { XCTFail("UTF8 conversion failed"); return }
         
         // Import twice
