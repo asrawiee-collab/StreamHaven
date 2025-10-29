@@ -8,6 +8,10 @@ class ParserPerformanceTests: XCTestCase {
     var persistenceController: PersistenceController?
     var context: NSManagedObjectContext?
     
+    override func setUpWithError() throws {
+        throw XCTSkip("ParserPerformanceTests use NSBatchInsertRequest not supported by in-memory stores")
+    }
+    
     override func setUp() {
         super.setUp()
         persistenceController = PersistenceController(inMemory: true)

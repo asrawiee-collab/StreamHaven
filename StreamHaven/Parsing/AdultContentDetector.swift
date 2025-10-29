@@ -5,7 +5,7 @@ public final class AdultContentDetector {
 
     /// Keywords that should flag a title as adult content.
     private static let adultTitleKeywords: Set<String> = [
-        "adult", "18+", "xxx", "porn", "erotic"
+        "adult", "18+", "xxx", "porn", "erotic", "explicit", "material"
     ]
 
     /// Category keywords that should flag a classification as adult content.

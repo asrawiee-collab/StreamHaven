@@ -7,11 +7,31 @@ final class DenormalizationTests: XCTestCase {
     var context: NSManagedObjectContext!
     var denormManager: DenormalizationManager!
     var profile: Profile!
+    var container: NSPersistentContainer!
 
     override func setUpWithError() throws {
-        let controller = PersistenceController(inMemory: true)
-        provider = DefaultPersistenceProvider(controller: controller)
-        context = provider.container.newBackgroundContext()
+        container = NSPersistentContainer(
+            name: "DenormalizationTesting",
+            managedObjectModel: TestCoreDataModelBuilder.sharedModel
+        )
+
+        let description = NSPersistentStoreDescription()
+        description.type = NSInMemoryStoreType
+        container.persistentStoreDescriptions = [description]
+
+        var loadError: Error?
+        container.loadPersistentStores { _, error in
+            loadError = error
+        }
+
+        if let loadError {
+            XCTFail("Failed to load in-memory store: \(loadError)")
+            return
+        }
+
+        provider = TestPersistenceProvider(container: container)
+        context = container.newBackgroundContext()
+        context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         denormManager = DenormalizationManager(persistenceProvider: provider)
         
         // Create test profile
@@ -23,7 +43,21 @@ final class DenormalizationTests: XCTestCase {
         }
     }
 
+    override func tearDownWithError() throws {
+        profile = nil
+        denormManager = nil
+        context = nil
+        provider = nil
+        container = nil
+        try super.tearDownWithError()
+    }
+
     func testMovieWatchProgressUpdatesDenormalizedFields() throws {
+        guard let context = context, let profile = profile else {
+            XCTFail("Missing dependencies")
+            return
+        }
+
         let movie = try context.performAndWait { () -> Movie in
             let m = Movie(context: context)
             m.title = "Test Movie"
@@ -47,7 +81,7 @@ final class DenormalizationTests: XCTestCase {
             try context.save()
         }
 
-        try context.performAndWait {
+        context.performAndWait {
             context.refresh(movie, mergeChanges: true)
             XCTAssertEqual(movie.watchProgressPercent, 50)
             XCTAssertNotNil(movie.lastWatchedDate)
@@ -55,6 +89,11 @@ final class DenormalizationTests: XCTestCase {
     }
 
     func testMovieMarkedAsWatchedWhenProgressOver90Percent() throws {
+        guard let context = context, let profile = profile else {
+            XCTFail("Missing dependencies")
+            return
+        }
+
         let movie = try context.performAndWait { () -> Movie in
             let m = Movie(context: context)
             m.title = "Test Movie"
@@ -75,13 +114,18 @@ final class DenormalizationTests: XCTestCase {
             try context.save()
         }
 
-        try context.performAndWait {
+        context.performAndWait {
             context.refresh(movie, mergeChanges: true)
             XCTAssertTrue(movie.hasBeenWatched)
         }
     }
 
     func testFavoriteToggleUpdatesDenormalizedField() throws {
+        guard let context = context, let profile = profile else {
+            XCTFail("Missing dependencies")
+            return
+        }
+
         let movie = try context.performAndWait { () -> Movie in
             let m = Movie(context: context)
             m.title = "Test Movie"
@@ -101,13 +145,18 @@ final class DenormalizationTests: XCTestCase {
             try context.save()
         }
 
-        try context.performAndWait {
+        context.performAndWait {
             context.refresh(movie, mergeChanges: true)
             XCTAssertTrue(movie.isFavorite)
         }
     }
 
     func testSeriesUnwatchedEpisodeCountAccurate() throws {
+        guard let context = context, let profile = profile else {
+            XCTFail("Missing dependencies")
+            return
+        }
+
         let series = try context.performAndWait { () -> Series in
             let s = Series(context: context)
             s.title = "Test Series"
@@ -148,7 +197,7 @@ final class DenormalizationTests: XCTestCase {
             try context.save()
         }
 
-        try context.performAndWait {
+        context.performAndWait {
             context.refresh(series, mergeChanges: true)
             XCTAssertEqual(series.totalEpisodeCount, 3)
             XCTAssertEqual(series.unwatchedEpisodeCount, 2)
@@ -156,6 +205,11 @@ final class DenormalizationTests: XCTestCase {
     }
 
     func testChannelEPGUpdatesDenormalizedFields() throws {
+        guard let context = context, let denormManager = denormManager else {
+            XCTFail("Missing context")
+            return
+        }
+
         let channel = try context.performAndWait { () -> Channel in
             let c = Channel(context: context)
             c.name = "Test Channel"
@@ -176,7 +230,7 @@ final class DenormalizationTests: XCTestCase {
             try context.save()
         }
 
-        try context.performAndWait {
+        context.performAndWait {
             context.refresh(channel, mergeChanges: true)
             XCTAssertTrue(channel.hasEPG)
             XCTAssertEqual(channel.currentProgramTitle, "Current Program")
@@ -185,6 +239,11 @@ final class DenormalizationTests: XCTestCase {
     }
 
     func testRebuildDenormalizedFieldsProcessesAllEntities() async throws {
+        guard let context = context, let denormManager = denormManager else {
+            XCTFail("Missing dependencies")
+            return
+        }
+
         // Create test data
         try context.performAndWait {
             let movie = Movie(context: context)
@@ -205,4 +264,8 @@ final class DenormalizationTests: XCTestCase {
         // Verify no crashes and operations complete
         XCTAssertTrue(true)
     }
+}
+
+private struct TestPersistenceProvider: PersistenceProviding {
+    let container: NSPersistentContainer
 }

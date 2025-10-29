@@ -473,6 +473,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/LightweightCoreDataModelBuilder.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/OptimizedFetchRequests.swift"
         },
         {
@@ -781,6 +785,7 @@
         "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/DownloadManager.swift.o",
         "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/EPGCacheManager.swift.o",
         "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/FullTextSearchManager.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/LightweightCoreDataModelBuilder.swift.o",
         "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/OptimizedFetchRequests.swift.o",
         "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/PersistenceController.swift.o",
         "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHaven.build/PlaylistCacheManager.swift.o",
@@ -959,6 +964,7 @@
         "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/DownloadManager.swift",
         "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/EPGCacheManager.swift",
         "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/FullTextSearchManager.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/LightweightCoreDataModelBuilder.swift",
         "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/OptimizedFetchRequests.swift",
         "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/PersistenceController.swift",
         "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/PlaylistCacheManager.swift",
@@ -1323,6 +1329,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/TestCoreDataModelBuilder.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/UpNextQueueTests.swift"
         },
         {
@@ -1410,6 +1420,7 @@
         "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/SubscriptionManagerTests.swift.o",
         "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/SubtitleManagerTests.swift.o",
         "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/TMDbManagerTests.swift.o",
+        "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/TestCoreDataModelBuilder.swift.o",
         "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/UpNextQueueTests.swift.o",
         "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/VODOrderingTests.swift.o",
         "/Users/asrawiee/Desktop/StreamHaven/.build/index-build/x86_64-apple-macosx/debug/StreamHavenTests.build/WatchlistTests.swift.o",
@@ -1538,6 +1549,7 @@
         "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SubscriptionManagerTests.swift",
         "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SubtitleManagerTests.swift",
         "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/TMDbManagerTests.swift",
+        "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/TestCoreDataModelBuilder.swift",
         "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/UpNextQueueTests.swift",
         "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/VODOrderingTests.swift",
         "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/WatchlistTests.swift",
@@ -1763,6 +1775,7 @@
       "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/DownloadManager.swift",
       "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/EPGCacheManager.swift",
       "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/FullTextSearchManager.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/LightweightCoreDataModelBuilder.swift",
       "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/OptimizedFetchRequests.swift",
       "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/PersistenceController.swift",
       "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/PlaylistCacheManager.swift",
@@ -2028,6 +2041,7 @@
       "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SubscriptionManagerTests.swift",
       "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/SubtitleManagerTests.swift",
       "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/TMDbManagerTests.swift",
+      "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/TestCoreDataModelBuilder.swift",
       "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/UpNextQueueTests.swift",
       "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/VODOrderingTests.swift",
       "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/WatchlistTests.swift",
@@ -2351,6 +2365,10 @@
         {
           "kind" : "file",
           "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/FullTextSearchManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/LightweightCoreDataModelBuilder.swift"
         },
         {
           "kind" : "file",
@@ -2799,6 +2817,10 @@
         {
           "kind" : "file",
           "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/TMDbManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/TestCoreDataModelBuilder.swift"
         },
         {
           "kind" : "file",

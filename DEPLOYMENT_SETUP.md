@@ -41,13 +41,17 @@ This is the most reliable and secure method for CI/CD deployments.
     - Download the .p8 file when creating the API key (only shown once!)
     - Convert to Base64:
        - macOS/Linux (bash):
+
           ```bash
           base64 -i AuthKey_XXXXXXXXXX.p8
           ```
+
        - Windows (PowerShell):
+
           ```powershell
           [Convert]::ToBase64String([IO.File]::ReadAllBytes("C:\\Path\\To\\AuthKey_XXXXXXXXXX.p8"))
           ```
+
     - Paste the Base64 string as the secret value
 
 #### Option 2: Apple ID Authentication (Alternative)
@@ -59,9 +63,11 @@ If you prefer using Apple ID instead of API keys:
 
 2. **FASTLANE_SESSION**
    - Generate using:
+
      ```bash
      fastlane spaceauth -u your-apple-id@example.com
      ```
+
    - Copy the session string
    - Note: This expires and needs renewal periodically
 
@@ -105,6 +111,7 @@ team_id("YOUR_TEAM_ID")                    # Your Team ID (10 characters)
 ```
 
 To find your Team ID:
+
 - Visit [Apple Developer Membership](https://developer.apple.com/account/#/membership/)
 - Copy the Team ID
 
@@ -125,6 +132,7 @@ Note: Building and signing iOS apps requires macOS with Xcode installed. Running
 ## Triggering the GitHub Actions Workflow
 
 ### A) From GitHub UI (Recommended)
+
 1. Open your repo → Actions
 2. Select "Deploy to TestFlight"
 3. Click "Run workflow"
@@ -132,6 +140,7 @@ Note: Building and signing iOS apps requires macOS with Xcode installed. Running
 5. Click "Run workflow" and watch logs
 
 ### B) From Windows with PowerShell (GitHub REST API)
+
 ```powershell
 $token = "ghp_your_token_here"  # GitHub token with repo + actions:write scope
 $owner = "asrawiee-collab"
@@ -151,6 +160,7 @@ On failure, the workflow uploads a `fastlane-logs` artifact containing `~/Librar
 ### Issue 1: "No API key provided"
 
 **Solution**: Ensure all three API key secrets are set:
+
 - `APP_STORE_CONNECT_API_KEY_ID`
 - `APP_STORE_CONNECT_API_ISSUER_ID`
 - `APP_STORE_CONNECT_API_KEY_CONTENT`
@@ -158,6 +168,7 @@ On failure, the workflow uploads a `fastlane-logs` artifact containing `~/Librar
 ### Issue 2: "Code signing error"
 
 **Solutions**:
+
 1. Make sure your Xcode project has proper signing configuration
 2. Use automatic signing in Xcode
 3. Or set up Fastlane Match for team signing
@@ -165,6 +176,7 @@ On failure, the workflow uploads a `fastlane-logs` artifact containing `~/Librar
 ### Issue 3: "Invalid credentials"
 
 **Solutions**:
+
 - Regenerate `FASTLANE_SESSION` (it expires)
 - Verify Apple ID has access to the app in App Store Connect
 - Check 2FA is properly configured
@@ -249,5 +261,5 @@ If you encounter issues:
 4. Verify all secrets are correctly set
 5. Check that certificates are valid in Apple Developer Portal
 
-**Common workflow run location**: 
+**Common workflow run location**:
 `https://github.com/asrawiee-collab/StreamHaven/actions`

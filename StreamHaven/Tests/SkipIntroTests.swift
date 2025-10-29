@@ -20,7 +20,7 @@ final class SkipIntroTests: XCTestCase {
         try await super.setUp()
         
         // Create in-memory Core Data context
-        let container = NSPersistentContainer(name: "StreamHaven", managedObjectModel: PersistenceController.shared.container.managedObjectModel)
+        let container = NSPersistentContainer(name: "StreamHaven", managedObjectModel: TestCoreDataModelBuilder.sharedModel)
         let description = NSPersistentStoreDescription()
         description.type = NSInMemoryStoreType
         container.persistentStoreDescriptions = [description]

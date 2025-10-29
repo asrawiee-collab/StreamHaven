@@ -310,6 +310,13 @@
     "swift-dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenTests.build/TMDbManagerTests.swiftdeps",
     "diagnostics": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenTests.build/TMDbManagerTests.dia"
   },
+  "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/TestCoreDataModelBuilder.swift": {
+    "dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenTests.build/TestCoreDataModelBuilder.d",
+    "object": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenTests.build/TestCoreDataModelBuilder.swift.o",
+    "swiftmodule": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenTests.build/TestCoreDataModelBuilder~partial.swiftmodule",
+    "swift-dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenTests.build/TestCoreDataModelBuilder.swiftdeps",
+    "diagnostics": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenTests.build/TestCoreDataModelBuilder.dia"
+  },
   "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Tests/UpNextQueueTests.swift": {
     "dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenTests.build/UpNextQueueTests.d",
     "object": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHavenTests.build/UpNextQueueTests.swift.o",

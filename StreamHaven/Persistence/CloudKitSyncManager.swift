@@ -73,8 +73,8 @@ public final class CloudKitSyncManager: ObservableObject {
     
     // MARK: - Properties
     
-    private let container: CKContainer
-    private let privateDatabase: CKDatabase
+    private let container: CKContainer?
+    private let privateDatabase: CKDatabase?
     private let context: NSManagedObjectContext
     private let logger = Logger(subsystem: "com.streamhaven.sync", category: "CloudKit")
     
@@ -88,9 +88,15 @@ public final class CloudKitSyncManager: ObservableObject {
     
     // MARK: - Initialization
     
-    init(container: CKContainer = .default(), context: NSManagedObjectContext) {
-        self.container = container
-        self.privateDatabase = container.privateCloudDatabase
+    init(container: CKContainer? = nil, context: NSManagedObjectContext, enableCloudKit: Bool = true) {
+        if enableCloudKit {
+            let resolvedContainer = container ?? CKContainer.default()
+            self.container = resolvedContainer
+            self.privateDatabase = resolvedContainer.privateCloudDatabase
+        } else {
+            self.container = container
+            self.privateDatabase = container?.privateCloudDatabase
+        }
         self.context = context
         
         loadChangeTokens()
@@ -405,13 +411,17 @@ public final class CloudKitSyncManager: ObservableObject {
     // MARK: - CloudKit Operations
     
     private func fetchRecords(query: CKQuery, changeToken: CKServerChangeToken?) async throws -> (records: [CKRecord], changeToken: CKServerChangeToken?) {
+        guard let privateDatabase else {
+            throw SyncError.notAuthenticated
+        }
+
         var allRecords: [CKRecord] = []
         var cursor: CKQueryOperation.Cursor?
         var newChangeToken: CKServerChangeToken?
-        
+
         let operation = CKQueryOperation(query: query)
         operation.resultsLimit = 100
-        
+
         return try await withCheckedThrowingContinuation { continuation in
             operation.recordMatchedBlock = { recordID, result in
                 switch result {
@@ -421,7 +431,7 @@ public final class CloudKitSyncManager: ObservableObject {
                     self.logger.error("Failed to fetch record: \(error.localizedDescription)")
                 }
             }
-            
+
             operation.queryResultBlock = { result in
                 switch result {
                 case .success(let fetchCursor):
@@ -432,14 +442,18 @@ public final class CloudKitSyncManager: ObservableObject {
                     continuation.resume(throwing: error)
                 }
             }
-            
+
             privateDatabase.add(operation)
         }
     }
     
     private func saveRecord(_ record: CKRecord) async throws {
+        guard let privateDatabase else {
+            throw SyncError.notAuthenticated
+        }
+
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            privateDatabase.save(record) { savedRecord, error in
+            privateDatabase.save(record) { _, error in
                 if let error = error {
                     continuation.resume(throwing: error)
                 } else {
@@ -450,6 +464,10 @@ public final class CloudKitSyncManager: ObservableObject {
     }
     
     private func deleteRecord(_ recordID: CKRecord.ID) async throws {
+        guard let privateDatabase else {
+            throw SyncError.notAuthenticated
+        }
+
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             privateDatabase.delete(withRecordID: recordID) { _, error in
                 if let error = error {
@@ -541,6 +559,10 @@ public final class CloudKitSyncManager: ObservableObject {
     // MARK: - CloudKit Availability
     
     private func isCloudKitAvailable() async -> Bool {
+        guard let container else {
+            return false
+        }
+
         do {
             let status = try await container.accountStatus()
             return status == .available

@@ -17,9 +17,15 @@ final class MockTMDbManager: TMDbManaging {
             return
         }
         fetchedMovies.append(movie)
+        let objectID = movie.objectID
         context.performAndWait {
+            guard let movie = context.object(with: objectID) as? Movie else { return }
             movie.imdbID = "tt1234567"
-            try? context.save()
+            do {
+                try context.save()
+            } catch {
+                context.rollback()
+            }
         }
     }
 }

@@ -35,6 +35,7 @@
 /Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/DownloadManager.swift
 /Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/EPGCacheManager.swift
 /Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/FullTextSearchManager.swift
+/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/LightweightCoreDataModelBuilder.swift
 /Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/OptimizedFetchRequests.swift
 /Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/PersistenceController.swift
 /Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/PlaylistCacheManager.swift

@@ -23,6 +23,7 @@ public class DownloadManager: NSObject, ObservableObject {
     
     private var downloadSession: AVAssetDownloadURLSession!
     private var activeDownloadTasks: [String: AVAssetDownloadTask] = [:]
+    private var contextObserver: NSObjectProtocol?
     
     /// Maximum storage in bytes (default: 10GB)
     public var maxStorageBytes: Int64
@@ -49,6 +50,29 @@ public class DownloadManager: NSObject, ObservableObject {
         setupDownloadSession()
         loadDownloads()
         calculateStorageUsed()
+
+        contextObserver = NotificationCenter.default.addObserver(
+            forName: .NSManagedObjectContextObjectsDidChange,
+            object: context,
+            queue: nil
+        ) { [weak self] notification in
+            guard let self else { return }
+            if Thread.isMainThread {
+                MainActor.assumeIsolated {
+                    self.handleContextChange(notification: notification)
+                }
+            } else {
+                Task { @MainActor [weak self] in
+                    self?.handleContextChange(notification: notification)
+                }
+            }
+        }
+    }
+    
+    deinit {
+        if let observer = contextObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
     
     private func setupDownloadSession() {
@@ -140,12 +164,17 @@ public class DownloadManager: NSObject, ObservableObject {
     
     /// Pauses a download.
     public func pauseDownload(_ download: Download) {
-        guard let streamURL = download.streamURL,
-              let task = activeDownloadTasks[streamURL] else {
+        guard let streamURL = download.streamURL else {
+            download.downloadStatus = .paused
+            try? context.save()
+            loadDownloads()
+            logger.info("Paused download without active task: \(download.contentTitle ?? "Unknown")")
             return
         }
         
-        task.suspend()
+        if let task = activeDownloadTasks[streamURL] {
+            task.suspend()
+        }
         download.downloadStatus = .paused
         try? context.save()
         
@@ -155,12 +184,17 @@ public class DownloadManager: NSObject, ObservableObject {
     
     /// Resumes a paused download.
     public func resumeDownload(_ download: Download) {
-        guard let streamURL = download.streamURL,
-              let task = activeDownloadTasks[streamURL] else {
+        guard let streamURL = download.streamURL else {
+            download.downloadStatus = .downloading
+            try? context.save()
+            loadDownloads()
+            logger.info("Resumed download without active task: \(download.contentTitle ?? "Unknown")")
             return
         }
         
-        task.resume()
+        if let task = activeDownloadTasks[streamURL] {
+            task.resume()
+        }
         download.downloadStatus = .downloading
         try? context.save()
         
@@ -414,6 +448,20 @@ public class DownloadManager: NSObject, ObservableObject {
         }
         
         return options
+    }
+
+    private func handleContextChange(notification: Notification) {
+        guard let userInfo = notification.userInfo else { return }
+        let relevantKeys = [NSInsertedObjectsKey, NSUpdatedObjectsKey, NSDeletedObjectsKey]
+        let hasDownloadChange = relevantKeys.contains { key in
+            guard let objects = userInfo[key] as? Set<NSManagedObject> else { return false }
+            return objects.contains { $0 is Download }
+        }
+
+        if hasDownloadChange {
+            loadDownloads()
+            calculateStorageUsed()
+        }
     }
 }
 

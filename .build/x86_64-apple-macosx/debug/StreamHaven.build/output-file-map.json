@@ -261,6 +261,13 @@
     "swift-dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHaven.build/FullTextSearchManager.swiftdeps",
     "diagnostics": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHaven.build/FullTextSearchManager.dia"
   },
+  "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/LightweightCoreDataModelBuilder.swift": {
+    "dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHaven.build/LightweightCoreDataModelBuilder.d",
+    "object": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHaven.build/LightweightCoreDataModelBuilder.swift.o",
+    "swiftmodule": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHaven.build/LightweightCoreDataModelBuilder~partial.swiftmodule",
+    "swift-dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHaven.build/LightweightCoreDataModelBuilder.swiftdeps",
+    "diagnostics": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHaven.build/LightweightCoreDataModelBuilder.dia"
+  },
   "/Users/asrawiee/Desktop/StreamHaven/StreamHaven/Persistence/OptimizedFetchRequests.swift": {
     "dependencies": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHaven.build/OptimizedFetchRequests.d",
     "object": "/Users/asrawiee/Desktop/StreamHaven/.build/x86_64-apple-macosx/debug/StreamHaven.build/OptimizedFetchRequests.swift.o",

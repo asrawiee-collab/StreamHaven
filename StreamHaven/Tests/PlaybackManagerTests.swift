@@ -51,7 +51,7 @@ class PlaybackManagerTests: XCTestCase {
         episode.streamURL = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
 
         // When
-        await playbackManager.loadMedia(for: episode, profile: profile)
+        playbackManager.loadMedia(for: episode, profile: profile)
 
         // Then
         XCTAssertNotNil(playbackManager.player, "Player should be created for a valid media item.")
@@ -68,7 +68,7 @@ class PlaybackManagerTests: XCTestCase {
         movie.streamURL = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
 
         // When
-        await playbackManager2.loadMedia(for: movie, profile: profile)
+        playbackManager2.loadMedia(for: movie, profile: profile)
 
         // Then
         XCTAssertNotNil(playbackManager2.player, "Player should be created for a valid movie item.")
@@ -81,7 +81,7 @@ class PlaybackManagerTests: XCTestCase {
         let profile = Profile(context: context3)
         let episode = Episode(context: context3)
         episode.streamURL = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
-        await playbackManager3.loadMedia(for: episode, profile: profile)
+        playbackManager3.loadMedia(for: episode, profile: profile)
 
         let expectation = XCTestExpectation(description: "Playback state updates to paused")
 
@@ -95,10 +95,10 @@ class PlaybackManagerTests: XCTestCase {
             .store(in: &cancellables)
 
         // When
-        await playbackManager3.pause()
+        playbackManager3.pause()
 
         // Then
-        wait(for: [expectation], timeout: 5.0)
+        await fulfillment(of: [expectation], timeout: 5.0)
         XCTAssertFalse(playbackManager3.isPlaying, "isPlaying should be false when paused.")
     }
 
@@ -108,7 +108,7 @@ class PlaybackManagerTests: XCTestCase {
         let profile = Profile(context: context4)
         let episode = Episode(context: context4)
         episode.streamURL = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
-        await playbackManager4.loadMedia(for: episode, profile: profile)
+        playbackManager4.loadMedia(for: episode, profile: profile)
 
         let expectation = XCTestExpectation(description: "Playback state updates to stopped")
 
@@ -122,10 +122,10 @@ class PlaybackManagerTests: XCTestCase {
             .store(in: &cancellables)
 
         // When
-        await playbackManager4.stop()
+        playbackManager4.stop()
 
         // Then
-        wait(for: [expectation], timeout: 5.0)
+        await fulfillment(of: [expectation], timeout: 5.0)
         XCTAssertNil(playbackManager4.player, "Player should be nil after stopping.")
         XCTAssertFalse(playbackManager4.isPlaying, "isPlaying should be false after stopping.")
     }

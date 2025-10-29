@@ -39,22 +39,24 @@ private enum SearchYearRange: String, CaseIterable {
     }
 }
 #endif
+@objc(SearchFiltersMovie)
+private final class SearchFiltersMovie: Movie {}
+
+@objc(SearchFiltersSeries)
+private final class SearchFiltersSeries: Series {}
+
 @MainActor
 final class SearchFiltersTests: XCTestCase {
     private var container: NSPersistentContainer!
-    var context: NSManagedObjectContext!
-    var testMovies: [Movie] = []
-    var testSeries: [Series] = []
+    private var context: NSManagedObjectContext!
+    private var testMovies: [Movie] = []
+    private var testSeries: [Series] = []
 
     override func setUp() async throws {
         try await super.setUp()
 
-        guard let model = Self.loadManagedObjectModel() else {
-            XCTFail("Unable to load Core Data model for SearchFiltersTests")
-            return
-        }
-
-        container = NSPersistentContainer(name: "StreamHaven", managedObjectModel: model)
+        let model = Self.sharedModel
+        container = NSPersistentContainer(name: "SearchFiltersTesting", managedObjectModel: model)
 
         let description = NSPersistentStoreDescription()
         description.type = NSInMemoryStoreType
@@ -82,69 +84,83 @@ final class SearchFiltersTests: XCTestCase {
         try await super.tearDown()
     }
 
-    private static func loadManagedObjectModel() -> NSManagedObjectModel? {
-#if SWIFT_PACKAGE
-        let primaryBundle = Bundle(for: Movie.self)
-#else
-        let primaryBundle = Bundle(for: Movie.self)
-#endif
-        let candidateBundles = [primaryBundle] + Bundle.allBundles + Bundle.allFrameworks
-        for candidate in candidateBundles {
-            if let url = candidate.url(forResource: "StreamHaven", withExtension: "momd") ??
-                candidate.url(forResource: "StreamHaven", withExtension: "mom") {
-                if let model = NSManagedObjectModel(contentsOf: url) {
-                    Self.patchManagedObjectClasses(in: model)
-#if DEBUG
-                    let entitySummaries = model.entities.map { entity in
-                        "\(entity.name ?? "<nil>") -> \(entity.managedObjectClassName ?? "<nil>")"
-                    }.joined(separator: ", ")
-                    print("SearchFiltersTests loaded entities from \(candidate.bundlePath): \(entitySummaries)")
-#endif
-                    return model
-                }
-            }
-        }
+    private static let sharedModel: NSManagedObjectModel = {
+        let model = NSManagedObjectModel()
+        model.entities = [makeMovieEntity(), makeSeriesEntity()]
+        return model
+    }()
 
-        if let merged = NSManagedObjectModel.mergedModel(from: candidateBundles) {
-            Self.patchManagedObjectClasses(in: merged)
-#if DEBUG
-            let entitySummaries = merged.entities.map { entity in
-                "\(entity.name ?? "<nil>") -> \(entity.managedObjectClassName ?? "<nil>")"
-            }.joined(separator: ", ")
-            print("SearchFiltersTests loaded merged entities: \(entitySummaries)")
-#endif
-            return merged
-        }
-
-        return nil
+    private static func makeMovieEntity() -> NSEntityDescription {
+        let entity = NSEntityDescription()
+        entity.name = "Movie"
+        entity.managedObjectClassName = NSStringFromClass(SearchFiltersMovie.self)
+        entity.properties = [
+            makeStringAttribute(named: "title"),
+            makeStringAttribute(named: "genres"),
+            makeStringAttribute(named: "rating"),
+            makeStringAttribute(named: "streamURL"),
+            makeStringAttribute(named: "summary"),
+            makeStringAttribute(named: "posterURL"),
+            makeStringAttribute(named: "previewURL"),
+            makeStringAttribute(named: "imdbID"),
+            makeStringAttribute(named: "stableID"),
+            makeUUIDAttribute(named: "sourceID"),
+            makeDateAttribute(named: "releaseDate"),
+            makeInt16Attribute(named: "releaseYearValue")
+        ]
+        return entity
     }
 
-    private static func patchManagedObjectClasses(in model: NSManagedObjectModel) {
-        for entity in model.entities {
-            guard let mappedClass = entityClassMap[entity.name ?? ""] else { continue }
-            entity.managedObjectClassName = NSStringFromClass(mappedClass)
-        }
+    private static func makeSeriesEntity() -> NSEntityDescription {
+        let entity = NSEntityDescription()
+        entity.name = "Series"
+        entity.managedObjectClassName = NSStringFromClass(SearchFiltersSeries.self)
+        entity.properties = [
+            makeStringAttribute(named: "title"),
+            makeStringAttribute(named: "genres"),
+            makeStringAttribute(named: "rating"),
+            makeStringAttribute(named: "summary"),
+            makeStringAttribute(named: "posterURL"),
+            makeStringAttribute(named: "previewURL"),
+            makeStringAttribute(named: "stableID"),
+            makeUUIDAttribute(named: "sourceID"),
+            makeDateAttribute(named: "releaseDate"),
+            makeInt16Attribute(named: "releaseYearValue")
+        ]
+        return entity
     }
 
-    private static let entityClassMap: [String: NSManagedObject.Type] = [
-        "Movie": Movie.self,
-        "Series": Series.self,
-        "Season": Season.self,
-        "Episode": Episode.self,
-        "Channel": Channel.self,
-        "ChannelVariant": ChannelVariant.self,
-        "Profile": Profile.self,
-        "WatchHistory": WatchHistory.self,
-        "Favorite": Favorite.self,
-        "StreamCache": StreamCache.self,
-        "PlaylistCache": PlaylistCache.self,
-        "PlaylistSource": PlaylistSource.self,
-        "Download": Download.self,
-        "UpNextQueueItem": UpNextQueueItem.self,
-        "Watchlist": Watchlist.self,
-        "WatchlistItem": WatchlistItem.self,
-        "EPGEntry": EPGEntry.self
-    ]
+    private static func makeStringAttribute(named name: String) -> NSAttributeDescription {
+        let attribute = NSAttributeDescription()
+        attribute.name = name
+        attribute.attributeType = .stringAttributeType
+        attribute.isOptional = true
+        return attribute
+    }
+
+    private static func makeDateAttribute(named name: String) -> NSAttributeDescription {
+        let attribute = NSAttributeDescription()
+        attribute.name = name
+        attribute.attributeType = .dateAttributeType
+        attribute.isOptional = true
+        return attribute
+    }
+
+    private static func makeInt16Attribute(named name: String) -> NSAttributeDescription {
+        let attribute = NSAttributeDescription()
+        attribute.name = name
+        attribute.attributeType = .integer16AttributeType
+        attribute.isOptional = true
+        return attribute
+    }
+
+    private static func makeUUIDAttribute(named name: String) -> NSAttributeDescription {
+        let attribute = NSAttributeDescription()
+        attribute.name = name
+        attribute.attributeType = .UUIDAttributeType
+        attribute.isOptional = true
+        return attribute
+    }
 
     private func seedSampleContent() {
         testMovies = [
@@ -203,7 +219,7 @@ final class SearchFiltersTests: XCTestCase {
     }
 
     private func makeMovie(title: String, genres: [String], rating: Rating, releaseYear: Int) -> Movie {
-        let movie = Movie(context: context)
+        let movie = SearchFiltersMovie(context: context)
         movie.title = title
         movie.genres = genres.joined(separator: ", ")
         movie.rating = rating.rawValue
@@ -214,7 +230,7 @@ final class SearchFiltersTests: XCTestCase {
     }
 
     private func makeSeries(title: String, genres: [String], rating: Rating, releaseYear: Int) -> Series {
-        let series = Series(context: context)
+        let series = SearchFiltersSeries(context: context)
         series.title = title
         series.genres = genres.joined(separator: ", ")
         series.rating = rating.rawValue

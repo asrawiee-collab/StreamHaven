@@ -7,6 +7,7 @@
 **File**: `StreamHaven/UI/SettingsView.swift`
 
 **Changes**:
+
 - Added `@StateObject private var sourceManager = PlaylistSourceManager()`
 - Added new "Playlists" section with "Manage Sources" navigation link
 - Shows source count badge
@@ -14,6 +15,7 @@
 - Links to full `PlaylistSourcesView` for source management
 
 **User Experience**:
+
 - Users can access source management from Settings
 - See at-a-glance how many sources are configured
 - Seamless navigation to full source management interface
@@ -25,12 +27,14 @@
 **File**: `StreamHaven/UI/MainView.swift`
 
 **Changes**:
+
 - Added `@StateObject private var sourceManager: PlaylistSourceManager`
 - Added `@StateObject private var contentManager: MultiSourceContentManager`
 - Initialized both managers in `init()` with proper context/persistence
 - Added both managers to `.environmentObject()` chain
 
 **User Experience**:
+
 - Multi-source managers available throughout the app
 - All child views can access source management functionality
 - Proper lifecycle management for multi-source features
@@ -42,6 +46,7 @@
 **File**: `StreamHaven/UI/HomeView.swift`
 
 **Changes**:
+
 - Added `@State private var showSourceModePrompt = false`
 - Added `@EnvironmentObject var sourceManager: PlaylistSourceManager`
 - Added `checkSourceModePrompt()` function to detect multiple sources
@@ -49,6 +54,7 @@
 - Integrated prompt check in `onAppear()` and empty state
 
 **User Experience**:
+
 - Automatic detection of multiple active sources
 - User-friendly prompt to choose viewing mode (combined vs single)
 - One-time setup flow when multiple sources are first added
@@ -61,11 +67,13 @@
 **File**: `StreamHaven/UI/AddPlaylistView.swift`
 
 **Changes**:
+
 - Added informational banner about multi-source support
 - Guides users to Settings > Manage Sources
 - Maintains backward compatibility with legacy add flow
 
 **User Experience**:
+
 - Users are informed about the new multi-source feature
 - Clear guidance on where to find advanced source management
 - Legacy single-playlist addition still works
@@ -106,6 +114,7 @@
 ### Content Browsing Experience
 
 #### Combined Mode (Default)
+
 - All active sources merged into unified catalog
 - Duplicate content automatically grouped
 - Multiple stream options shown with quality badges
@@ -113,6 +122,7 @@
 - "X sources available" indicator
 
 #### Single Mode
+
 - View one source at a time
 - Switch sources manually
 - Clear separation of catalogs
@@ -130,6 +140,7 @@ The multi-source managers are available as environment objects in all views:
 ```
 
 This enables:
+
 - Movie/Series/Channel lists to show multi-source options
 - Detail views to display source information
 - Playback to implement fallback between sources
@@ -154,6 +165,7 @@ All new views are ready to use:
 To fully leverage multi-source support in additional views:
 
 ### Movie/Series Lists
+
 ```swift
 // Instead of displaying raw content:
 ForEach(movies) { movie in
@@ -170,7 +182,9 @@ ForEach(groups, id: \.primaryItem.objectID) { group in
 ```
 
 ### Detail Views
+
 Add source information badge:
+
 ```swift
 if let sourceID = movie.sourceID,
    let metadata = contentManager.getSourceMetadata(for: sourceID, in: profile) {
@@ -181,7 +195,9 @@ if let sourceID = movie.sourceID,
 ```
 
 ### Playback Manager
+
 Implement automatic fallback:
+
 ```swift
 // If current stream fails, try alternatives from group
 if let group = try? contentManager.groupMovies(for: profile).first(where: { $0.allItems.contains(currentMovie) }) {
@@ -229,6 +245,7 @@ if let group = try? contentManager.groupMovies(for: profile).first(where: { $0.a
 ### Automated Tests
 
 Run the test suite:
+
 ```bash
 xcodebuild test -scheme StreamHaven -only-testing:StreamHavenTests/MultiSourceSystemTests
 ```
@@ -240,12 +257,14 @@ All tests should pass ✅
 ## Migration Notes
 
 ### Existing Users
+
 - Legacy single-playlist setup continues to work
 - No breaking changes to existing functionality
 - New features opt-in via Settings
 - Existing playlists can be migrated to multi-source system manually
 
 ### New Users
+
 - Guided to multi-source setup via info banners
 - Source mode prompt on first multi-source setup
 - Clean, intuitive onboarding flow
@@ -263,6 +282,7 @@ All tests should pass ✅
 ## Support
 
 If issues arise:
+
 1. Check Settings > Manage Sources for error messages
 2. Verify sources are active (toggle on)
 3. Test sources individually in single mode

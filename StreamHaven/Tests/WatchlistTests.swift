@@ -278,7 +278,7 @@ class WatchlistTests: XCTestCase {
     func testIsInAnyWatchlist() throws {
         // Given
         let watchlist1 = try watchlistManager.createWatchlist(name: "Watchlist 1", profile: profile)
-        let watchlist2 = try watchlistManager.createWatchlist(name: "Watchlist 2", profile: profile)
+        _ = try watchlistManager.createWatchlist(name: "Watchlist 2", profile: profile)
         
         let movie = Movie(context: context)
         movie.title = "Test Movie"

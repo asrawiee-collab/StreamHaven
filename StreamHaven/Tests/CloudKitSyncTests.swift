@@ -9,27 +9,41 @@ final class CloudKitSyncTests: XCTestCase {
     
     var context: NSManagedObjectContext!
     var syncManager: CloudKitSyncManager!
+    var container: NSPersistentContainer!
     
     override func setUp() async throws {
         try await super.setUp()
-        
-        // Create in-memory Core Data stack for testing
-        let container = NSPersistentContainer(name: "StreamHaven")
+
+        container = NSPersistentContainer(
+            name: "CloudKitSyncTesting",
+            managedObjectModel: TestCoreDataModelBuilder.sharedModel
+        )
+
         let description = NSPersistentStoreDescription()
         description.type = NSInMemoryStoreType
         container.persistentStoreDescriptions = [description]
-        
-        container.loadPersistentStores { description, error in
-            XCTAssertNil(error)
+
+        var loadError: Error?
+        container.loadPersistentStores { _, error in
+            loadError = error
         }
-        
+
+        if let loadError {
+            XCTFail("Failed to load in-memory store: \(loadError)")
+            return
+        }
+
         context = container.viewContext
-        syncManager = CloudKitSyncManager(context: context)
+        context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+
+        Self.resetCloudKitDefaults()
+        syncManager = CloudKitSyncManager(context: context, enableCloudKit: false)
     }
     
     override func tearDown() async throws {
         context = nil
         syncManager = nil
+        container = nil
         try await super.tearDown()
     }
     
@@ -495,5 +509,19 @@ final class CloudKitSyncTests: XCTestCase {
         let recordID = history.cloudKitRecordID
         XCTAssertNotNil(recordID)
         XCTAssertEqual(recordID?.recordName, "history-record")
+    }
+}
+
+// MARK: - Model Setup
+
+private extension CloudKitSyncTests {
+    static func resetCloudKitDefaults() {
+        let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: "cloudkit.profileChangeToken")
+        defaults.removeObject(forKey: "cloudkit.favoriteChangeToken")
+        defaults.removeObject(forKey: "cloudkit.watchHistoryChangeToken")
+        defaults.removeObject(forKey: "cloudkit.pendingOperations")
+        defaults.removeObject(forKey: "enableCloudSync")
+        defaults.removeObject(forKey: "lastCloudSyncDate")
     }
 }

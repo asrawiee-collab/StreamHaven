@@ -5,33 +5,48 @@ import CoreData
 /// Tests for the adult content filtering functionality.
 @MainActor
 final class AdultContentFilterTests: XCTestCase {
-    
-    var persistenceController: PersistenceController!
-    var context: NSManagedObjectContext!
-    var settingsManager: SettingsManager!
-    var profileManager: ProfileManager!
-    
+    private var container: NSPersistentContainer!
+    private var context: NSManagedObjectContext!
+    private var settingsManager: SettingsManager!
+    private var currentProfile: Profile!
+
     override func setUp() async throws {
-        persistenceController = PersistenceController(inMemory: true)
-        context = persistenceController.container.viewContext
+        try await super.setUp()
+
+        container = NSPersistentContainer(name: "AdultContentFilterTesting", managedObjectModel: Self.sharedModel)
+
+        let description = NSPersistentStoreDescription()
+        description.type = NSInMemoryStoreType
+        container.persistentStoreDescriptions = [description]
+
+        var loadError: Error?
+        container.loadPersistentStores { _, error in
+            loadError = error
+        }
+
+        if let loadError {
+            XCTFail("Failed to load in-memory store: \(loadError)")
+            return
+        }
+
+        context = container.viewContext
         settingsManager = SettingsManager()
-        profileManager = ProfileManager(context: context)
-        
-        // Reset settings
         settingsManager.hideAdultContent = false
     }
-    
+
     override func tearDown() async throws {
-        persistenceController = nil
-        context = nil
+        UserDefaults.standard.removeObject(forKey: "hideAdultContent")
+        currentProfile = nil
         settingsManager = nil
-        profileManager = nil
+        context = nil
+        container = nil
+        try await super.tearDown()
     }
     
     // MARK: - Test Data Creation
     
     func createMovie(title: String, rating: Rating) -> Movie {
-        let movie = Movie(context: context)
+        let movie = AdultContentMovie(context: context)
         movie.title = title
         movie.rating = rating.rawValue
         movie.releaseDate = Date()
@@ -39,7 +54,7 @@ final class AdultContentFilterTests: XCTestCase {
     }
     
     func createProfile(name: String, isAdult: Bool) -> Profile {
-        let profile = Profile(context: context)
+        let profile = AdultContentProfile(context: context)
         profile.name = name
         profile.isAdult = isAdult
         return profile
@@ -50,7 +65,7 @@ final class AdultContentFilterTests: XCTestCase {
     func testKidsProfileFiltersAdultContent() throws {
         // Given: A kids profile
         let kidsProfile = createProfile(name: "Kids", isAdult: false)
-        profileManager.currentProfile = kidsProfile
+        currentProfile = kidsProfile
         
         // And: Movies with various ratings
         _ = createMovie(title: "Kids Movie", rating: .g)
@@ -82,7 +97,7 @@ final class AdultContentFilterTests: XCTestCase {
     func testAdultProfileSeesAllContentByDefault() throws {
         // Given: An adult profile with hideAdultContent OFF
         let adultProfile = createProfile(name: "Adult", isAdult: true)
-        profileManager.currentProfile = adultProfile
+        currentProfile = adultProfile
         settingsManager.hideAdultContent = false
         
         // And: Movies with all ratings
@@ -107,7 +122,7 @@ final class AdultContentFilterTests: XCTestCase {
     func testAdultProfileCanHideNC17Content() throws {
         // Given: An adult profile with hideAdultContent ON
         let adultProfile = createProfile(name: "Adult", isAdult: true)
-        profileManager.currentProfile = adultProfile
+        currentProfile = adultProfile
         settingsManager.hideAdultContent = true
         UserDefaults.standard.set(true, forKey: "hideAdultContent")
         
@@ -161,7 +176,7 @@ final class AdultContentFilterTests: XCTestCase {
     func testSearchFilterRespectsKidsProfile() throws {
         // Given: A kids profile
         let kidsProfile = createProfile(name: "Kids", isAdult: false)
-        profileManager.currentProfile = kidsProfile
+        currentProfile = kidsProfile
         
         // And: Movies with various ratings
         let gMovie = createMovie(title: "G Movie", rating: .g)
@@ -193,7 +208,7 @@ final class AdultContentFilterTests: XCTestCase {
     func testSearchFilterRespectsAdultProfileWithHideAdultContent() throws {
         // Given: An adult profile with hideAdultContent enabled
         let adultProfile = createProfile(name: "Adult", isAdult: true)
-        profileManager.currentProfile = adultProfile
+        currentProfile = adultProfile
         settingsManager.hideAdultContent = true
         
         // And: Movies with various ratings
@@ -219,5 +234,101 @@ final class AdultContentFilterTests: XCTestCase {
         XCTAssertTrue(filteredResults.contains(gMovie), "G-rated movie should be included")
         XCTAssertTrue(filteredResults.contains(rMovie), "R-rated movie should be included")
         XCTAssertFalse(filteredResults.contains(nc17Movie), "NC-17 movie should be excluded")
+    }
+}
+
+@objc(AdultContentMovie)
+private final class AdultContentMovie: Movie {
+    override func awakeFromInsert() {
+        super.awakeFromInsert()
+        if self.stableID == nil {
+            self.stableID = UUID().uuidString
+        }
+    }
+}
+
+@objc(AdultContentProfile)
+private final class AdultContentProfile: Profile {
+    // Test-specific Profile subclass
+}
+
+private extension AdultContentFilterTests {
+    static let sharedModel: NSManagedObjectModel = {
+        let model = NSManagedObjectModel()
+        model.entities = [makeMovieEntity(), makeProfileEntity()]
+        return model
+    }()
+
+    static func makeMovieEntity() -> NSEntityDescription {
+        let entity = NSEntityDescription()
+        entity.name = "Movie"
+        entity.managedObjectClassName = NSStringFromClass(AdultContentMovie.self)
+        entity.properties = [
+            makeStringAttribute(named: "title"),
+            makeStringAttribute(named: "rating"),
+            makeStringAttribute(named: "streamURL"),
+            makeStringAttribute(named: "summary"),
+            makeStringAttribute(named: "posterURL"),
+            makeStringAttribute(named: "previewURL"),
+            makeStringAttribute(named: "imdbID"),
+            makeStringAttribute(named: "stableID"),
+            makeUUIDAttribute(named: "sourceID"),
+            makeDateAttribute(named: "releaseDate"),
+            makeInt16Attribute(named: "releaseYearValue")
+        ]
+        return entity
+    }
+
+    static func makeProfileEntity() -> NSEntityDescription {
+        let entity = NSEntityDescription()
+        entity.name = "Profile"
+        entity.managedObjectClassName = NSStringFromClass(AdultContentProfile.self)
+        entity.properties = [
+            makeStringAttribute(named: "name"),
+            makeBooleanAttribute(named: "isAdult"),
+            makeDateAttribute(named: "modifiedAt"),
+            makeStringAttribute(named: "cloudKitRecordName")
+        ]
+        return entity
+    }
+
+    static func makeStringAttribute(named name: String) -> NSAttributeDescription {
+        let attribute = NSAttributeDescription()
+        attribute.name = name
+        attribute.attributeType = .stringAttributeType
+        attribute.isOptional = true
+        return attribute
+    }
+
+    static func makeDateAttribute(named name: String) -> NSAttributeDescription {
+        let attribute = NSAttributeDescription()
+        attribute.name = name
+        attribute.attributeType = .dateAttributeType
+        attribute.isOptional = true
+        return attribute
+    }
+
+    static func makeBooleanAttribute(named name: String) -> NSAttributeDescription {
+        let attribute = NSAttributeDescription()
+        attribute.name = name
+        attribute.attributeType = .booleanAttributeType
+        attribute.isOptional = true
+        return attribute
+    }
+
+    static func makeInt16Attribute(named name: String) -> NSAttributeDescription {
+        let attribute = NSAttributeDescription()
+        attribute.name = name
+        attribute.attributeType = .integer16AttributeType
+        attribute.isOptional = true
+        return attribute
+    }
+
+    static func makeUUIDAttribute(named name: String) -> NSAttributeDescription {
+        let attribute = NSAttributeDescription()
+        attribute.name = name
+        attribute.attributeType = .UUIDAttributeType
+        attribute.isOptional = true
+        return attribute
     }
 }
