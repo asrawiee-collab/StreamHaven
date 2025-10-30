@@ -13,22 +13,24 @@ This directory contains tests that require SQLite file-based storage instead of 
 When SQLite tests run concurrently (as XCTest does by default), they cause database locking issues that make the test suite hang. The main test suite (`StreamHavenTests`) uses in-memory stores which don't have this problem and execute in <10 seconds.
 
 By separating SQLite tests, we maintain:
+
 - ✅ Fast main test suite (150+ tests, <10 seconds)
-- ✅ Working SQLite tests (30+ tests) that run serially
+- ✅ Working SQLite tests (32 tests) that run serially
 - ✅ No test hangs or database locks
 
 ## Test Structure
 
-```
+```text
 StreamHavenSQLiteTests/
 ├── Helpers/
 │   ├── FileBasedTestCase.swift                    # Base class for SQLite tests
 │   ├── FileBasedTestCoreDataModelBuilder.swift    # SQLite container factory
 │   └── TestCoreDataModelBuilder.swift             # Core Data model builder
-├── FTSTriggerTests.swift                           # Full-text search tests (9 tests)
-├── EPGParserTests.swift                            # EPG XML parsing tests (9 tests)
-├── PerformanceRegressionTests.swift                # Performance benchmarks (8 tests)
-└── FullTextSearchManagerTests.swift                # FTS manager tests (1 test)
+├── FTSTriggerTests.swift                           # Full-text search tests (9 tests) ✅
+├── EPGParserTests.swift                            # EPG XML parsing tests (9 tests) ✅
+├── PerformanceRegressionTests.swift                # Performance benchmarks (8 tests) ✅
+├── FullTextSearchManagerTests.swift                # FTS manager tests (1 test) ✅
+└── M3UPlaylistParserTests.swift                    # M3U parsing tests (5 tests) ✅
 ```
 
 ## Running Tests
@@ -52,9 +54,11 @@ swift test --filter StreamHavenSQLiteTests.EPGParserTests
 
 # Run all performance tests
 swift test --filter StreamHavenSQLiteTests.PerformanceRegressionTests
-
 # Run FTS manager tests
 swift test --filter StreamHavenSQLiteTests.FullTextSearchManagerTests
+
+# Run M3U parser tests
+swift test --filter StreamHavenSQLiteTests.M3UPlaylistParserTests
 ```
 
 ### Option 3: Run Individual Tests
@@ -95,6 +99,7 @@ class MyTests: FileBasedTestCase {
 ```
 
 **Automatic Features:**
+
 - Creates temporary SQLite database in setUp()
 - Configures optimized pragmas (WAL/MEMORY mode based on needsFTS())
 - Cleans up database files in tearDown()
@@ -103,14 +108,16 @@ class MyTests: FileBasedTestCase {
 ### SQLite Pragma Configuration
 
 **For FTS Tests (needsFTS() = true):**
-```
+
+```text
 PRAGMA journal_mode=WAL       // Required for FTS5
 PRAGMA synchronous=NORMAL     // Balanced durability
 PRAGMA cache_size=10000       // 10MB cache
 ```
 
 **For Non-FTS Tests (needsFTS() = false):**
-```
+
+```text
 PRAGMA journal_mode=MEMORY    // No WAL files
 PRAGMA synchronous=OFF        // Max performance
 PRAGMA locking_mode=EXCLUSIVE // Prevent concurrent access
@@ -179,6 +186,7 @@ test_classes=(
 ### Xcode Cloud Example
 
 Create two test actions:
+
 1. **Fast Tests**: Run scheme `StreamHavenTests`
 2. **SQLite Tests**: Run script `./run_sqlite_tests.sh`
 
@@ -211,20 +219,36 @@ rm -f /tmp/StreamHavenTest_*.sqlite*
 ## Performance Notes
 
 ### Main Test Suite (StreamHavenTests)
+
 - **Type:** In-memory stores
 - **Tests:** 150+
 - **Time:** <10 seconds
 - **Concurrency:** Full parallel execution
 
 ### SQLite Test Suite (StreamHavenSQLiteTests)
-- **Type:** File-based SQLite stores
+
+- **Type:** File-based SQLite stores (WAL mode enabled for performance tests)
 - **Tests:** 27
-- **Time:** ~30-60 seconds (serial execution)
+- **Time:** ~3 seconds (serial execution, aggressive datasets)
 - **Concurrency:** Must run serially (one class at a time)
+
+#### PerformanceRegressionTests Dataset Sizes (as of Oct 2025)
+
+- Search: 50,000 movies
+- Favorites: 500 movies, 50 favorites
+- Batch Insert: 5,000 movies
+- Watch History: 500 items
+- EPG Query: 1,000 entries
+- Concurrent Fetch: 2,000 movies
+- Memory Pressure: 1,000 movies
+- Fetch Batching: 2,000 movies
+
+All performance tests use WAL mode for safe concurrent reads and aggressive stress testing. No hangs or database locks observed.
 
 ## Test Coverage
 
 ### FTSTriggerTests (9 tests)
+
 - FTS5 setup and virtual table creation
 - Fuzzy search functionality
 - Multi-entity search (Movie, Series, Channel)
@@ -233,6 +257,7 @@ rm -f /tmp/StreamHavenTest_*.sqlite*
 - Performance with large datasets
 
 ### EPGParserTests (9 tests)
+
 - XMLTV format parsing
 - Timezone offset handling
 - Invalid XML error handling
@@ -242,6 +267,7 @@ rm -f /tmp/StreamHavenTest_*.sqlite*
 - Special character escaping
 
 ### PerformanceRegressionTests (8 tests)
+
 - Search performance with large datasets
 - Batch insert operations
 - Concurrent fetch performance
@@ -249,6 +275,7 @@ rm -f /tmp/StreamHavenTest_*.sqlite*
 - Fetch batching optimization
 
 ### FullTextSearchManagerTests (1 test)
+
 - FTS setup idempotency
 
 ## Migration Notes

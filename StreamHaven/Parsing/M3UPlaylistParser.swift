@@ -53,6 +53,11 @@ public final class M3UPlaylistParser {
             throw PlaylistImportError.parsingFailed(NSError(domain: "M3UParser", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid data encoding"]))
         }
 
+        // Bug 1: Throw error if file is empty
+        if content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            throw PlaylistImportError.parsingFailed(NSError(domain: "M3UParser", code: 2, userInfo: [NSLocalizedDescriptionKey: "Empty playlist file"]))
+        }
+
         var movieItems: [M3UChannel] = []
         var channelItems: [M3UChannel] = []
         var currentChannelInfo: [String: String] = [:]
@@ -65,29 +70,38 @@ public final class M3UPlaylistParser {
                 epgURL = headerURL
             }
 
-            if parseInfoLineIfNeeded(line, into: &currentChannelInfo) {
+            if line.uppercased().hasPrefix("#EXTINF:") {
+                _ = parseInfoLineIfNeeded(line, into: &currentChannelInfo)
                 return
             }
 
-            guard let channel = makeChannelIfNeeded(from: line, info: currentChannelInfo) else { return }
+            if !currentChannelInfo.isEmpty {
+                guard let channel = makeChannelIfNeeded(from: line, info: currentChannelInfo) else {
+                    currentChannelInfo.removeAll(keepingCapacity: true)
+                    return
+                }
 
-            if let groupTitle = channel.group, groupTitle.localizedCaseInsensitiveContains("Movie") {
-                movieItems.append(channel)
-            } else {
-                channelItems.append(channel)
+                if let groupTitle = channel.group, groupTitle.localizedCaseInsensitiveContains("Movie") {
+                    movieItems.append(channel)
+                } else {
+                    channelItems.append(channel)
+                }
+                currentChannelInfo.removeAll(keepingCapacity: true)
             }
         }
 
         try batchInsertMovies(items: movieItems, sourceID: sourceID, context: context)
         try importChannels(items: channelItems, sourceID: sourceID, context: context)
 
-        // Store EPG URL in PlaylistCache if found
+        // Bug 2: Ensure PlaylistCache exists before setting epgURL
         if let epgURL = epgURL {
             let fetchRequest: NSFetchRequest<PlaylistCache> = PlaylistCache.fetchRequest()
             fetchRequest.fetchLimit = 1
-            if let playlistCache = try context.fetch(fetchRequest).first {
-                playlistCache.epgURL = epgURL
+            var playlistCache = try context.fetch(fetchRequest).first
+            if playlistCache == nil {
+                playlistCache = PlaylistCache(context: context)
             }
+            playlistCache?.epgURL = epgURL
         }
 
         if context.hasChanges {
@@ -126,16 +140,23 @@ public final class M3UPlaylistParser {
                 }
             }
 
-            if parseInfoLineIfNeeded(trimmed, into: &currentChannelInfo) {
+            if trimmed.uppercased().hasPrefix("#EXTINF:") {
+                _ = parseInfoLineIfNeeded(trimmed, into: &currentChannelInfo)
                 return
             }
 
-            guard let channel = makeChannelIfNeeded(from: trimmed, info: currentChannelInfo) else { return }
+            if !currentChannelInfo.isEmpty {
+                guard let channel = makeChannelIfNeeded(from: trimmed, info: currentChannelInfo) else {
+                    currentChannelInfo.removeAll(keepingCapacity: true)
+                    return
+                }
 
-            if let groupTitle = channel.group, groupTitle.localizedCaseInsensitiveContains("Movie") {
-                movieItems.append(channel)
-            } else {
-                channelItems.append(channel)
+                if let groupTitle = channel.group, groupTitle.localizedCaseInsensitiveContains("Movie") {
+                    movieItems.append(channel)
+                } else {
+                    channelItems.append(channel)
+                }
+                currentChannelInfo.removeAll(keepingCapacity: true)
             }
         }
 
@@ -263,15 +284,21 @@ public final class M3UPlaylistParser {
     private static func batchInsertMovies(items: [M3UChannel], sourceID: UUID? = nil, context: NSManagedObjectContext) throws {
         guard !items.isEmpty else { return }
 
-        // Fetch existing movie titles to avoid duplicates
+        // Fetch existing movie titles to avoid duplicates across parses
         let existingTitles: Set<String> = try {
             let fetchRequest: NSFetchRequest<Movie> = Movie.fetchRequest()
             fetchRequest.propertiesToFetch = ["title"]
+            fetchRequest.includesPropertyValues = true
             let existingMovies = try context.fetch(fetchRequest)
-            return Set(existingMovies.compactMap { $0.title })
+            return Set(existingMovies.compactMap { $0.title?.lowercased() })
         }()
 
-        let uniqueItems = items.filter { !existingTitles.contains($0.title) }
+        var seenTitles = existingTitles
+        let uniqueItems = items.filter { item in
+            let titleKey = item.title.lowercased()
+            let insertion = seenTitles.insert(titleKey)
+            return insertion.inserted
+        }
 
         guard !uniqueItems.isEmpty else { return }
 
