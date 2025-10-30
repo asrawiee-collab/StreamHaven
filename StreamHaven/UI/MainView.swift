@@ -121,6 +121,8 @@ public struct MainView: View {
                             MovieDetailView(movie: movie)
                         case .seriesDetail(let series):
                             SeriesDetailView(series: series)
+                        case .actorDetail(let actor):
+                            ActorDetailView(actor: actor)
                         }
                     }
             }

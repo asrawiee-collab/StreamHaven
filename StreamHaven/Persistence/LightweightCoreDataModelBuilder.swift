@@ -73,6 +73,14 @@ enum LightweightCoreDataModelBuilder {
         watchlistItem.name = "WatchlistItem"
         watchlistItem.managedObjectClassName = NSStringFromClass(WatchlistItem.self)
 
+        let actor = NSEntityDescription()
+        actor.name = "Actor"
+        actor.managedObjectClassName = NSStringFromClass(Actor.self)
+
+        let credit = NSEntityDescription()
+        credit.name = "Credit"
+        credit.managedObjectClassName = NSStringFromClass(Credit.self)
+
         let profileFavorites = makeToManyRelationship("favorites", deleteRule: .cascadeDeleteRule)
         let profileWatchHistory = makeToManyRelationship("watchHistory", deleteRule: .cascadeDeleteRule)
         let profilePlaylistSources = makeToManyRelationship("playlistSources", deleteRule: .cascadeDeleteRule)
@@ -88,9 +96,11 @@ enum LightweightCoreDataModelBuilder {
 
         let movieWatchHistory = makeToOneRelationship("watchHistory", deleteRule: .nullifyDeleteRule)
         let movieFavorite = makeToOneRelationship("favorite", deleteRule: .nullifyDeleteRule)
+        let movieCredits = makeToManyRelationship("credits", deleteRule: .cascadeDeleteRule)
 
         let seriesSeasons = makeToManyRelationship("seasons", deleteRule: .cascadeDeleteRule)
         let seriesFavorite = makeToOneRelationship("favorite", deleteRule: .nullifyDeleteRule)
+        let seriesCredits = makeToManyRelationship("credits", deleteRule: .cascadeDeleteRule)
 
         let seasonEpisodes = makeToManyRelationship("episodes", deleteRule: .cascadeDeleteRule)
         let seasonSeries = makeToOneRelationship("series", deleteRule: .nullifyDeleteRule)
@@ -113,6 +123,11 @@ enum LightweightCoreDataModelBuilder {
         let watchlistProfile = makeToOneRelationship("profile", deleteRule: .nullifyDeleteRule, isOptional: false)
         let watchlistItems = makeToManyRelationship("items", deleteRule: .cascadeDeleteRule)
         let watchlistItemWatchlist = makeToOneRelationship("watchlist", deleteRule: .nullifyDeleteRule, isOptional: false)
+
+        let actorCredits = makeToManyRelationship("credits", deleteRule: .cascadeDeleteRule)
+        let creditActor = makeToOneRelationship("actor", deleteRule: .nullifyDeleteRule)
+        let creditMovie = makeToOneRelationship("movie", deleteRule: .nullifyDeleteRule)
+        let creditSeries = makeToOneRelationship("series", deleteRule: .nullifyDeleteRule)
 
         profile.properties = [
             makeStringAttribute("name"),
@@ -163,7 +178,8 @@ enum LightweightCoreDataModelBuilder {
             makeBoolAttribute("isFavorite"),
             makeDateAttribute("lastWatchedDate"),
             movieWatchHistory,
-            movieFavorite
+            movieFavorite,
+            movieCredits
         ]
 
         series.properties = [
@@ -182,7 +198,8 @@ enum LightweightCoreDataModelBuilder {
             makeBoolAttribute("isFavorite"),
             makeInt32Attribute("unwatchedEpisodeCount"),
             seriesSeasons,
-            seriesFavorite
+            seriesFavorite,
+            seriesCredits
         ]
 
         season.properties = [
@@ -310,6 +327,25 @@ enum LightweightCoreDataModelBuilder {
             watchlistItemWatchlist
         ]
 
+        actor.properties = [
+            makeInt64Attribute("tmdbID", isOptional: false, defaultValue: 0),
+            makeStringAttribute("name"),
+            makeStringAttribute("photoURL"),
+            makeStringAttribute("biography"),
+            makeDoubleAttribute("popularity"),
+            actorCredits
+        ]
+
+        credit.properties = [
+            makeStringAttribute("character"),
+            makeInt16Attribute("order", isOptional: false, defaultValue: 0),
+            makeStringAttribute("creditType"),
+            makeStringAttribute("job"),
+            creditActor,
+            creditMovie,
+            creditSeries
+        ]
+
         profileFavorites.destinationEntity = favorite
         favoriteProfile.destinationEntity = profile
         profileFavorites.inverseRelationship = favoriteProfile
@@ -380,6 +416,21 @@ enum LightweightCoreDataModelBuilder {
         watchlistItems.inverseRelationship = watchlistItemWatchlist
         watchlistItemWatchlist.inverseRelationship = watchlistItems
 
+        actorCredits.destinationEntity = credit
+        creditActor.destinationEntity = actor
+        actorCredits.inverseRelationship = creditActor
+        creditActor.inverseRelationship = actorCredits
+
+        movieCredits.destinationEntity = credit
+        creditMovie.destinationEntity = movie
+        movieCredits.inverseRelationship = creditMovie
+        creditMovie.inverseRelationship = movieCredits
+
+        seriesCredits.destinationEntity = credit
+        creditSeries.destinationEntity = series
+        seriesCredits.inverseRelationship = creditSeries
+        creditSeries.inverseRelationship = seriesCredits
+
         model.entities = [
             profile,
             favorite,
@@ -397,7 +448,9 @@ enum LightweightCoreDataModelBuilder {
             playlistCache,
             upNextQueueItem,
             watchlist,
-            watchlistItem
+            watchlistItem,
+            actor,
+            credit
         ]
 
         return model

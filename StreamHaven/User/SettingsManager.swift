@@ -74,6 +74,11 @@ public class SettingsManager: ObservableObject {
     /// Maximum queue size.
     @AppStorage("maxQueueSize") public var maxQueueSize: Int = 50
     
+    // MARK: - TMDb Settings
+    
+    /// Enable fetching actor information from TMDb.
+    @AppStorage("fetchActorInfo") public var fetchActorInfo: Bool = true
+    
     // MARK: - tvOS Hover Preview Settings
     
     #if os(tvOS)

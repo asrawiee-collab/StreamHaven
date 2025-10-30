@@ -318,6 +318,15 @@ public struct SettingsView: View {
                     .foregroundColor(.secondary)
             }
             
+            // TMDb Integration Section
+            Section(header: Text(NSLocalizedString("TMDb Integration", comment: "Settings section header for TMDb Integration"))) {
+                Toggle(NSLocalizedString("Fetch Actor Information", comment: "Settings option to fetch actor information from TMDb"), isOn: $settingsManager.fetchActorInfo)
+                
+                Text(NSLocalizedString("Automatically fetch cast information from The Movie Database (TMDb) for movies and series.", comment: "Informational text for TMDb Integration"))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            
             #if os(tvOS)
             // tvOS Hover Previews Section
             Section(header: Text(NSLocalizedString("Hover Previews", comment: "Settings section header for tvOS hover previews"))) {

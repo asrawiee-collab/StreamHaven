@@ -100,6 +100,45 @@ public struct TMDbVideosResponse: Decodable {
     let results: [TMDbVideo]
 }
 
+/// A struct representing a cast member from TMDb credits API.
+public struct TMDbCastMember: Decodable, Sendable {
+    let id: Int
+    let name: String
+    let character: String?
+    let profilePath: String?
+    let order: Int
+    
+    enum CodingKeys: String, CodingKey {
+        case id, name, character, order
+        case profilePath = "profile_path"
+    }
+    
+    /// Returns the full photo URL for this actor.
+    var photoURL: String? {
+        guard let path = profilePath else { return nil }
+        return "https://image.tmdb.org/t/p/w185\(path)"
+    }
+}
+
+/// A struct representing a crew member from TMDb credits API.
+public struct TMDbCrewMember: Decodable, Sendable {
+    let id: Int
+    let name: String
+    let job: String
+    let profilePath: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case id, name, job
+        case profilePath = "profile_path"
+    }
+}
+
+/// A struct representing the response from credits API.
+public struct TMDbCreditsResponse: Decodable, Sendable {
+    let cast: [TMDbCastMember]
+    let crew: [TMDbCrewMember]
+}
+
 /// A class for interacting with The Movie Database (TMDb) API.
 @MainActor
 public final class TMDbManager: TMDbManaging {
@@ -359,6 +398,178 @@ public final class TMDbManager: TMDbManaging {
         }
         
         return nil
+    }
+    
+    /// Fetches cast and crew for a movie from TMDb.
+    /// - Parameters:
+    ///   - movie: The Movie object to fetch credits for.
+    ///   - context: The managed object context.
+    public func fetchMovieCredits(for movie: Movie, context: NSManagedObjectContext) async {
+        guard let apiKey = apiKey, let title = movie.title else { return }
+        
+        do {
+            // 1. Search for the movie to get TMDb ID
+            let searchQuery = title.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+            let searchURLString = "\(apiBaseURL)/search/movie?api_key=\(apiKey)&query=\(searchQuery)"
+            guard let searchURL = URL(string: searchURLString) else { return }
+            
+            await rateLimiter.acquire()
+            let (searchData, _) = try await URLSession.shared.data(from: searchURL)
+            let searchResponse = try JSONDecoder().decode(TMDbMovieSearchResponse.self, from: searchData)
+            
+            guard let tmdbID = searchResponse.results.first?.id else {
+                PerformanceLogger.logNetwork("TMDb: Could not find movie \(title)")
+                return
+            }
+            
+            // 2. Fetch credits for the movie
+            let creditsURLString = "\(apiBaseURL)/movie/\(tmdbID)/credits?api_key=\(apiKey)"
+            guard let creditsURL = URL(string: creditsURLString) else { return }
+            
+            await rateLimiter.acquire()
+            let (creditsData, _) = try await URLSession.shared.data(from: creditsURL)
+            let creditsResponse = try JSONDecoder().decode(TMDbCreditsResponse.self, from: creditsData)
+            
+            // 3. Save credits to Core Data
+            await saveCredits(creditsResponse, for: movie, context: context)
+            
+            PerformanceLogger.logNetwork("TMDb: Fetched \(creditsResponse.cast.count) cast members for \(title)")
+        } catch {
+            PerformanceLogger.logNetwork("TMDb error: Failed to fetch credits for \(title): \(error)")
+        }
+    }
+    
+    /// Fetches cast and crew for a series from TMDb.
+    /// - Parameters:
+    ///   - series: The Series object to fetch credits for.
+    ///   - context: The managed object context.
+    public func fetchSeriesCredits(for series: Series, context: NSManagedObjectContext) async {
+        guard let apiKey = apiKey, let title = series.title else { return }
+        
+        do {
+            // 1. Search for the series to get TMDb ID
+            let searchQuery = title.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+            let searchURLString = "\(apiBaseURL)/search/tv?api_key=\(apiKey)&query=\(searchQuery)"
+            guard let searchURL = URL(string: searchURLString) else { return }
+            
+            await rateLimiter.acquire()
+            let (searchData, _) = try await URLSession.shared.data(from: searchURL)
+            let searchResponse = try JSONDecoder().decode(TMDbSeriesSearchResponse.self, from: searchData)
+            
+            guard let tmdbID = searchResponse.results.first?.id else {
+                PerformanceLogger.logNetwork("TMDb: Could not find series \(title)")
+                return
+            }
+            
+            // 2. Fetch credits for the series
+            let creditsURLString = "\(apiBaseURL)/tv/\(tmdbID)/credits?api_key=\(apiKey)"
+            guard let creditsURL = URL(string: creditsURLString) else { return }
+            
+            await rateLimiter.acquire()
+            let (creditsData, _) = try await URLSession.shared.data(from: creditsURL)
+            let creditsResponse = try JSONDecoder().decode(TMDbCreditsResponse.self, from: creditsData)
+            
+            // 3. Save credits to Core Data
+            await saveCredits(creditsResponse, for: series, context: context)
+            
+            PerformanceLogger.logNetwork("TMDb: Fetched \(creditsResponse.cast.count) cast members for \(title)")
+        } catch {
+            PerformanceLogger.logNetwork("TMDb error: Failed to fetch credits for \(title): \(error)")
+        }
+    }
+    
+    /// Saves credits to Core Data, creating or updating Actor and Credit entities.
+    private func saveCredits(_ creditsResponse: TMDbCreditsResponse, for content: Any, context: NSManagedObjectContext) async {
+        let cast = creditsResponse.cast
+        
+        await context.perform {
+            // Limit to top 10 cast members to avoid cluttering UI
+            let topCast = Array(cast.prefix(10))
+            
+            for castMember in topCast {
+                // Find or create Actor
+                let actorFetch: NSFetchRequest<Actor> = Actor.fetchRequest()
+                actorFetch.predicate = NSPredicate(format: "tmdbID == %d", castMember.id)
+                
+                let actor: Actor
+                if let existingActor = try? context.fetch(actorFetch).first {
+                    actor = existingActor
+                } else {
+                    actor = Actor(context: context)
+                    actor.tmdbID = Int64(castMember.id)
+                }
+                
+                // Update actor info
+                actor.name = castMember.name
+                actor.photoURL = castMember.photoURL
+                
+                // Create Credit junction
+                let credit = Credit(context: context)
+                credit.actor = actor
+                credit.character = castMember.character
+                credit.order = Int16(castMember.order)
+                credit.creditType = "cast"
+                
+                // Link to content
+                if let movie = content as? Movie {
+                    credit.movie = movie
+                } else if let series = content as? Series {
+                    credit.series = series
+                }
+            }
+            
+            try? context.save()
+        }
+    }
+    
+    /// Batch fetches credits for multiple movies.
+    /// - Parameters:
+    ///   - movies: Array of movies to fetch credits for.
+    ///   - context: The managed object context.
+    public func batchFetchMovieCredits(for movies: [Movie], context: NSManagedObjectContext) async {
+        // Process in chunks of 10 to respect rate limits
+        let chunks = movies.chunked(into: 10)
+        
+        for chunk in chunks {
+            await withTaskGroup(of: Void.self) { group in
+                for movie in chunk {
+                    group.addTask {
+                        await self.fetchMovieCredits(for: movie, context: context)
+                    }
+                }
+            }
+            
+            // Pause between chunks to respect rate limits
+            try? await Task.sleep(nanoseconds: 3_000_000_000) // 3 seconds
+        }
+    }
+    
+    /// Batch fetches credits for multiple series.
+    /// - Parameters:
+    ///   - series: Array of series to fetch credits for.
+    ///   - context: The managed object context.
+    public func batchFetchSeriesCredits(for series: [Series], context: NSManagedObjectContext) async {
+        let chunks = series.chunked(into: 10)
+        
+        for chunk in chunks {
+            await withTaskGroup(of: Void.self) { group in
+                for seriesItem in chunk {
+                    group.addTask {
+                        await self.fetchSeriesCredits(for: seriesItem, context: context)
+                    }
+                }
+            }
+            
+            try? await Task.sleep(nanoseconds: 3_000_000_000) // 3 seconds
+        }
+    }
+}
+
+extension Array {
+    func chunked(into size: Int) -> [[Element]] {
+        stride(from: 0, to: count, by: size).map {
+            Array(self[$0 ..< Swift.min($0 + size, count)])
+        }
     }
 }
 

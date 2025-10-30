@@ -7,6 +7,8 @@ public enum Destination: Hashable {
     case movieDetail(Movie)
     /// The series detail view.
     case seriesDetail(Series)
+    /// The actor detail view.
+    case actorDetail(Actor)
 
     // Conformance to Hashable for NavigationPath
     public func hash(into hasher: inout Hasher) {
@@ -17,6 +19,9 @@ public enum Destination: Hashable {
         case .seriesDetail(let series):
             hasher.combine("series")
             hasher.combine(series.objectID)
+        case .actorDetail(let actor):
+            hasher.combine("actor")
+            hasher.combine(actor.objectID)
         }
     }
 
@@ -26,6 +31,8 @@ public enum Destination: Hashable {
             return lhsMovie.objectID == rhsMovie.objectID
         case (.seriesDetail(let lhsSeries), .seriesDetail(let rhsSeries)):
             return lhsSeries.objectID == rhsSeries.objectID
+        case (.actorDetail(let lhsActor), .actorDetail(let rhsActor)):
+            return lhsActor.objectID == rhsActor.objectID
         default:
             return false
         }
@@ -44,6 +51,13 @@ public final class NavigationCoordinator: ObservableObject {
     /// - Parameter destination: The `Destination` to navigate to.
     public func goTo(_ destination: Destination) {
         path.append(destination)
+    }
+
+    /// Pushes a destination onto the navigation stack (alias for goTo).
+    ///
+    /// - Parameter destination: The `Destination` to navigate to.
+    public func push(_ destination: Destination) {
+        goTo(destination)
     }
 
     /// Pops the top view controller from the navigation stack.

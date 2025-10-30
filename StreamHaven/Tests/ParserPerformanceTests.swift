@@ -3,25 +3,42 @@ import CoreData
 @testable import StreamHaven
 
 /// Performance tests for playlist parsing operations.
+@MainActor
 class ParserPerformanceTests: XCTestCase {
+    var container: NSPersistentContainer!
+    var context: NSManagedObjectContext!
+    var persistenceProvider: PersistenceProviding!
     
-    var persistenceController: PersistenceController?
-    var context: NSManagedObjectContext?
-    
-    override func setUpWithError() throws {
-        throw XCTSkip("ParserPerformanceTests use NSBatchInsertRequest not supported by in-memory stores")
+    override func setUp() async throws {
+        try await super.setUp()
+        container = NSPersistentContainer(
+            name: "StreamHavenTest",
+            managedObjectModel: TestCoreDataModelBuilder.sharedModel
+        )
+        let description = NSPersistentStoreDescription()
+        description.type = NSInMemoryStoreType
+        container.persistentStoreDescriptions = [description]
+        
+        var loadError: Error?
+        container.loadPersistentStores { _, error in
+            loadError = error
+        }
+        if let error = loadError {
+            throw error
+        }
+        
+        context = container.viewContext
+        struct TestProvider: PersistenceProviding {
+            let container: NSPersistentContainer
+        }
+        persistenceProvider = TestProvider(container: container)
     }
     
-    override func setUp() {
-        super.setUp()
-        persistenceController = PersistenceController(inMemory: true)
-        context = persistenceController?.container.newBackgroundContext()
-    }
-    
-    override func tearDown() {
+    override func tearDown() async throws {
         context = nil
-        persistenceController = nil
-        super.tearDown()
+        persistenceProvider = nil
+        container = nil
+        try await super.tearDown()
     }
     
     // MARK: - M3U Parser Performance Tests
@@ -29,7 +46,6 @@ class ParserPerformanceTests: XCTestCase {
     func testM3UBatchInsertPerformance_SmallPlaylist() throws {
         // Generate a small M3U playlist with 100 channels
         let m3uContent = generateM3UPlaylist(channelCount: 100, movieCount: 50)
-        guard let context = context else { XCTFail("Missing context"); return }
         guard let data = m3uContent.data(using: .utf8) else { XCTFail("UTF8 conversion failed"); return }
         
         measure {
@@ -41,7 +57,6 @@ class ParserPerformanceTests: XCTestCase {
     func testM3UBatchInsertPerformance_MediumPlaylist() throws {
         // Generate a medium M3U playlist with 1,000 channels
         let m3uContent = generateM3UPlaylist(channelCount: 1000, movieCount: 500)
-        guard let context = context else { XCTFail("Missing context"); return }
         guard let data = m3uContent.data(using: .utf8) else { XCTFail("UTF8 conversion failed"); return }
         
         measure {
@@ -53,7 +68,6 @@ class ParserPerformanceTests: XCTestCase {
     func testM3UBatchInsertPerformance_LargePlaylist() throws {
         // Generate a large M3U playlist with 10,000 channels
         let m3uContent = generateM3UPlaylist(channelCount: 10000, movieCount: 5000)
-        guard let context = context else { XCTFail("Missing context"); return }
         guard let data = m3uContent.data(using: .utf8) else { XCTFail("UTF8 conversion failed"); return }
         
         measure {
@@ -65,7 +79,6 @@ class ParserPerformanceTests: XCTestCase {
     func testM3UStreamingParserMemoryEfficiency() throws {
         // Test streaming parser with a large file
         let m3uContent = generateM3UPlaylist(channelCount: 50000, movieCount: 25000)
-        guard let context = context else { XCTFail("Missing context"); return }
         guard let data = m3uContent.data(using: .utf8) else { XCTFail("UTF8 conversion failed"); return }
         
         // Write to temporary file
@@ -114,7 +127,6 @@ class ParserPerformanceTests: XCTestCase {
     
     func testBatchInsertCreatesCorrectCount() throws {
         let m3uContent = generateM3UPlaylist(channelCount: 100, movieCount: 50)
-        guard let context = context else { XCTFail("Missing context"); return }
         guard let data = m3uContent.data(using: .utf8) else { XCTFail("UTF8 conversion failed"); return }
         
         try M3UPlaylistParser.parse(data: data, context: context)
@@ -134,7 +146,6 @@ class ParserPerformanceTests: XCTestCase {
     
     func testBatchInsertAvoidseDuplicates() throws {
         let m3uContent = generateM3UPlaylist(channelCount: 50, movieCount: 25)
-        guard let context = context else { XCTFail("Missing context"); return }
         guard let data = m3uContent.data(using: .utf8) else { XCTFail("UTF8 conversion failed"); return }
         
         // Import twice

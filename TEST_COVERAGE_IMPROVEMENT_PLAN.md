@@ -539,3 +539,175 @@ swift test --enable-code-coverage
 - **Prefer file-based for integration**: Use in-memory for pure unit tests only
 - **Async is your friend**: All file/network operations should be async with expectations
 - **Cleanup is critical**: Always destroy test containers and remove temp files
+
+My Plan to Address Testing Gaps
+Immediate Priorities (Based on Your Document)
+Phase 1: File-Based Test Infrastructure ⚡ START HERE (2-3 hours)
+Why First: This is the foundation that unblocks all other skipped tests.
+
+Actions:
+
+Create FileBasedTestCoreDataModelBuilder.swift helper class
+
+Generates temporary SQLite databases per test
+Supports FTS5 enablement flag
+Proper cleanup in tearDown
+Create FileBasedTestCase.swift base class
+
+Handles container lifecycle
+Automatic database cleanup
+Override point for FTS requirements
+Update existing TestCoreDataModelBuilder to include Actor/Credit entities (✅ Already done!)
+
+Deliverable: Foundation that supports NSBatchInsertRequest, NSBatchDeleteRequest, FTS5, and file I/O
+
+Phase 2.1: EPG Parser Tests 🔴 CRITICAL (1 hour)
+Current Status: ~15 tests skipped
+Blocker: NSBatchDeleteRequest requires file-based store
+
+Actions:
+
+Remove XCTSkip from EPGParserTests.swift
+Extend FileBasedTestCase instead of base XCTestCase
+Test coverage:
+XML parsing with valid/invalid data
+Batch delete of old entries
+EPG entry creation and validation
+Date range handling
+Expected Result: +15 passing tests
+
+Phase 2.2: M3U Parser Tests 🔴 CRITICAL (1 hour)
+Current Status: ~20 tests skipped
+Blocker: NSBatchInsertRequest requires file-based store
+
+Actions:
+
+Remove XCTSkip from M3UPlaylistParserTests.swift
+Convert to FileBasedTestCase
+Test batch operations with various playlist sizes:
+Small (100 channels)
+Medium (1,000 channels)
+Large (10,000+ channels)
+Test duplicate detection and merging
+Expected Result: +20 passing tests
+
+Phase 2.3: Full-Text Search Tests 🔴 CRITICAL (1 hour)
+Current Status: ~10 tests skipped
+Blocker: FTS5 virtual tables require SQLite file store
+
+Actions:
+
+Remove XCTSkip from FullTextSearchManagerTests.swift and FTSTriggerTests.swift
+Override needsFTS() -> Bool { return true }
+Test coverage:
+FTS initialization and table creation
+Search queries across movies, series, channels
+FTS trigger firing on insert/update
+Search ranking and relevance
+Expected Result: +10 passing tests
+
+Phase 2.4: Playlist Cache Manager Tests 🟡 HIGH (1 hour)
+Current Status: ~8 tests skipped
+Blocker: File I/O operations require actual filesystem
+
+Actions:
+
+Remove XCTSkip from PlaylistCacheManagerStressTests.swift
+Create temporary cache directory per test
+Test coverage:
+Cache write and retrieval
+Expiration logic
+Concurrent access
+Cache invalidation
+Expected Result: +8 passing tests
+
+Phase 3: Integration Tests 🟡 HIGH (2-3 hours)
+Current Status: Several integration tests skipped
+Blocker: Requires combination of file-based store + FTS + file I/O
+
+Actions:
+
+Update IntegrationTests.swift to use FileBasedTestCase with FTS
+Test end-to-end flows:
+Import M3U → Parse → Save → Search
+EPG import → Update → Query
+Multi-source playlist management
+Profile switching with data isolation
+Expected Result: +5 passing tests
+
+Phase 4: Medium Priority Tests 🟢 MEDIUM (2-3 hours)
+4.1 Franchise Grouping Tests
+
+Remove XCTSkip from FranchiseGroupingTests.swift
+May need to mock TMDb API calls or use test fixtures
+Test franchise detection algorithms
+4.2 Optimized Fetch Tests
+
+Remove XCTSkip from OptimizedFetchTests.swift
+Test batch faulting and prefetching strategies
+Verify performance improvements
+4.3 Playback Progress Tests
+
+Remove XCTSkip from PlaybackProgressTests.swift
+Test multi-profile progress tracking
+Test progress persistence and denormalization
+Expected Result: +15 passing tests
+
+Phase 5: Performance & Edge Cases 🟢 MEDIUM (1-2 hours)
+5.1 Performance Regression Tests
+
+Benchmark parsing for various playlist sizes
+Memory usage profiling
+Response time validation
+5.2 Edge Case Tests
+
+Malformed M3U data handling
+Invalid EPG XML recovery
+Network timeout scenarios
+Concurrent import conflicts
+Expected Result: +10 passing tests
+
+Phase 6: New Tests for Actor Filtering ✅ DONE
+Status: Already implemented with 9 passing tests!
+
+✅ Actor entity creation
+✅ Credit relationships
+✅ Filmography filtering
+✅ Credit ordering
+✅ Cascade deletion
+Current: 198 passing tests (including new actor tests)
+
+Summary & Timeline
+Phase	|Duration	|Tests Added	|Priority	|Status|
+Phase 1: Infrastructure	|2-3 hours	|0 (foundation)	|🔴 Critical	|Not Started|
+Phase 2.1: EPG Tests	|1 hour	|+15 tests	|🔴 Critical	|Not Started|
+Phase 2.2: M3U Tests	|1 hour	|+20 tests	|🔴 Critical	|Not Started|
+Phase 2.3: FTS Tests	|1 hour	|+10 tests	|🔴 Critical	|Not Started|
+Phase 2.4: Cache Tests	|1 hour	|+8 tests	|🟡 High	|Not Started|
+Phase 3: Integration	|2-3 hours	|+5 tests	|🟡 High	|Not Started|
+Phase 4: Medium Priority	|2-3 hours	|+15 tests	|🟢 Medium	|Not Started|
+Phase 5: Performance	|1-2 hours	|+10 tests	|🟢 Medium	|Not Started|
+Phase 6: Actor Tests	|✅ Done	|+9 tests	|✅ Complete	|✅ DONE|
+Total Time: 11-15 hours
+Current Tests: 198 passing
+Expected Final: 290+ passing tests
+Coverage Improvement: 65% → 95%+
+
+Recommended Execution Order
+Week 1 - Critical Foundation:
+
+Day 1: Phase 1 (Infrastructure)
+Day 2: Phase 2.1 (EPG) + Phase 2.2 (M3U)
+Day 3: Phase 2.3 (FTS) + Phase 2.4 (Cache)
+Checkpoint: ~50 tests recovered, core functionality validated
+Week 2 - Integration & Polish:
+
+Day 4-5: Phase 3 (Integration Tests)
+Day 6: Phase 4 (Medium Priority)
+Day 7: Phase 5 (Performance & Edge Cases)
+Final Checkpoint: 95%+ coverage achieved
+My Recommendations
+Start with Phase 1 immediately - It's the foundation for everything else
+Use CI/CD separation - Run in-memory tests on every commit, file-based tests nightly
+Add the Actor filtering tests to documentation - They're new and should be tracked
+Consider test categories for easier filtering:

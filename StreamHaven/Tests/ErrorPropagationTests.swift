@@ -5,6 +5,7 @@ import CoreData
 @MainActor
 final class ErrorPropagationTests: XCTestCase {
     func testImportPlaylistNetworkErrorPropagates() async throws {
-        throw XCTSkip("Test disabled - involves EPG parsing which uses NSBatchDeleteRequest that hangs with in-memory stores")
+        // TODO: Implement test once network error handling is in place
+        throw XCTSkip("Test needs implementation with mock URLSession")
     }
 }

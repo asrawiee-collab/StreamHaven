@@ -12,7 +12,10 @@ public struct SeriesDetailView: View {
     @EnvironmentObject var favoritesManager: FavoritesManager
     @EnvironmentObject var watchHistoryManager: WatchHistoryManager
     @EnvironmentObject var watchlistManager: WatchlistManager
+    @EnvironmentObject var navigationCoordinator: NavigationCoordinator
+    @EnvironmentObject var tmdbManager: TMDbManager
 
+    @Environment(\.managedObjectContext) private var viewContext
     @StateObject private var smartSummaryManager = SmartSummaryManager()
     @State private var showingPlayer = false
     @State private var selectedEpisode: Episode?
@@ -20,6 +23,7 @@ public struct SeriesDetailView: View {
     @State private var smartSummary: String?
     @State private var showingWatchlistPicker = false
     @State private var isInWatchlist: Bool = false
+    @State private var cast: [Actor] = []
 
     private var seasons: [Season] {
         let set = series.seasons as? Set<Season> ?? []
@@ -72,6 +76,28 @@ public struct SeriesDetailView: View {
                         .padding()
                 }
                 
+                // Cast Section
+                if !cast.isEmpty {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Cast")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .padding(.horizontal)
+                        
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 16) {
+                                ForEach(cast, id: \.tmdbID) { actor in
+                                    ActorCardView(actor: actor) {
+                                        navigationCoordinator.push(.actorDetail(actor))
+                                    }
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+                    }
+                    .padding(.vertical)
+                }
+                
                 // Add to Watchlist Button
                 Button(action: { showingWatchlistPicker = true }) {
                     Label(isInWatchlist ? "In Watchlists" : "Add to Watchlist", systemImage: isInWatchlist ? "checkmark.circle.fill" : "plus.circle")
@@ -106,6 +132,7 @@ public struct SeriesDetailView: View {
         .onAppear(perform: {
             setup()
             generateSmartSummary()
+            loadCast()
         })
     }
 
@@ -260,6 +287,32 @@ public struct SeriesDetailView: View {
 
         let cacheKey = "series_\(series.objectID.uriRepresentation().absoluteString)"
         smartSummary = smartSummaryManager.getCachedSummary(cacheKey: cacheKey, fullPlot: fullPlot)
+    }
+
+    /// Loads cast members for this series.
+    private func loadCast() {
+        // Fetch credits if not already loaded
+        if let credits = series.credits as? Set<Credit>, !credits.isEmpty {
+            let sortedCredits = credits
+                .filter { $0.creditType == "cast" }
+                .sorted { $0.order < $1.order }
+            cast = sortedCredits.compactMap { $0.actor }
+        } else {
+            // Fetch from TMDb in background
+            Task {
+                await tmdbManager.fetchSeriesCredits(for: series, context: viewContext)
+                
+                // Reload cast after fetch
+                if let credits = series.credits as? Set<Credit> {
+                    let sortedCredits = credits
+                        .filter { $0.creditType == "cast" }
+                        .sorted { $0.order < $1.order }
+                    await MainActor.run {
+                        cast = sortedCredits.compactMap { $0.actor }
+                    }
+                }
+            }
+        }
     }
 }
 #endif

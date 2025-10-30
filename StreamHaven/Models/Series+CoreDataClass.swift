@@ -56,6 +56,8 @@ extension Series {
     @NSManaged public var seasons: NSSet?
     /// The `Favorite` object if the series is marked as a favorite.
     @NSManaged public var favorite: Favorite?
+    /// The set of credits (cast/crew) for this series.
+    @NSManaged public var credits: NSSet?
     /// Stored release year backing value (NSNumber to allow nil).
     @NSManaged private var releaseYearValue: NSNumber?
 

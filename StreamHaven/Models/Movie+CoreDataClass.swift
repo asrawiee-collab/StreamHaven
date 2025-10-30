@@ -60,6 +60,8 @@ extension Movie {
     @NSManaged public var watchHistory: WatchHistory?
     /// The `Favorite` object if the movie is marked as a favorite.
     @NSManaged public var favorite: Favorite?
+    /// The set of credits (cast/crew) for this movie.
+    @NSManaged public var credits: NSSet?
     /// Stored release year backing value (NSNumber to allow nil).
     @NSManaged private var releaseYearValue: NSNumber?
 

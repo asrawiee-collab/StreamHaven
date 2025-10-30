@@ -2,40 +2,24 @@ import XCTest
 import CoreData
 @testable import StreamHaven
 
+@MainActor
 final class OptimizedFetchTests: XCTestCase {
-    var provider: PersistenceProviding!
+    var container: NSPersistentContainer!
     var context: NSManagedObjectContext!
     var profile: Profile!
 
-    override func setUpWithError() throws {
-        throw XCTSkip("OptimizedFetchTests require file-based Core Data store")
-        let container = NSPersistentContainer(
-            name: "OptimizedFetchTesting",
-            managedObjectModel: TestCoreDataModelBuilder.sharedModel
-        )
+    override func setUp() async throws {
+        try await super.setUp()
         
-        let description = NSPersistentStoreDescription()
-        description.type = NSInMemoryStoreType
-        container.persistentStoreDescriptions = [description]
-        
-        var loadError: Error?
-        container.loadPersistentStores { _, error in
-            loadError = error
+        let localContext = context!
+        let createdProfile = try localContext.performAndWait {
+            let p = Profile(context: localContext)
+            p.name = "Test"
+            p.isAdult = true
+            try localContext.save()
+            return p
         }
-        
-        guard loadError == nil else {
-            throw XCTSkip("Failed to load in-memory store: \(loadError!)")
-        }
-        
-        provider = TestPersistenceProvider(container: container)
-        context = provider.container.newBackgroundContext()
-        
-        try context.performAndWait {
-            profile = Profile(context: context)
-            profile.name = "Test"
-            profile.isAdult = true
-            try context.save()
-        }
+        profile = createdProfile
     }
 
     func testFetchFavoriteMoviesReturnsOnlyFavorites() throws {
@@ -208,8 +192,4 @@ final class OptimizedFetchTests: XCTestCase {
             XCTAssertEqual(stats.totalChannels, 5)
         }
     }
-}
-
-private struct TestPersistenceProvider: PersistenceProviding {
-    let container: NSPersistentContainer
 }

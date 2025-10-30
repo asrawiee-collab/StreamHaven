@@ -26,6 +26,8 @@ public struct MovieDetailView: View {
     @State private var isInQueue: Bool = false
     @State private var showingWatchlistPicker = false
     @State private var isInWatchlist: Bool = false
+    @State private var cast: [Actor] = []
+    @EnvironmentObject var navigationCoordinator: NavigationCoordinator
 
     /// The body of the view.
     public var body: some View {
@@ -86,6 +88,28 @@ public struct MovieDetailView: View {
                 } else {
                     Text(movie.summary ?? "No summary available.")
                         .padding()
+                }
+
+                // Cast Section
+                if !cast.isEmpty {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Cast")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .padding(.horizontal)
+                        
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 16) {
+                                ForEach(cast, id: \.tmdbID) { actor in
+                                    ActorCardView(actor: actor) {
+                                        navigationCoordinator.push(.actorDetail(actor))
+                                    }
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+                    }
+                    .padding(.vertical)
                 }
 
                 Button(action: playMovie) {
@@ -203,6 +227,7 @@ public struct MovieDetailView: View {
             setup()
             fetchIMDbID()
             generateSmartSummary()
+            loadCast()
         })
         .onReceive(downloadManager.$activeDownloads) { _ in
             updateDownloadProgress()
@@ -273,6 +298,7 @@ public struct MovieDetailView: View {
             setup()
             fetchIMDbID()
             generateSmartSummary()
+            loadCast()
         })
         .onReceive(downloadManager.$activeDownloads) { _ in
             updateDownloadProgress()
@@ -371,6 +397,32 @@ public struct MovieDetailView: View {
 
         let cacheKey = "movie_\(movie.objectID.uriRepresentation().absoluteString)"
         smartSummary = smartSummaryManager.getCachedSummary(cacheKey: cacheKey, fullPlot: fullPlot)
+    }
+
+    /// Loads cast members for this movie.
+    private func loadCast() {
+        // Fetch credits if not already loaded
+        if let credits = movie.credits as? Set<Credit>, !credits.isEmpty {
+            let sortedCredits = credits
+                .filter { $0.creditType == "cast" }
+                .sorted { $0.order < $1.order }
+            cast = sortedCredits.compactMap { $0.actor }
+        } else {
+            // Fetch from TMDb in background
+            Task {
+                await tmdbManager.fetchMovieCredits(for: movie, context: viewContext)
+                
+                // Reload cast after fetch
+                if let credits = movie.credits as? Set<Credit> {
+                    let sortedCredits = credits
+                        .filter { $0.creditType == "cast" }
+                        .sorted { $0.order < $1.order }
+                    await MainActor.run {
+                        cast = sortedCredits.compactMap { $0.actor }
+                    }
+                }
+            }
+        }
     }
 }
 

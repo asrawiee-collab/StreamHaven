@@ -35,6 +35,11 @@ let package = Package(
             name: "StreamHavenTests",
             dependencies: ["StreamHaven"],
             path: "StreamHaven/Tests"
+        ),
+        .testTarget(
+            name: "StreamHavenSQLiteTests",
+            dependencies: ["StreamHaven"],
+            path: "StreamHavenSQLiteTests"
         )
     ]
 )

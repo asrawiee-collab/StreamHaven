@@ -4,33 +4,43 @@ import CoreData
 
 @MainActor
 class PersistenceIntegrationTests: XCTestCase {
-
-    var persistenceController: PersistenceController? 
-    var persistenceProvider: PersistenceProviding? 
-    var context: NSManagedObjectContext? 
+    var container: NSPersistentContainer!
+    var context: NSManagedObjectContext!
+    var persistenceProvider: PersistenceProviding!
     var dataManager: StreamHavenData? 
 
-    override func setUpWithError() throws {
-        throw XCTSkip("PersistenceIntegrationTests involve parsing which hangs with in-memory stores")
-    }
-    
-    override func setUp() {
-        super.setUp()
-        persistenceController = PersistenceController(inMemory: true)
-        if let pc = persistenceController {
-            persistenceProvider = DefaultPersistenceProvider(controller: pc)
-            context = persistenceProvider?.container.viewContext
-            if let provider = persistenceProvider {
-                dataManager = StreamHavenData(persistenceProvider: provider)
-            }
+    override func setUp() async throws {
+        try await super.setUp()
+        container = NSPersistentContainer(
+            name: "StreamHavenTest",
+            managedObjectModel: TestCoreDataModelBuilder.sharedModel
+        )
+        let description = NSPersistentStoreDescription()
+        description.type = NSInMemoryStoreType
+        container.persistentStoreDescriptions = [description]
+        
+        var loadError: Error?
+        container.loadPersistentStores { _, error in
+            loadError = error
         }
+        if let error = loadError {
+            throw error
+        }
+        
+        context = container.viewContext
+        struct TestProvider: PersistenceProviding {
+            let container: NSPersistentContainer
+        }
+        persistenceProvider = TestProvider(container: container)
+        dataManager = StreamHavenData(persistenceProvider: persistenceProvider)
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         dataManager = nil
         context = nil
-        persistenceController = nil
-        super.tearDown()
+        persistenceProvider = nil
+        container = nil
+        try await super.tearDown()
     }
 
     func testParseSaveFetchRoundtrip() {
