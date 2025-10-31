@@ -11,9 +11,24 @@ final class PlaybackProgressTests: XCTestCase {
     var watchHistoryManager: WatchHistoryManager!
 
     override func setUpWithError() throws {
-        throw XCTSkip("PlaybackProgressTests require model not compatible with TestCoreDataModelBuilder")
-        let controller = PersistenceController(inMemory: true)
-        provider = DefaultPersistenceProvider(controller: controller)
+        let container = NSPersistentContainer(
+            name: "PlaybackProgressTest",
+            managedObjectModel: TestCoreDataModelBuilder.sharedModel
+        )
+        let description = NSPersistentStoreDescription()
+        description.type = NSInMemoryStoreType
+        container.persistentStoreDescriptions = [description]
+        
+        var loadError: Error?
+        container.loadPersistentStores { _, error in
+            loadError = error
+        }
+        
+        if let error = loadError {
+            throw error
+        }
+        
+        provider = TestPersistenceProvider(container: container)
         context = provider.container.viewContext
         
         profile = Profile(context: context)
@@ -131,4 +146,8 @@ final class PlaybackProgressTests: XCTestCase {
         XCTAssertEqual(Double(history1?.progress ?? 0), 0.3, accuracy: 0.01)
         XCTAssertEqual(Double(history2?.progress ?? 0), 0.8, accuracy: 0.01)
     }
+}
+
+private struct TestPersistenceProvider: PersistenceProviding {
+    let container: NSPersistentContainer
 }

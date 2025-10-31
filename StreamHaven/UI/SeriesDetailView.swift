@@ -24,6 +24,9 @@ public struct SeriesDetailView: View {
     @State private var showingWatchlistPicker = false
     @State private var isInWatchlist: Bool = false
     @State private var cast: [Actor] = []
+    @State private var directors: [Crew] = []
+    @State private var writers: [Crew] = []
+    @State private var producers: [Crew] = []
 
     private var seasons: [Season] {
         let set = series.seasons as? Set<Season> ?? []
@@ -98,6 +101,27 @@ public struct SeriesDetailView: View {
                     .padding(.vertical)
                 }
                 
+                // Crew Section
+                if !directors.isEmpty || !writers.isEmpty || !producers.isEmpty {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Crew")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .padding(.horizontal)
+                        
+                        if !directors.isEmpty {
+                            CrewSectionRow(title: "Directed by", crew: directors)
+                        }
+                        if !writers.isEmpty {
+                            CrewSectionRow(title: "Written by", crew: writers)
+                        }
+                        if !producers.isEmpty {
+                            CrewSectionRow(title: "Produced by", crew: producers)
+                        }
+                    }
+                    .padding(.vertical)
+                }
+                
                 // Add to Watchlist Button
                 Button(action: { showingWatchlistPicker = true }) {
                     Label(isInWatchlist ? "In Watchlists" : "Add to Watchlist", systemImage: isInWatchlist ? "checkmark.circle.fill" : "plus.circle")
@@ -133,6 +157,7 @@ public struct SeriesDetailView: View {
             setup()
             generateSmartSummary()
             loadCast()
+            loadCrew()
         })
     }
 
@@ -208,6 +233,8 @@ public struct SeriesDetailView: View {
         .onAppear {
             setup()
             generateSmartSummary()
+            loadCast()
+            loadCrew()
         }
     }
 
@@ -313,6 +340,62 @@ public struct SeriesDetailView: View {
                 }
             }
         }
+    }
+    
+    /// Loads crew members for this series.
+    private func loadCrew() {
+        guard let crewSet = series.crew as? Set<Crew> else { return }
+        let allCrew = Array(crewSet)
+        
+        directors = allCrew.filter { $0.job == "Director" }.sorted { $0.name ?? "" < $1.name ?? "" }
+        writers = allCrew.filter { $0.job == "Writer" }.sorted { $0.name ?? "" < $1.name ?? "" }
+        producers = allCrew.filter { $0.job == "Producer" }.sorted { $0.name ?? "" < $1.name ?? "" }
+    }
+}
+
+// MARK: - Crew Section Row
+
+private struct CrewSectionRow: View {
+    let title: String
+    let crew: [Crew]
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .padding(.horizontal)
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 10) {
+                    ForEach(crew, id: \.tmdbID) { member in
+                        VStack(alignment: .center) {
+                            AsyncImage(url: URL(string: member.profilePath ?? "")) { image in
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                            } placeholder: {
+                                ZStack {
+                                    Color.gray.opacity(0.3)
+                                    Image(systemName: "person.circle.fill")
+                                        .foregroundColor(.gray)
+                                        .font(.system(size: 30))
+                                }
+                            }
+                            .frame(width: 60, height: 60)
+                            .clipShape(Circle())
+                            
+                            Text(member.name ?? "")
+                                .font(.caption)
+                                .lineLimit(1)
+                        }
+                        .frame(width: 60)
+                    }
+                }
+                .padding(.horizontal)
+            }
+        }
+        .padding(.vertical, 5)
     }
 }
 #endif

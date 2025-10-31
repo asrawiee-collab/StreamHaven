@@ -139,9 +139,28 @@ public struct TMDbCreditsResponse: Decodable, Sendable {
     let crew: [TMDbCrewMember]
 }
 
+/// A struct for full person details from TMDb API.
+public struct TMDbPersonDetail: Decodable, Sendable {
+    let id: Int
+    let name: String
+    let biography: String?
+    let profilePath: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case id, name, biography
+        case profilePath = "profile_path"
+    }
+
+    /// Returns the full photo URL for this person.
+    var photoURL: String? {
+        guard let path = profilePath else { return nil }
+        return "https://image.tmdb.org/t/p/w185\(path)"
+    }
+}
+
 /// A class for interacting with The Movie Database (TMDb) API.
 @MainActor
-public final class TMDbManager: TMDbManaging {
+public final class TMDbManager: ObservableObject, TMDbManaging {
 
     /// The TMDb API key.
     public var apiKey: String?
@@ -164,10 +183,7 @@ public final class TMDbManager: TMDbManaging {
             PerformanceLogger.logNetwork("TMDb API Key not found in Keychain. IMDb ID fetching disabled.")
         }
     }
-    ///
-    /// - Parameters:
-    ///   - movie: The `Movie` object to fetch the IMDb ID for.
-    ///   - context: The `NSManagedObjectContext` to perform the save on.
+    ///   - context: The managed object context.
     public func fetchIMDbID(for movie: Movie, context: NSManagedObjectContext) async {
         guard let apiKey = apiKey, let title = movie.title else { return }
 
@@ -177,6 +193,35 @@ public final class TMDbManager: TMDbManaging {
         }
 
         do {
+
+    /// Fetches full details for a person (actor) from TMDb.
+    /// - Parameter tmdbID: The TMDb ID of the person.
+    /// - Returns: A `TMDbPersonDetail` object if found, otherwise `nil`.
+    public func fetchPersonDetails(tmdbID: Int) async throws -> TMDbPersonDetail? {
+        guard let actualApiKey = apiKey else {
+            throw TMDbError.missingAPIKey
+        }
+
+        let urlString = "\(apiBaseURL)/person/\(tmdbID)?api_key=\(actualApiKey)"
+        guard let url = URL(string: urlString) else {
+            throw TMDbError.invalidURL
+        }
+
+        await rateLimiter.acquire()
+        let (data, response) = try await URLSession.shared.data(from: url)
+
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            PerformanceLogger.logNetwork("TMDb: Failed to fetch person details for TMDb ID \(tmdbID). Status code: \((response as? HTTPURLResponse)?.statusCode ?? 0)")
+            return nil
+        }
+
+        let personDetail = try JSONDecoder().decode(TMDbPersonDetail.self, from: data)
+        PerformanceLogger.logNetwork("TMDb: Fetched details for person \(personDetail.name) (TMDb ID \(tmdbID))")
+        return personDetail
+    }
+
+
+
             // 1. Search for the movie by title to get the TMDb ID
             let searchQuery = title.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
             let searchURLString = "\(apiBaseURL)/search/movie?api_key=\(apiKey)&query=\(searchQuery)"
@@ -515,6 +560,34 @@ public final class TMDbManager: TMDbManaging {
                     credit.movie = movie
                 } else if let series = content as? Series {
                     credit.series = series
+                }
+            }
+            
+            // Save Crew members
+            let crew = creditsResponse.crew
+            for crewMember in crew {
+                // Find or create Crew
+                let crewFetch: NSFetchRequest<Crew> = Crew.fetchRequest()
+                crewFetch.predicate = NSPredicate(format: "tmdbID == %d AND job == %@", crewMember.id, crewMember.job)
+                
+                let crewEntity: Crew
+                if let existingCrew = try? context.fetch(crewFetch).first {
+                    crewEntity = existingCrew
+                } else {
+                    crewEntity = Crew(context: context)
+                    crewEntity.tmdbID = Int64(crewMember.id)
+                    crewEntity.job = crewMember.job
+                }
+                
+                // Update crew info
+                crewEntity.name = crewMember.name
+                crewEntity.profilePath = crewMember.profilePath
+                
+                // Link to content
+                if let movie = content as? Movie {
+                    crewEntity.movie = movie
+                } else if let series = content as? Series {
+                    crewEntity.series = series
                 }
             }
             

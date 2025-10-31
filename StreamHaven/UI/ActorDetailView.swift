@@ -8,6 +8,7 @@ struct ActorDetailView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var navigationCoordinator: NavigationCoordinator
     @EnvironmentObject var settingsManager: SettingsManager
+    @EnvironmentObject var tmdbManager: TMDbManager
     
     @State private var movies: [Movie] = []
     @State private var series: [Series] = []
@@ -120,6 +121,7 @@ struct ActorDetailView: View {
         .navigationTitle(actor.name ?? "Actor")
         .onAppear {
             loadFilmography()
+            fetchActorBiography()
         }
     }
     
@@ -134,5 +136,24 @@ struct ActorDetailView: View {
         // Extract series
         let seriesCredits = credits.compactMap { $0.series }
         series = seriesCredits.sorted { ($0.title ?? "") < ($1.title ?? "") }
+    }
+    
+    /// Fetches the actor's biography from TMDb.
+    private func fetchActorBiography() {
+        Task {
+            // Only fetch if biography is not already loaded
+            guard actor.biography == nil || actor.biography?.isEmpty == true else { return }
+            
+            do {
+                if let personDetail = try await tmdbManager.fetchPersonDetails(tmdbID: Int(actor.tmdbID)) {
+                    await MainActor.run {
+                        actor.biography = personDetail.biography
+                        try? viewContext.save()
+                    }
+                }
+            } catch {
+                print("Failed to fetch actor biography: \(error)")
+            }
+        }
     }
 }
