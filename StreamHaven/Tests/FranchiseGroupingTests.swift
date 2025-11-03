@@ -1,5 +1,5 @@
-import XCTest
 import CoreData
+import XCTest
 @testable import StreamHaven
 
 final class FranchiseGroupingTests: XCTestCase {
@@ -7,8 +7,7 @@ final class FranchiseGroupingTests: XCTestCase {
 
     override func setUpWithError() throws {
         let container = NSPersistentContainer(
-            name: "FranchiseGroupingTesting",
-            managedObjectModel: LightweightCoreDataModelBuilder.sharedModel
+            name: "FranchiseGroupingTesting", managedObjectModel: LightweightCoreDataModelBuilder.sharedModel
         )
         
         let description = NSPersistentStoreDescription()

@@ -117,8 +117,7 @@ public struct DownloadsView: View {
             }
         }
         .sheet(isPresented: $showingPlayer) {
-            if let player = playbackManager.player,
-               let item = selectedItem {
+            if let player = playbackManager.player, let item = selectedItem {
                 if let movie = item as? Movie {
                     PlaybackViewController(player: player, imdbID: movie.imdbID)
                 } else if let episode = item as? Episode {
@@ -280,7 +279,7 @@ struct CompletedDownloadRow: View {
             }
         }
         .padding(.vertical, 4)
-        .opacity(download.isExpired ? 0.5 : 1.0)
+        .opacity(download.isExpired ? 0.5: 1.0)
     }
     
     private func formatBytes(_ bytes: Int64) -> String {

@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 /// Represents the cached data of a playlist.
 /// This class is a Core Data managed object.

@@ -5,8 +5,8 @@
 //  Created on October 25, 2025.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 @objc(Watchlist)
 public class Watchlist: NSManagedObject {
@@ -31,10 +31,7 @@ public class Watchlist: NSManagedObject {
     
     /// Create a new watchlist
     static func create(
-        name: String,
-        icon: String = "list.bullet",
-        profile: Profile,
-        context: NSManagedObjectContext
+        name: String, icon: String = "list.bullet", profile: Profile, context: NSManagedObjectContext
     ) -> Watchlist {
         let watchlist = Watchlist(context: context)
         watchlist.name = name

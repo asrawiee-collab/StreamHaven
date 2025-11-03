@@ -109,9 +109,7 @@ struct WatchlistCard: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(LinearGradient(
-                        gradient: Gradient(colors: [.blue.opacity(0.6), .purple.opacity(0.6)]),
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
+                        gradient: Gradient(colors: [.blue.opacity(0.6), .purple.opacity(0.6)]), startPoint: .topLeading, endPoint: .bottomTrailing
                     ))
                     .frame(height: 120)
                 
@@ -153,9 +151,7 @@ struct CreateWatchlistSheet: View {
     @State private var errorMessage: String = ""
     
     let availableIcons = [
-        "list.bullet", "star.fill", "heart.fill", "bookmark.fill",
-        "film.fill", "tv.fill", "sparkles", "flame.fill",
-        "eye.fill", "clock.fill", "calendar", "folder.fill"
+        "list.bullet", "star.fill", "heart.fill", "bookmark.fill", "film.fill", "tv.fill", "sparkles", "flame.fill", "eye.fill", "clock.fill", "calendar", "folder.fill"
     ]
     
     let iconColumns = [
@@ -175,9 +171,9 @@ struct CreateWatchlistSheet: View {
                             Button(action: { selectedIcon = icon }) {
                                 Image(systemName: icon)
                                     .font(.title2)
-                                    .foregroundColor(selectedIcon == icon ? .white : .blue)
+                                    .foregroundColor(selectedIcon == icon ? .white: .blue)
                                     .frame(width: 60, height: 60)
-                                    .background(selectedIcon == icon ? Color.blue : Color.gray.opacity(0.2))
+                                    .background(selectedIcon == icon ? Color.blue: Color.gray.opacity(0.2))
                                     .cornerRadius(8)
                             }
                         }
@@ -218,9 +214,7 @@ struct CreateWatchlistSheet: View {
         
         do {
             try watchlistManager.createWatchlist(
-                name: name.trimmingCharacters(in: .whitespaces),
-                icon: selectedIcon,
-                profile: profile
+                name: name.trimmingCharacters(in: .whitespaces), icon: selectedIcon, profile: profile
             )
             isPresented = false
         } catch {
@@ -480,9 +474,7 @@ struct RenameWatchlistSheet: View {
         
         do {
             try watchlistManager.renameWatchlist(
-                watchlist,
-                newName: name.trimmingCharacters(in: .whitespaces),
-                profile: profile
+                watchlist, newName: name.trimmingCharacters(in: .whitespaces), profile: profile
             )
             isPresented = false
         } catch {
@@ -502,9 +494,7 @@ struct IconPickerSheet: View {
     @State private var selectedIcon: String = ""
     
     let availableIcons = [
-        "list.bullet", "star.fill", "heart.fill", "bookmark.fill",
-        "film.fill", "tv.fill", "sparkles", "flame.fill",
-        "eye.fill", "clock.fill", "calendar", "folder.fill"
+        "list.bullet", "star.fill", "heart.fill", "bookmark.fill", "film.fill", "tv.fill", "sparkles", "flame.fill", "eye.fill", "clock.fill", "calendar", "folder.fill"
     ]
     
     let iconColumns = [
@@ -519,9 +509,9 @@ struct IconPickerSheet: View {
                         Button(action: { selectedIcon = icon }) {
                             Image(systemName: icon)
                                 .font(.title2)
-                                .foregroundColor(selectedIcon == icon ? .white : .blue)
+                                .foregroundColor(selectedIcon == icon ? .white: .blue)
                                 .frame(width: 60, height: 60)
-                                .background(selectedIcon == icon ? Color.blue : Color.gray.opacity(0.2))
+                                .background(selectedIcon == icon ? Color.blue: Color.gray.opacity(0.2))
                                 .cornerRadius(8)
                         }
                     }

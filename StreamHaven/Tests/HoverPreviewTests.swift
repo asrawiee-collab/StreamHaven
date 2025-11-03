@@ -6,9 +6,9 @@
 //
 
 #if os(tvOS)
-import XCTest
-import CoreData
 import AVKit
+import CoreData
+import XCTest
 @testable import StreamHaven
 
 @MainActor

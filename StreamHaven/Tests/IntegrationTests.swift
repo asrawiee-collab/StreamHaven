@@ -1,5 +1,5 @@
-import XCTest
 import CoreData
+import XCTest
 @testable import StreamHaven
 
 @MainActor
@@ -11,8 +11,7 @@ class IntegrationTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         container = NSPersistentContainer(
-            name: "StreamHavenTest",
-            managedObjectModel: TestCoreDataModelBuilder.sharedModel
+            name: "StreamHavenTest", managedObjectModel: TestCoreDataModelBuilder.sharedModel
         )
         let description = NSPersistentStoreDescription()
         description.type = NSInMemoryStoreType
@@ -43,7 +42,7 @@ class IntegrationTests: XCTestCase {
     func testImportPersistSearchFlow() async throws {
         let m3uString = """
         #EXTM3U
-        #EXTINF:-1 tvg-id="movie1" tvg-name="Test Movie" tvg-logo="logo.png" group-title="Movies",Test Movie
+        #EXTINF:-1 tvg-id="movie1" tvg-name="Test Movie" tvg-logo="logo.png" group-title="Movies", Test Movie
         http://server.com/movie1
         """
         guard let m3uData = m3uString.data(using: .utf8) else { XCTFail("UTF8 conversion failed"); return }

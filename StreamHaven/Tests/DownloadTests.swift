@@ -1,6 +1,6 @@
-import XCTest
-import CoreData
 import AVFoundation
+import CoreData
+import XCTest
 @testable import StreamHaven
 
 /// Tests for the DownloadManager.

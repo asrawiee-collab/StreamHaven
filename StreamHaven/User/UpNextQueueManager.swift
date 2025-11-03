@@ -1,6 +1,6 @@
-import Foundation
-import CoreData
 import Combine
+import CoreData
+import Foundation
 import os.log
 
 /// Manages the Up Next queue for automated content continuation.
@@ -76,11 +76,7 @@ public class UpNextQueueManager: ObservableObject {
         
         // Create queue item
         guard let queueItem = UpNextQueueItem.create(
-            for: content,
-            profile: profile,
-            position: nextPosition,
-            autoAdded: autoAdded,
-            context: context
+            for: content, profile: profile, position: nextPosition, autoAdded: autoAdded, context: context
         ) else {
             throw UpNextQueueError.unsupportedContentType
         }

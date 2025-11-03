@@ -1,5 +1,5 @@
-import SwiftUI
 import CoreData
+import SwiftUI
 
 #if os(iOS)
 
@@ -61,8 +61,7 @@ struct PlaylistSourcesView: View {
                 
                 Section {
                     Picker("Source Mode", selection: Binding(
-                        get: { profile.mode },
-                        set: { newMode in
+                        get: { profile.mode }, set: { newMode in
                             try? sourceManager.setSourceMode(newMode, for: profile)
                         }
                     )) {
@@ -101,8 +100,7 @@ struct PlaylistSourcesView: View {
             EditSourceView(source: source, sourceManager: sourceManager)
         }
         .alert("Error", isPresented: Binding(
-            get: { errorMessage != nil },
-            set: { if !$0 { errorMessage = nil } }
+            get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } }
         )) {
             Button("OK") { errorMessage = nil }
         } message: {
@@ -142,7 +140,7 @@ struct SourceRowView: View {
             // Source type icon
             Image(systemName: source.isM3U ? "doc.text" : "server.rack")
                 .font(.title2)
-                .foregroundColor(source.isActive ? .blue : .gray)
+                .foregroundColor(source.isActive ? .blue: .gray)
                 .frame(width: 40, height: 40)
                 .background(Color.secondary.opacity(0.1))
                 .clipShape(RoundedRectangle(cornerRadius: 8))
@@ -150,7 +148,7 @@ struct SourceRowView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(source.name ?? "Unnamed Source")
                     .font(.headline)
-                    .foregroundColor(source.isActive ? .primary : .secondary)
+                    .foregroundColor(source.isActive ? .primary: .secondary)
                 
                 HStack(spacing: 8) {
                     Text(source.type == .m3u ? "M3U Playlist" : "Xtream Codes")
@@ -178,8 +176,7 @@ struct SourceRowView: View {
             Spacer()
             
             Toggle("", isOn: Binding(
-                get: { source.isActive },
-                set: { isActive in
+                get: { source.isActive }, set: { isActive in
                     do {
                         if isActive {
                             try sourceManager.activateSource(source)

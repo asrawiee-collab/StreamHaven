@@ -1,5 +1,5 @@
-import XCTest
 import CoreData
+import XCTest
 @testable import StreamHaven
 
 @MainActor
@@ -10,8 +10,7 @@ final class ErrorPropagationTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         let container = NSPersistentContainer(
-            name: "ErrorPropagationTest",
-            managedObjectModel: TestCoreDataModelBuilder.sharedModel
+            name: "ErrorPropagationTest", managedObjectModel: TestCoreDataModelBuilder.sharedModel
         )
         let description = NSPersistentStoreDescription()
         description.type = NSInMemoryStoreType

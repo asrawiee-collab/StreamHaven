@@ -23,8 +23,7 @@ final class SubscriptionManagerTests: XCTestCase {
     func testLoadProductsAndInitialEntitlements() async {
         let mock = MockStoreKitProvider()
         mock.productsToReturn = [
-            ProductInfo(id: MonetizationConfig.ProductID.plusMonthly, displayName: "Plus Monthly", displayPrice: "$4.99", isSubscription: true, subscriptionPeriodUnit: "month", subscriptionPeriodValue: 1),
-            ProductInfo(id: MonetizationConfig.ProductID.plusYearly, displayName: "Plus Yearly", displayPrice: "$39.99", isSubscription: true, subscriptionPeriodUnit: "year", subscriptionPeriodValue: 1)
+            ProductInfo(id: MonetizationConfig.ProductID.plusMonthly, displayName: "Plus Monthly", displayPrice: "$4.99", isSubscription: true, subscriptionPeriodUnit: "month", subscriptionPeriodValue: 1), ProductInfo(id: MonetizationConfig.ProductID.plusYearly, displayName: "Plus Yearly", displayPrice: "$39.99", isSubscription: true, subscriptionPeriodUnit: "year", subscriptionPeriodValue: 1)
         ]
         let sm = SubscriptionManager(storeKitProvider: mock)
         await sm.load()

@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 /// Represents a downloaded or downloading content item.
 /// This class is a Core Data managed object.
@@ -49,11 +49,11 @@ extension Download {
 extension Download {
     /// Enumeration of possible download statuses.
     public enum Status: String {
-        case queued = "queued"
-        case downloading = "downloading"
-        case completed = "completed"
-        case failed = "failed"
-        case paused = "paused"
+        case queued
+        case downloading
+        case completed
+        case failed
+        case paused
     }
     
     /// Gets the status as an enum value.
@@ -68,8 +68,7 @@ extension Download {
     
     /// Checks if the download is completed and file exists.
     public var isAvailableOffline: Bool {
-        guard downloadStatus == .completed,
-              let filePath = filePath else {
+        guard downloadStatus == .completed, let filePath = filePath else {
             return false
         }
         return FileManager.default.fileExists(atPath: filePath)

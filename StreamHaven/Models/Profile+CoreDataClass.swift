@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 /// Represents a user profile in the application.
 /// This class is a Core Data managed object.
@@ -115,8 +115,8 @@ extension Profile {
     
     /// Source viewing mode constants.
     enum SourceMode: String {
-        case combined = "combined"
-        case single = "single"
+        case combined
+        case single
     }
     
     /// Returns the source mode as an enum.

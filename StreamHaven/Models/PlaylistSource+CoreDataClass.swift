@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 /// Represents a playlist source (M3U or Xtream Codes) for a user profile.
 /// This class is a Core Data managed object.
@@ -50,8 +50,8 @@ extension PlaylistSource {
     
     /// Source type constants.
     enum SourceType: String {
-        case m3u = "m3u"
-        case xtream = "xtream"
+        case m3u
+        case xtream
     }
     
     /// Returns the source type as an enum.

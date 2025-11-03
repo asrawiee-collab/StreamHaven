@@ -1,5 +1,5 @@
-import XCTest
 import CoreData
+import XCTest
 @testable import StreamHaven
 
 /// Performance tests for playlist parsing operations.
@@ -12,8 +12,7 @@ class ParserPerformanceTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         container = NSPersistentContainer(
-            name: "StreamHavenTest",
-            managedObjectModel: TestCoreDataModelBuilder.sharedModel
+            name: "StreamHavenTest", managedObjectModel: TestCoreDataModelBuilder.sharedModel
         )
         let description = NSPersistentStoreDescription()
         description.type = NSInMemoryStoreType
@@ -55,7 +54,7 @@ class ParserPerformanceTests: XCTestCase {
     }
     
     func testM3UBatchInsertPerformance_MediumPlaylist() throws {
-        // Generate a medium M3U playlist with 1,000 channels
+        // Generate a medium M3U playlist with 1, 000 channels
         let m3uContent = generateM3UPlaylist(channelCount: 1000, movieCount: 500)
         guard let data = m3uContent.data(using: .utf8) else { XCTFail("UTF8 conversion failed"); return }
         
@@ -66,7 +65,7 @@ class ParserPerformanceTests: XCTestCase {
     }
     
     func testM3UBatchInsertPerformance_LargePlaylist() throws {
-        // Generate a large M3U playlist with 10,000 channels
+        // Generate a large M3U playlist with 10, 000 channels
         let m3uContent = generateM3UPlaylist(channelCount: 10000, movieCount: 5000)
         guard let data = m3uContent.data(using: .utf8) else { XCTFail("UTF8 conversion failed"); return }
         
@@ -110,13 +109,13 @@ class ParserPerformanceTests: XCTestCase {
         
         // Generate channels
         for i in 1...channelCount {
-            lines.append("#EXTINF:-1 tvg-id=\"channel\(i)\" tvg-name=\"Channel \(i)\" tvg-logo=\"http://logo.url/\(i).png\" group-title=\"Live TV\",Channel \(i)")
+            lines.append("#EXTINF:-1 tvg-id=\"channel\(i)\" tvg-name=\"Channel \(i)\" tvg-logo=\"http://logo.url/\(i).png\" group-title=\"Live TV\", Channel \(i)")
             lines.append("http://stream.url/channel\(i)")
         }
         
         // Generate movies
         for i in 1...movieCount {
-            lines.append("#EXTINF:-1 tvg-id=\"movie\(i)\" tvg-name=\"Movie \(i)\" tvg-logo=\"http://poster.url/\(i).png\" group-title=\"Movies\",Movie \(i)")
+            lines.append("#EXTINF:-1 tvg-id=\"movie\(i)\" tvg-name=\"Movie \(i)\" tvg-logo=\"http://poster.url/\(i).png\" group-title=\"Movies\", Movie \(i)")
             lines.append("http://stream.url/movie\(i).mp4")
         }
         

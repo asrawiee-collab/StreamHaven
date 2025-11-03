@@ -5,8 +5,8 @@
 //  Tests for search filter functionality
 //
 
-import XCTest
 import CoreData
+import XCTest
 @testable import StreamHaven
 
 #if os(iOS) || os(tvOS)
@@ -95,18 +95,7 @@ final class SearchFiltersTests: XCTestCase {
         entity.name = "Movie"
         entity.managedObjectClassName = NSStringFromClass(SearchFiltersMovie.self)
         entity.properties = [
-            makeStringAttribute(named: "title"),
-            makeStringAttribute(named: "genres"),
-            makeStringAttribute(named: "rating"),
-            makeStringAttribute(named: "streamURL"),
-            makeStringAttribute(named: "summary"),
-            makeStringAttribute(named: "posterURL"),
-            makeStringAttribute(named: "previewURL"),
-            makeStringAttribute(named: "imdbID"),
-            makeStringAttribute(named: "stableID"),
-            makeUUIDAttribute(named: "sourceID"),
-            makeDateAttribute(named: "releaseDate"),
-            makeInt16Attribute(named: "releaseYearValue")
+            makeStringAttribute(named: "title"), makeStringAttribute(named: "genres"), makeStringAttribute(named: "rating"), makeStringAttribute(named: "streamURL"), makeStringAttribute(named: "summary"), makeStringAttribute(named: "posterURL"), makeStringAttribute(named: "previewURL"), makeStringAttribute(named: "imdbID"), makeStringAttribute(named: "stableID"), makeUUIDAttribute(named: "sourceID"), makeDateAttribute(named: "releaseDate"), makeInt16Attribute(named: "releaseYearValue")
         ]
         return entity
     }
@@ -116,16 +105,7 @@ final class SearchFiltersTests: XCTestCase {
         entity.name = "Series"
         entity.managedObjectClassName = NSStringFromClass(SearchFiltersSeries.self)
         entity.properties = [
-            makeStringAttribute(named: "title"),
-            makeStringAttribute(named: "genres"),
-            makeStringAttribute(named: "rating"),
-            makeStringAttribute(named: "summary"),
-            makeStringAttribute(named: "posterURL"),
-            makeStringAttribute(named: "previewURL"),
-            makeStringAttribute(named: "stableID"),
-            makeUUIDAttribute(named: "sourceID"),
-            makeDateAttribute(named: "releaseDate"),
-            makeInt16Attribute(named: "releaseYearValue")
+            makeStringAttribute(named: "title"), makeStringAttribute(named: "genres"), makeStringAttribute(named: "rating"), makeStringAttribute(named: "summary"), makeStringAttribute(named: "posterURL"), makeStringAttribute(named: "previewURL"), makeStringAttribute(named: "stableID"), makeUUIDAttribute(named: "sourceID"), makeDateAttribute(named: "releaseDate"), makeInt16Attribute(named: "releaseYearValue")
         ]
         return entity
     }
@@ -165,49 +145,23 @@ final class SearchFiltersTests: XCTestCase {
     private func seedSampleContent() {
         testMovies = [
             makeMovie(
-                title: "Action Movie",
-                genres: ["Action", "Adventure"],
-                rating: .pg13,
-                releaseYear: 2022
-            ),
-            makeMovie(
-                title: "Comedy Movie",
-                genres: ["Comedy"],
-                rating: .r,
-                releaseYear: 2015
-            ),
-            makeMovie(
-                title: "Horror Movie",
-                genres: ["Horror"],
-                rating: .nc17,
-                releaseYear: 2021
-            ),
-            makeMovie(
-                title: "Classic Movie",
-                genres: ["Drama"],
-                rating: .pg,
-                releaseYear: 1985
-            ),
-            makeMovie(
-                title: "Family Movie",
-                genres: ["Family"],
-                rating: .pg,
-                releaseYear: 2004
+                title: "Action Movie", genres: ["Action", "Adventure"], rating: .pg13, releaseYear: 2022
+            ), makeMovie(
+                title: "Comedy Movie", genres: ["Comedy"], rating: .r, releaseYear: 2015
+            ), makeMovie(
+                title: "Horror Movie", genres: ["Horror"], rating: .nc17, releaseYear: 2021
+            ), makeMovie(
+                title: "Classic Movie", genres: ["Drama"], rating: .pg, releaseYear: 1985
+            ), makeMovie(
+                title: "Family Movie", genres: ["Family"], rating: .pg, releaseYear: 2004
             )
         ]
 
         testSeries = [
             makeSeries(
-                title: "Sci-Fi Saga",
-                genres: ["Sci-Fi", "Adventure"],
-                rating: .pg13,
-                releaseYear: 2021
-            ),
-            makeSeries(
-                title: "Classic Sitcom",
-                genres: ["Comedy"],
-                rating: .pg,
-                releaseYear: 1994
+                title: "Sci-Fi Saga", genres: ["Sci-Fi", "Adventure"], rating: .pg13, releaseYear: 2021
+            ), makeSeries(
+                title: "Classic Sitcom", genres: ["Comedy"], rating: .pg, releaseYear: 1994
             )
         ]
 
@@ -241,13 +195,13 @@ final class SearchFiltersTests: XCTestCase {
 
     private func genres(for movie: Movie) -> [String] {
         movie.genres?
-            .split(separator: ",")
+            .split(separator: ", ")
             .map { $0.trimmingCharacters(in: .whitespaces) } ?? []
     }
 
     private func genres(for series: Series) -> [String] {
         series.genres?
-            .split(separator: ",")
+            .split(separator: ", ")
             .map { $0.trimmingCharacters(in: .whitespaces) } ?? []
     }
 

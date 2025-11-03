@@ -5,8 +5,8 @@
 //  Created on October 25, 2025.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 @objc(WatchlistItem)
 public class WatchlistItem: NSManagedObject {
@@ -38,10 +38,7 @@ public class WatchlistItem: NSManagedObject {
     
     /// Create a new watchlist item
     static func create(
-        for content: NSManagedObject,
-        watchlist: Watchlist,
-        position: Int32,
-        context: NSManagedObjectContext
+        for content: NSManagedObject, watchlist: Watchlist, position: Int32, context: NSManagedObjectContext
     ) -> WatchlistItem? {
         let item = WatchlistItem(context: context)
         
@@ -70,8 +67,7 @@ public class WatchlistItem: NSManagedObject {
     
     /// Fetch the actual content object (Movie, Episode, or Series)
     func fetchContent(context: NSManagedObjectContext) -> NSManagedObject? {
-        guard let url = URL(string: contentID),
-              let objectID = context.persistentStoreCoordinator?.managedObjectID(forURIRepresentation: url) else {
+        guard let url = URL(string: contentID), let objectID = context.persistentStoreCoordinator?.managedObjectID(forURIRepresentation: url) else {
             return nil
         }
         

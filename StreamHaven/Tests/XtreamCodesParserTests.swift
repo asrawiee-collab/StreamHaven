@@ -1,5 +1,5 @@
-import XCTest
 import CoreData
+import XCTest
 @testable import StreamHaven
 
 final class XtreamCodesParserTests: XCTestCase {
@@ -42,7 +42,7 @@ final class XtreamCodesParserTests: XCTestCase {
             if url.contains("get_vod_streams") {
                 json = """
                 [
-                  {"name":"Movie A","stream_id":101,"stream_icon":null,"rating":"7.0","category_id":1,"container_extension":"mp4"}
+                  {"name":"Movie A", "stream_id":101, "stream_icon":null, "rating":"7.0", "category_id":1, "container_extension":"mp4"}
                 ]
                 """
             } else if url.contains("get_series") {
@@ -50,7 +50,7 @@ final class XtreamCodesParserTests: XCTestCase {
             } else if url.contains("get_live_streams") {
                 json = """
                 [
-                  {"name":"Live 1","stream_id":201,"stream_icon":null,"category_id":2}
+                  {"name":"Live 1", "stream_id":201, "stream_icon":null, "category_id":2}
                 ]
                 """
             } else {

@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 /// Represents an EPG (Electronic Program Guide) entry in the application.
 /// This class is a Core Data managed object.
@@ -31,6 +31,6 @@ extension EPGEntry {
 
 }
 
-extension EPGEntry : Identifiable {
+extension EPGEntry: Identifiable {
 
 }

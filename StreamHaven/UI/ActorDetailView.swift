@@ -1,5 +1,5 @@
-import SwiftUI
 import CoreData
+import SwiftUI
 
 /// A view displaying an actor's filmography filtered from local library.
 struct ActorDetailView: View {
@@ -62,8 +62,7 @@ struct ActorDetailView: View {
                                     navigationCoordinator.push(.movieDetail(movie))
                                 }) {
                                     CardView(
-                                        url: URL(string: movie.posterURL ?? ""),
-                                        title: movie.title ?? "No Title"
+                                        url: URL(string: movie.posterURL ?? ""), title: movie.title ?? "No Title"
                                     )
                                 }
                                 .buttonStyle(.plain)
@@ -87,8 +86,7 @@ struct ActorDetailView: View {
                                     navigationCoordinator.push(.seriesDetail(seriesItem))
                                 }) {
                                     CardView(
-                                        url: URL(string: seriesItem.posterURL ?? ""),
-                                        title: seriesItem.title ?? "No Title"
+                                        url: URL(string: seriesItem.posterURL ?? ""), title: seriesItem.title ?? "No Title"
                                     )
                                 }
                                 .buttonStyle(.plain)

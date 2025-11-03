@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 /// Extension to add denormalized/cached properties for hot paths.
 extension Channel {

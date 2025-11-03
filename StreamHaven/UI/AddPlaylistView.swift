@@ -77,16 +77,11 @@ public struct AddPlaylistView: View {
             .alert(item: $errorAlert) { alert in
                 if let retryAction = alert.retryAction {
                     return Alert(
-                        title: Text(alert.title),
-                        message: Text(alert.message),
-                        primaryButton: .default(Text(NSLocalizedString("Retry", comment: "Retry button title")), action: retryAction),
-                        secondaryButton: .cancel(Text(NSLocalizedString("OK", comment: "Default button for alert")))
+                        title: Text(alert.title), message: Text(alert.message), primaryButton: .default(Text(NSLocalizedString("Retry", comment: "Retry button title")), action: retryAction), secondaryButton: .cancel(Text(NSLocalizedString("OK", comment: "Default button for alert")))
                     )
                 } else {
                     return Alert(
-                        title: Text(alert.title),
-                        message: Text(alert.message),
-                        dismissButton: .default(Text(NSLocalizedString("OK", comment: "Default button for alert")))
+                        title: Text(alert.title), message: Text(alert.message), dismissButton: .default(Text(NSLocalizedString("OK", comment: "Default button for alert")))
                     )
                 }
             }
@@ -100,7 +95,7 @@ public struct AddPlaylistView: View {
             return
         }
 
-        let epgURLValue = epgURL.isEmpty ? nil : URL(string: epgURL)
+        let epgURLValue = epgURL.isEmpty ? nil: URL(string: epgURL)
 
         isLoading = true
         loadingStatus = NSLocalizedString("Downloading...", comment: "Playlist import status")
@@ -121,8 +116,7 @@ public struct AddPlaylistView: View {
                 await MainActor.run {
                     self.isLoading = false
                     self.errorAlert = ErrorAlert(
-                        message: ErrorReporter.userMessage(for: error),
-                        retryAction: {
+                        message: ErrorReporter.userMessage(for: error), retryAction: {
                             self.addPlaylist()
                         }
                     )

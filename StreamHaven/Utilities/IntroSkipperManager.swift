@@ -5,8 +5,8 @@
 //  Service for detecting and managing intro/outro timing data
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 /// Manager for fetching and storing intro/outro timing data from multiple sources.
 public final class IntroSkipperManager {
@@ -64,26 +64,19 @@ public final class IntroSkipperManager {
         // Check if we already have intro data stored
         if episode.hasIntroData {
             return IntroTiming(
-                introStart: episode.introStartTime,
-                introEnd: episode.introEndTime,
-                creditStart: episode.creditStartTime > 0 ? episode.creditStartTime : nil,
-                source: .cached
+                introStart: episode.introStartTime, introEnd: episode.introEndTime, creditStart: episode.creditStartTime > 0 ? episode.creditStartTime: nil, source: .cached
             )
         }
         
         // Try TheTVDB API if configured
-        if let tvdbAPIKey = tvdbAPIKey,
-           let timing = await fetchFromTheTVDB(episode: episode) {
+        if let tvdbAPIKey = tvdbAPIKey, let timing = await fetchFromTheTVDB(episode: episode) {
             await storeIntroTiming(timing, for: episode, context: context)
             return timing
         }
         
         // Fallback to heuristic (90-second intro)
         let heuristicTiming = IntroTiming(
-            introStart: defaultIntroStart,
-            introEnd: defaultIntroEnd,
-            creditStart: nil,
-            source: .heuristic
+            introStart: defaultIntroStart, introEnd: defaultIntroEnd, creditStart: nil, source: .heuristic
         )
         
         // Store heuristic so we don't keep retrying API
@@ -99,17 +92,10 @@ public final class IntroSkipperManager {
     ///   - episode: The episode to update.
     ///   - context: Core Data context.
     public func setIntroTiming(
-        introStart: Double,
-        introEnd: Double,
-        creditStart: Double?,
-        for episode: Episode,
-        context: NSManagedObjectContext
+        introStart: Double, introEnd: Double, creditStart: Double?, for episode: Episode, context: NSManagedObjectContext
     ) async {
         let timing = IntroTiming(
-            introStart: introStart,
-            introEnd: introEnd,
-            creditStart: creditStart,
-            source: .m3uMetadata
+            introStart: introStart, introEnd: introEnd, creditStart: creditStart, source: .m3uMetadata
         )
         await storeIntroTiming(timing, for: episode, context: context)
     }
@@ -151,9 +137,7 @@ public final class IntroSkipperManager {
     
     /// Fetches intro timing from TheTVDB API.
     private func fetchFromTheTVDB(episode: Episode) async -> IntroTiming? {
-        guard let token = await authenticateTheTVDB(),
-              let series = episode.season?.series,
-              let seriesTitle = series.title else {
+        guard let token = await authenticateTheTVDB(), let series = episode.season?.series, let seriesTitle = series.title else {
             return nil
         }
         
@@ -165,10 +149,7 @@ public final class IntroSkipperManager {
         
         // Then fetch episode details with intro timing
         guard let timing = await fetchTheTVDBEpisode(
-            seriesID: tvdbSeriesID,
-            seasonNumber: Int(episode.season?.seasonNumber ?? 0),
-            episodeNumber: Int(episode.episodeNumber),
-            token: token
+            seriesID: tvdbSeriesID, seasonNumber: Int(episode.season?.seasonNumber ?? 0), episodeNumber: Int(episode.episodeNumber), token: token
         ) else {
             PerformanceLogger.logNetwork("TheTVDB episode intro data not found")
             return nil
@@ -188,8 +169,7 @@ public final class IntroSkipperManager {
         
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
-            if let response = try? JSONDecoder().decode(TheTVDBSearchResponse.self, from: data),
-               let firstResult = response.data.first {
+            if let response = try? JSONDecoder().decode(TheTVDBSearchResponse.self, from: data), let firstResult = response.data.first {
                 return firstResult.tvdb_id
             }
         } catch {
@@ -201,10 +181,7 @@ public final class IntroSkipperManager {
     
     /// Fetches episode details from TheTVDB including intro timing.
     private func fetchTheTVDBEpisode(
-        seriesID: Int,
-        seasonNumber: Int,
-        episodeNumber: Int,
-        token: String
+        seriesID: Int, seasonNumber: Int, episodeNumber: Int, token: String
     ) async -> IntroTiming? {
         // TheTVDB uses extended episode endpoint for detailed data
         let episodeURL = URL(string: "\(tvdbBaseURL)/series/\(seriesID)/episodes/default?season=\(seasonNumber)&episodeNumber=\(episodeNumber)")!
@@ -214,18 +191,13 @@ public final class IntroSkipperManager {
         
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
-            if let response = try? JSONDecoder().decode(TheTVDBEpisodeResponse.self, from: data),
-               let episode = response.data.episodes.first {
+            if let response = try? JSONDecoder().decode(TheTVDBEpisodeResponse.self, from: data), let episode = response.data.episodes.first {
                 
                 // TheTVDB may have intro timing in extended metadata
                 // If not available, return nil to fallback to heuristic
-                if let introStart = episode.introStart,
-                   let introEnd = episode.introEnd {
+                if let introStart = episode.introStart, let introEnd = episode.introEnd {
                     return IntroTiming(
-                        introStart: introStart,
-                        introEnd: introEnd,
-                        creditStart: episode.creditStart,
-                        source: .tvdb
+                        introStart: introStart, introEnd: introEnd, creditStart: episode.creditStart, source: .tvdb
                     )
                 }
             }

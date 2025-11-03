@@ -1,5 +1,5 @@
-import SwiftUI
 import CoreData
+import SwiftUI
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -13,8 +13,7 @@ public struct EPGView: View {
     @Environment(\.managedObjectContext) private var viewContext
     
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Channel.name, ascending: true)],
-        animation: .default
+        sortDescriptors: [NSSortDescriptor(keyPath: \Channel.name, ascending: true)], animation: .default
     )
     private var channels: FetchedResults<Channel>
     
@@ -45,11 +44,7 @@ public struct EPGView: View {
                         // Channel rows with programs
                         ForEach(channels, id: \.objectID) { channel in
                             EPGTimelineRow(
-                                channel: channel,
-                                startTime: selectedTimeSlot,
-                                endTime: selectedTimeSlot.addingTimeInterval(TimeInterval(hoursToShow * 3600)),
-                                timeSlotWidth: timeSlotWidth,
-                                rowHeight: channelRowHeight
+                                channel: channel, startTime: selectedTimeSlot, endTime: selectedTimeSlot.addingTimeInterval(TimeInterval(hoursToShow * 3600)), timeSlotWidth: timeSlotWidth, rowHeight: channelRowHeight
                             )
                             
                             Divider()
@@ -69,11 +64,7 @@ public struct EPGView: View {
             if let hour = components.hour, let minute = components.minute {
                 let roundedMinute = (minute / 30) * 30
                 if let roundedDate = calendar.date(from: DateComponents(
-                    year: components.year,
-                    month: components.month,
-                    day: components.day,
-                    hour: hour,
-                    minute: roundedMinute
+                    year: components.year, month: components.month, day: components.day, hour: hour, minute: roundedMinute
                 )) {
                     selectedTimeSlot = roundedDate
                 }
@@ -162,11 +153,7 @@ public struct EPGView: View {
         if let hour = components.hour, let minute = components.minute {
             let roundedMinute = (minute / 30) * 30
             if let roundedDate = calendar.date(from: DateComponents(
-                year: components.year,
-                month: components.month,
-                day: components.day,
-                hour: hour,
-                minute: roundedMinute
+                year: components.year, month: components.month, day: components.day, hour: hour, minute: roundedMinute
             )) {
                 selectedTimeSlot = roundedDate
             }

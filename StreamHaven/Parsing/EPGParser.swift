@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 /// A parser for processing XMLTV format EPG data and importing it into Core Data.
 public class EPGParser: NSObject, XMLParserDelegate {
@@ -66,11 +66,9 @@ public class EPGParser: NSObject, XMLParserDelegate {
         if components.count > 1 {
             let timezone = components[1]
             if timezone.hasPrefix("+") || timezone.hasPrefix("-") {
-                let sign = timezone.hasPrefix("+") ? 1 : -1
+                let sign = timezone.hasPrefix("+") ? 1: -1
                 let offset = String(timezone.dropFirst())
-                if offset.count == 4,
-                   let hours = Int(offset.prefix(2)),
-                   let minutes = Int(offset.suffix(2)) {
+                if offset.count == 4, let hours = Int(offset.prefix(2)), let minutes = Int(offset.suffix(2)) {
                     let secondsOffset = sign * (hours * 3600 + minutes * 60)
                     dateFormatter.timeZone = TimeZone(secondsFromGMT: secondsOffset)
                 }
@@ -82,7 +80,7 @@ public class EPGParser: NSObject, XMLParserDelegate {
     
     // MARK: - XMLParserDelegate
     
-    public func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String] = [:]) {
+    public func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String: String] = [:]) {
         currentElement = elementName
         currentTextContent = ""
         
@@ -114,20 +112,10 @@ public class EPGParser: NSObject, XMLParserDelegate {
             currentProgramme["category"] = currentTextContent
         case "programme":
             // Finished parsing a programme element
-            if let channelID = currentProgramme["channel"],
-               let title = currentProgramme["title"],
-               let startString = currentProgramme["start"],
-               let stopString = currentProgramme["stop"],
-               let startTime = parseXMLTVDate(startString),
-               let endTime = parseXMLTVDate(stopString) {
+            if let channelID = currentProgramme["channel"], let title = currentProgramme["title"], let startString = currentProgramme["start"], let stopString = currentProgramme["stop"], let startTime = parseXMLTVDate(startString), let endTime = parseXMLTVDate(stopString) {
                 
                 let programme = EPGProgramme(
-                    channelID: channelID,
-                    title: title,
-                    description: currentProgramme["desc"],
-                    category: currentProgramme["category"],
-                    startTime: startTime,
-                    endTime: endTime
+                    channelID: channelID, title: title, description: currentProgramme["desc"], category: currentProgramme["category"], startTime: startTime, endTime: endTime
                 )
                 parsedEntries.append(programme)
             }
@@ -176,8 +164,7 @@ public class EPGParser: NSObject, XMLParserDelegate {
             // Check if this entry already exists
             let existingFetch: NSFetchRequest<EPGEntry> = EPGEntry.fetchRequest()
             existingFetch.predicate = NSPredicate(
-                format: "channel == %@ AND startTime == %@ AND title == %@",
-                channel, programme.startTime as CVarArg, programme.title
+                format: "channel == %@ AND startTime == %@ AND title == %@", channel, programme.startTime as CVarArg, programme.title
             )
             existingFetch.fetchLimit = 1
             

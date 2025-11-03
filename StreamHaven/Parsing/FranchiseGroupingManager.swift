@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 /// A utility class for grouping movies into franchises.
 public final class FranchiseGroupingManager {
@@ -53,10 +53,10 @@ public final class FranchiseGroupingManager {
         // If subtitle removal didn't change anything, try other patterns
         if franchiseName == originalTitle {
             let patterns = [
-                ":\\s.*",              // Removes colon and everything after (e.g., "Movie: Subtitle")
-                "\\s\\d+$",            // Removes trailing numbers (e.g., "Movie 2")
-                "\\sPart\\s\\w+",      // Removes "Part X" (e.g., "Movie Part II")
-                "\\s(I|V|X)+$",        // Removes roman numerals at end (e.g., "Movie III")
+                ":\\s.*", // Removes colon and everything after (e.g., "Movie: Subtitle")
+                "\\s\\d+$", // Removes trailing numbers (e.g., "Movie 2")
+                "\\sPart\\s\\w+", // Removes "Part X" (e.g., "Movie Part II")
+                "\\s(I|V|X)+$", // Removes roman numerals at end (e.g., "Movie III")
             ]
 
             for pattern in patterns {
@@ -80,23 +80,13 @@ public final class FranchiseGroupingManager {
         // Common single-word subtitle patterns for sequels
         let subtitleWords = [
             // Action/continuation words
-            "Reloaded", "Revolutions", "Revolution", "Returns", "Resurrection",
-            "Rising", "Rises", "Reborn", "Redemption", "Revenge", "Retribution",
-            // Directional/temporal
-            "Begins", "Origins", "Genesis", "Forever", "Legacy", "Legends",
-            "Awakens", "Awakening", "Dawn", "Dusk", "Midnight", "Eclipse",
-            // Endings
-            "Endgame", "Finale", "Final", "Last", "Ultimate", "Infinity",
-            // Action descriptors
-            "Strike", "Force", "Attack", "War", "Battle", "Combat",
-            "Quest", "Mission", "Journey", "Voyage", "Adventure",
-            // Story progression
-            "Chapter", "Chronicles", "Saga", "Tales", "Stories",
-            // Superlatives/intensifiers
-            "Extreme", "Maximum", "Overdrive", "Turbo",
-            // Common sequel words
-            "Reload", "Recharged", "Reckoning", "Vengeance",
-            // Fate/destiny themed
+            "Reloaded", "Revolutions", "Revolution", "Returns", "Resurrection", "Rising", "Rises", "Reborn", "Redemption", "Revenge", "Retribution", // Directional/temporal
+            "Begins", "Origins", "Genesis", "Forever", "Legacy", "Legends", "Awakens", "Awakening", "Dawn", "Dusk", "Midnight", "Eclipse", // Endings
+            "Endgame", "Finale", "Final", "Last", "Ultimate", "Infinity", // Action descriptors
+            "Strike", "Force", "Attack", "War", "Battle", "Combat", "Quest", "Mission", "Journey", "Voyage", "Adventure", // Story progression
+            "Chapter", "Chronicles", "Saga", "Tales", "Stories", // Superlatives/intensifiers
+            "Extreme", "Maximum", "Overdrive", "Turbo", // Common sequel words
+            "Reload", "Recharged", "Reckoning", "Vengeance", // Fate/destiny themed
             "Salvation", "Fate", "Destiny", "Judgment", "Apocalypse"
         ]
         

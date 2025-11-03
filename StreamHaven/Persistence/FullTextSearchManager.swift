@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 import SQLite3
 
 /// Advanced full-text search manager using SQLite FTS5 for fuzzy and fast search.
@@ -23,43 +23,34 @@ public final class FullTextSearchManager {
         let context = persistenceProvider.container.newBackgroundContext()
         
         try context.performAndWait {
-            guard let storeURL = persistenceProvider.container.persistentStoreDescriptions.first?.url,
-                  let storeURLPath = storeURL.path as String? else {
-                throw NSError(domain: "FullTextSearchManager", code: 1,
-                             userInfo: [NSLocalizedDescriptionKey: "Could not find Core Data store URL"])
+            guard let storeURL = persistenceProvider.container.persistentStoreDescriptions.first?.url, let storeURLPath = storeURL.path as String? else {
+                throw NSError(domain: "FullTextSearchManager", code: 1, userInfo: [NSLocalizedDescriptionKey: "Could not find Core Data store URL"])
             }
             
             var db: OpaquePointer?
             guard sqlite3_open(storeURLPath, &db) == SQLITE_OK, let database = db else {
-                throw NSError(domain: "FullTextSearchManager", code: 2,
-                             userInfo: [NSLocalizedDescriptionKey: "Failed to open SQLite database"])
+                throw NSError(domain: "FullTextSearchManager", code: 2, userInfo: [NSLocalizedDescriptionKey: "Failed to open SQLite database"])
             }
             defer { sqlite3_close(database) }
             
             // Create FTS5 virtual table for movies (use stableID for lookups)
             let createMovieFTS = """
             CREATE VIRTUAL TABLE IF NOT EXISTS movie_fts USING fts5(
-                stableID UNINDEXED,
-                title,
-                tokenize='porter unicode61'
+                stableID UNINDEXED, title, tokenize='porter unicode61'
             );
             """
             
             // Create FTS5 virtual table for series
             let createSeriesFTS = """
             CREATE VIRTUAL TABLE IF NOT EXISTS series_fts USING fts5(
-                stableID UNINDEXED,
-                title,
-                tokenize='porter unicode61'
+                stableID UNINDEXED, title, tokenize='porter unicode61'
             );
             """
             
             // Create FTS5 virtual table for channels
             let createChannelFTS = """
             CREATE VIRTUAL TABLE IF NOT EXISTS channel_fts USING fts5(
-                stableID UNINDEXED,
-                name,
-                tokenize='porter unicode61'
+                stableID UNINDEXED, name, tokenize='porter unicode61'
             );
             """
             
@@ -69,8 +60,7 @@ public final class FullTextSearchManager {
                 if sqlite3_exec(database, sql, nil, nil, &errMsg) != SQLITE_OK {
                     let error = errMsg.map { String(cString: $0) } ?? "Unknown error"
                     if let e = errMsg { sqlite3_free(e) }
-                    throw NSError(domain: "FullTextSearchManager", code: 3,
-                                 userInfo: [NSLocalizedDescriptionKey: "FTS5 creation failed: \(error)"])
+                    throw NSError(domain: "FullTextSearchManager", code: 3, userInfo: [NSLocalizedDescriptionKey: "FTS5 creation failed: \(error)"])
                 }
             }
             
@@ -92,47 +82,37 @@ public final class FullTextSearchManager {
             CREATE TRIGGER IF NOT EXISTS movie_fts_insert AFTER INSERT ON ZMOVIE BEGIN
                 INSERT INTO movie_fts(stableID, title) VALUES (new.ZSTABLEID, new.ZTITLE);
             END;
-            """,
-            """
+            """, """
             CREATE TRIGGER IF NOT EXISTS movie_fts_update AFTER UPDATE ON ZMOVIE BEGIN
                 UPDATE movie_fts SET title = new.ZTITLE WHERE stableID = old.ZSTABLEID;
             END;
-            """,
-            """
+            """, """
             CREATE TRIGGER IF NOT EXISTS movie_fts_delete AFTER DELETE ON ZMOVIE BEGIN
                 DELETE FROM movie_fts WHERE stableID = old.ZSTABLEID;
             END;
-            """,
-            
-            // Series triggers
+            """, // Series triggers
             """
             CREATE TRIGGER IF NOT EXISTS series_fts_insert AFTER INSERT ON ZSERIES BEGIN
                 INSERT INTO series_fts(stableID, title) VALUES (new.ZSTABLEID, new.ZTITLE);
             END;
-            """,
-            """
+            """, """
             CREATE TRIGGER IF NOT EXISTS series_fts_update AFTER UPDATE ON ZSERIES BEGIN
                 UPDATE series_fts SET title = new.ZTITLE WHERE stableID = old.ZSTABLEID;
             END;
-            """,
-            """
+            """, """
             CREATE TRIGGER IF NOT EXISTS series_fts_delete AFTER DELETE ON ZSERIES BEGIN
                 DELETE FROM series_fts WHERE stableID = old.ZSTABLEID;
             END;
-            """,
-            
-            // Channel triggers
+            """, // Channel triggers
             """
             CREATE TRIGGER IF NOT EXISTS channel_fts_insert AFTER INSERT ON ZCHANNEL BEGIN
                 INSERT INTO channel_fts(stableID, name) VALUES (new.ZSTABLEID, new.ZNAME);
             END;
-            """,
-            """
+            """, """
             CREATE TRIGGER IF NOT EXISTS channel_fts_update AFTER UPDATE ON ZCHANNEL BEGIN
                 UPDATE channel_fts SET name = new.ZNAME WHERE stableID = old.ZSTABLEID;
             END;
-            """,
-            """
+            """, """
             CREATE TRIGGER IF NOT EXISTS channel_fts_delete AFTER DELETE ON ZCHANNEL BEGIN
                 DELETE FROM channel_fts WHERE stableID = old.ZSTABLEID;
             END;
@@ -144,8 +124,7 @@ public final class FullTextSearchManager {
             if sqlite3_exec(db, trigger, nil, nil, &errMsg) != SQLITE_OK {
                 let error = errMsg.map { String(cString: $0) } ?? "Unknown error"
                 if let e = errMsg { sqlite3_free(e) }
-                throw NSError(domain: "FullTextSearchManager", code: 4,
-                             userInfo: [NSLocalizedDescriptionKey: "Trigger creation failed: \(error)"])
+                throw NSError(domain: "FullTextSearchManager", code: 4, userInfo: [NSLocalizedDescriptionKey: "Trigger creation failed: \(error)"])
             }
         }
     }
@@ -215,15 +194,12 @@ public final class FullTextSearchManager {
     ///   - maxResults: Maximum number of results to return per category.
     ///   - completion: Callback with search results.
     public func fuzzySearch(
-        query: String,
-        maxResults: Int = 50,
-        completion: @escaping ([NSManagedObject]) -> Void
+        query: String, maxResults: Int = 50, completion: @escaping ([NSManagedObject]) -> Void
     ) {
         let context = persistenceProvider.container.newBackgroundContext()
         
         context.perform {
-            guard let storeURL = self.persistenceProvider.container.persistentStoreDescriptions.first?.url,
-                  let storeURLPath = storeURL.path as String? else {
+            guard let storeURL = self.persistenceProvider.container.persistentStoreDescriptions.first?.url, let storeURLPath = storeURL.path as String? else {
                 completion([])
                 return
             }

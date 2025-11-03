@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 /// Manages content grouping and source selection for multi-source playlists.
 @MainActor
@@ -187,10 +187,7 @@ final class MultiSourceContentManager: ObservableObject {
         }
         
         return SourceMetadata(
-            sourceID: sourceID,
-            sourceName: source.name ?? "Unknown Source",
-            isActive: source.isActive,
-            lastRefreshed: source.lastRefreshed
+            sourceID: sourceID, sourceName: source.name ?? "Unknown Source", isActive: source.isActive, lastRefreshed: source.lastRefreshed
         )
     }
     

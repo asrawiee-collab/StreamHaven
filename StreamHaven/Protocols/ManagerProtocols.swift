@@ -1,7 +1,7 @@
-import Foundation
-import CoreData
 import AVKit
 import Combine
+import CoreData
+import Foundation
 
 // MARK: - TMDb Protocol
 

@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 extension StreamCache {
 
@@ -15,6 +15,6 @@ extension StreamCache {
 
 }
 
-extension StreamCache : Identifiable {
+extension StreamCache: Identifiable {
 
 }

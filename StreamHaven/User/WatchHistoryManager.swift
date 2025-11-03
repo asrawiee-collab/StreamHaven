@@ -9,9 +9,7 @@ public final class WatchHistoryManager: ObservableObject, WatchHistoryManaging {
     private let cloudKitSyncManager: CloudKitSyncManager?
 
     public init(
-        context: NSManagedObjectContext,
-        profile: Profile,
-        cloudKitSyncManager: CloudKitSyncManager? = nil
+        context: NSManagedObjectContext, profile: Profile, cloudKitSyncManager: CloudKitSyncManager? = nil
     ) {
         self.context = context
         self.profile = profile
@@ -61,8 +59,7 @@ public final class WatchHistoryManager: ObservableObject, WatchHistoryManaging {
         let request: NSFetchRequest<WatchHistory> = WatchHistory.fetchRequest()
 
         var predicates: [NSPredicate] = [
-            NSPredicate(format: "profile == %@", profile),
-            NSPredicate(format: "progress >= %f", threshold)
+            NSPredicate(format: "profile == %@", profile), NSPredicate(format: "progress >= %f", threshold)
         ]
 
         if let movie = item as? Movie {

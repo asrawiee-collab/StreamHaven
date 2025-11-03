@@ -1,6 +1,6 @@
-import XCTest
-import CoreData
 import CloudKit
+import CoreData
+import XCTest
 @testable import StreamHaven
 
 /// Comprehensive tests for CloudKit synchronization functionality.
@@ -15,8 +15,7 @@ final class CloudKitSyncTests: XCTestCase {
         try await super.setUp()
 
         container = NSPersistentContainer(
-            name: "CloudKitSyncTesting",
-            managedObjectModel: TestCoreDataModelBuilder.sharedModel
+            name: "CloudKitSyncTesting", managedObjectModel: TestCoreDataModelBuilder.sharedModel
         )
 
         let description = NSPersistentStoreDescription()

@@ -1,6 +1,6 @@
 #if os(tvOS)
-import SwiftUI
 import CoreData
+import SwiftUI
 
 /// A view that displays the user's library of movies, series, and channels on tvOS.
 public struct HomeView_tvOS: View {
@@ -41,18 +41,13 @@ public struct HomeView_tvOS: View {
         }
 
         _movies = FetchRequest<Movie>(
-            sortDescriptors: [NSSortDescriptor(keyPath: \Movie.releaseDate, ascending: false)],
-            predicate: moviePredicate,
-            animation: .default)
+            sortDescriptors: [NSSortDescriptor(keyPath: \Movie.releaseDate, ascending: false)], predicate: moviePredicate, animation: .default)
 
         _series = FetchRequest<Series>(
-            sortDescriptors: [NSSortDescriptor(keyPath: \Series.releaseDate, ascending: false)],
-            predicate: seriesPredicate,
-            animation: .default)
+            sortDescriptors: [NSSortDescriptor(keyPath: \Series.releaseDate, ascending: false)], predicate: seriesPredicate, animation: .default)
 
         _channels = FetchRequest<Channel>(
-            sortDescriptors: [NSSortDescriptor(keyPath: \Channel.name, ascending: true)],
-            animation: .default)
+            sortDescriptors: [NSSortDescriptor(keyPath: \Channel.name, ascending: true)], animation: .default)
 
         var watchHistoryPredicate = NSPredicate(value: false)
         if let profile = profileManager.currentProfile {
@@ -60,9 +55,7 @@ public struct HomeView_tvOS: View {
         }
 
         _watchHistory = FetchRequest<WatchHistory>(
-            sortDescriptors: [NSSortDescriptor(keyPath: \WatchHistory.watchedDate, ascending: false)],
-            predicate: watchHistoryPredicate,
-            animation: .default)
+            sortDescriptors: [NSSortDescriptor(keyPath: \WatchHistory.watchedDate, ascending: false)], predicate: watchHistoryPredicate, animation: .default)
     }
 
     private var sectionHeader: (String) -> some View {
@@ -103,15 +96,11 @@ public struct HomeView_tvOS: View {
                                 ForEach(watchHistory) { history in
                                     if let movie = history.movie {
                                         MovieCardWithPreview(
-                                            movie: movie,
-                                            previewManager: previewManager,
-                                            backgroundURL: $backgroundPosterURL
+                                            movie: movie, previewManager: previewManager, backgroundURL: $backgroundPosterURL
                                         )
                                     } else if let episode = history.episode, let series = episode.season?.series {
                                         SeriesCardWithPreview(
-                                            series: series,
-                                            previewManager: previewManager,
-                                            backgroundURL: $backgroundPosterURL
+                                            series: series, previewManager: previewManager, backgroundURL: $backgroundPosterURL
                                         )
                                     }
                                 }
@@ -128,16 +117,12 @@ public struct HomeView_tvOS: View {
                             HStack(spacing: 50) {
                                 ForEach(trendingMovies) { movie in
                                     MovieCardWithPreview(
-                                        movie: movie,
-                                        previewManager: previewManager,
-                                        backgroundURL: $backgroundPosterURL
+                                        movie: movie, previewManager: previewManager, backgroundURL: $backgroundPosterURL
                                     )
                                 }
                                 ForEach(trendingSeries) { series in
                                     SeriesCardWithPreview(
-                                        series: series,
-                                        previewManager: previewManager,
-                                        backgroundURL: $backgroundPosterURL
+                                        series: series, previewManager: previewManager, backgroundURL: $backgroundPosterURL
                                     )
                                 }
                             }
@@ -153,9 +138,7 @@ public struct HomeView_tvOS: View {
                             HStack(spacing: 50) {
                                 ForEach(recommendedMovies) { movie in
                                     MovieCardWithPreview(
-                                        movie: movie,
-                                        previewManager: previewManager,
-                                        backgroundURL: $backgroundPosterURL
+                                        movie: movie, previewManager: previewManager, backgroundURL: $backgroundPosterURL
                                     )
                                 }
                             }
@@ -169,9 +152,7 @@ public struct HomeView_tvOS: View {
                         HStack(spacing: 50) {
                             ForEach(movies) { movie in
                                 MovieCardWithPreview(
-                                    movie: movie,
-                                    previewManager: previewManager,
-                                    backgroundURL: $backgroundPosterURL
+                                    movie: movie, previewManager: previewManager, backgroundURL: $backgroundPosterURL
                                 )
                             }
                         }
@@ -184,9 +165,7 @@ public struct HomeView_tvOS: View {
                         HStack(spacing: 50) {
                             ForEach(series) { seriesItem in
                                 SeriesCardWithPreview(
-                                    series: seriesItem,
-                                    previewManager: previewManager,
-                                    backgroundURL: $backgroundPosterURL
+                                    series: seriesItem, previewManager: previewManager, backgroundURL: $backgroundPosterURL
                                 )
                             }
                         }
@@ -268,8 +247,8 @@ fileprivate struct CarouselItemView<Destination: View>: View {
             CardView(url: URL(string: url ?? ""), title: title ?? "No Title")
         }
         .buttonStyle(.card)
-        .scaleEffect(isFocused ? 1.1 : 1.0)
-        .shadow(radius: isFocused ? 20 : 0)
+        .scaleEffect(isFocused ? 1.1: 1.0)
+        .shadow(radius: isFocused ? 20: 0)
         .animation(.easeInOut, value: isFocused)
         .focusable { focused in
             self.isFocused = focused

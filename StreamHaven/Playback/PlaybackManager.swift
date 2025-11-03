@@ -1,6 +1,6 @@
 import AVKit
-import CoreData
 import Combine
+import CoreData
 import CoreMedia
 import os.log
 #if canImport(Sentry)
@@ -115,12 +115,10 @@ public final class PlaybackManager: NSObject, ObservableObject, PlaybackManaging
     }
 
     public func loadCurrentVariant(isOffline: Bool = false) {
-        let itemToLoad = availableVariants.isEmpty ? currentItem : availableVariants[currentVariantIndex]
+        let itemToLoad = availableVariants.isEmpty ? currentItem: availableVariants[currentVariantIndex]
 
         // Check for offline download first
-        if isOffline, let downloadManager = downloadManager,
-           let localPath = downloadManager.getLocalFilePath(for: itemToLoad!),
-           let localURL = URL(string: "file://\(localPath)") {
+        if isOffline, let downloadManager = downloadManager, let localPath = downloadManager.getLocalFilePath(for: itemToLoad!), let localURL = URL(string: "file://\(localPath)") {
             
             let playerItem = AVPlayerItem(url: localURL)
             playerItem.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: [.new, .old], context: nil)
@@ -136,8 +134,7 @@ public final class PlaybackManager: NSObject, ObservableObject, PlaybackManaging
             return
         }
 
-        guard let streamURLString = getStreamURL(for: itemToLoad),
-              let streamURL = URL(string: streamURLString) else {
+        guard let streamURLString = getStreamURL(for: itemToLoad), let streamURL = URL(string: streamURLString) else {
             handlePlaybackFailure()
             return
         }
@@ -197,7 +194,7 @@ public final class PlaybackManager: NSObject, ObservableObject, PlaybackManaging
         }
     }
 
-    override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == #keyPath(AVPlayerItem.status), let item = object as? AVPlayerItem {
             if item == player?.currentItem && item.status == .failed {
                 handlePlaybackFailure()
@@ -347,9 +344,7 @@ public final class PlaybackManager: NSObject, ObservableObject, PlaybackManaging
 
     /// Plays the next episode in a series.
     private func playNextEpisode() {
-        guard let currentEpisode = currentItem as? Episode,
-              let profile = currentProfile,
-              let nextEpisode = findNextEpisode(for: currentEpisode) else {
+        guard let currentEpisode = currentItem as? Episode, let profile = currentProfile, let nextEpisode = findNextEpisode(for: currentEpisode) else {
             // No next episode, check Up Next queue
             playNextInQueue()
             return
@@ -368,10 +363,7 @@ public final class PlaybackManager: NSObject, ObservableObject, PlaybackManaging
     
     /// Plays the next item in the Up Next queue.
     private func playNextInQueue() {
-        guard let profile = currentProfile,
-              let queueManager = queueManager,
-              let nextQueueItem = queueManager.getNextItem(),
-              let content = nextQueueItem.fetchContent(context: context) else {
+        guard let profile = currentProfile, let queueManager = queueManager, let nextQueueItem = queueManager.getNextItem(), let content = nextQueueItem.fetchContent(context: context) else {
             stop()
             return
         }
@@ -389,8 +381,7 @@ public final class PlaybackManager: NSObject, ObservableObject, PlaybackManaging
     /// - Parameter episode: The current `Episode`.
     /// - Returns: The next `Episode` in the season, or `nil` if there is no next episode.
     private func findNextEpisode(for episode: Episode) -> Episode? {
-        guard let season = episode.season,
-              let episodesSet = season.episodes as? Set<Episode> else {
+        guard let season = episode.season, let episodesSet = season.episodes as? Set<Episode> else {
             return nil
         }
 
@@ -441,8 +432,7 @@ extension PlaybackManager {
         PerformanceLogger.logPlayback("Pre-buffer requested with \(String(format: "%.1f", timeRemaining))s remaining")
         
         // Find next episode
-        guard let currentEpisode = currentItem as? Episode,
-              let nextEpisode = findNextEpisode(for: currentEpisode) else {
+        guard let currentEpisode = currentItem as? Episode, let nextEpisode = findNextEpisode(for: currentEpisode) else {
             PerformanceLogger.logPlayback("No next episode found for pre-buffer")
             return
         }
@@ -453,8 +443,7 @@ extension PlaybackManager {
     /// Loads the next episode in a background player for seamless transition.
     /// - Parameter episode: The next episode to pre-buffer.
     private func loadNextEpisodeInBackground(_ episode: Episode) {
-        guard let streamURLString = episode.streamURL,
-              let streamURL = URL(string: streamURLString) else {
+        guard let streamURLString = episode.streamURL, let streamURL = URL(string: streamURLString) else {
             PerformanceLogger.logPlayback("Invalid stream URL for next episode")
             return
         }
@@ -484,8 +473,7 @@ extension PlaybackManager {
     
     /// Swaps the pre-buffered player to become the active player.
     private func swapToNextEpisode() {
-        guard let nextPlayer = nextEpisodePlayer,
-              isNextEpisodeReady else {
+        guard let nextPlayer = nextEpisodePlayer, isNextEpisodeReady else {
             PerformanceLogger.logPlayback("Next episode not ready, falling back to normal transition")
             playNextEpisode()
             return
@@ -504,8 +492,7 @@ extension PlaybackManager {
         isNextEpisodeReady = false
         
         // Update current item to next episode
-        if let currentEpisode = currentItem as? Episode,
-           let nextEpisode = findNextEpisode(for: currentEpisode) {
+        if let currentEpisode = currentItem as? Episode, let nextEpisode = findNextEpisode(for: currentEpisode) {
             currentItem = nextEpisode
         }
         
@@ -574,24 +561,20 @@ extension PlaybackManager {
             title = movie.title ?? "Unknown Movie"
             contentType = "movie"
             thumbnailURL = movie.posterURL
-            if let playerDuration = player?.currentItem?.duration,
-               !playerDuration.isIndefinite {
+            if let playerDuration = player?.currentItem?.duration, !playerDuration.isIndefinite {
                 duration = CMTimeGetSeconds(playerDuration)
             }
         } else if let episode = item as? Episode {
             title = episode.title ?? "Unknown Episode"
             contentType = "episode"
-            if let season = episode.season,
-               let series = season.series {
+            if let season = episode.season, let series = season.series {
                 seriesInfo = "\(series.title ?? "") S\(season.seasonNumber)E\(episode.episodeNumber)"
                 thumbnailURL = series.posterURL
             }
-            if let playerDuration = player?.currentItem?.duration,
-               !playerDuration.isIndefinite {
+            if let playerDuration = player?.currentItem?.duration, !playerDuration.isIndefinite {
                 duration = CMTimeGetSeconds(playerDuration)
             }
-        } else if let variant = item as? ChannelVariant,
-                  let channel = variant.channel {
+        } else if let variant = item as? ChannelVariant, let channel = variant.channel {
             title = channel.name ?? "Unknown Channel"
             contentType = "channel"
             thumbnailURL = channel.logoURL
@@ -602,12 +585,7 @@ extension PlaybackManager {
         
         do {
             try await liveActivityManager?.startActivity(
-                title: title,
-                contentType: contentType,
-                streamIdentifier: streamIdentifier,
-                thumbnailURL: thumbnailURL,
-                seriesInfo: seriesInfo,
-                duration: duration
+                title: title, contentType: contentType, streamIdentifier: streamIdentifier, thumbnailURL: thumbnailURL, seriesInfo: seriesInfo, duration: duration
             )
         } catch {
             ErrorReporter.log(error, context: "PlaybackManager.startLiveActivity")
@@ -619,25 +597,17 @@ extension PlaybackManager {
     /// Called periodically by PlaybackProgressTracker
     public func updateLiveActivityProgress() {
         #if os(iOS)
-        guard settingsManager.enableLiveActivities,
-              #available(iOS 16.1, *),
-              let player,
-              let currentTime = player.currentItem?.currentTime(),
-              let duration = player.currentItem?.duration,
-              !currentTime.isIndefinite,
-              !duration.isIndefinite else {
+        guard settingsManager.enableLiveActivities, #available(iOS 16.1, *), let player, let currentTime = player.currentItem?.currentTime(), let duration = player.currentItem?.duration, !currentTime.isIndefinite, !duration.isIndefinite else {
             return
         }
 
         let elapsed = CMTimeGetSeconds(currentTime)
         let total = CMTimeGetSeconds(duration)
-        let progress = total > 0 ? elapsed / total : 0.0
+        let progress = total > 0 ? elapsed / total: 0.0
 
         Task { @MainActor in
             await liveActivityManager?.updateActivity(
-                progress: progress,
-                isPlaying: isPlaying,
-                elapsedSeconds: elapsed
+                progress: progress, isPlaying: isPlaying, elapsedSeconds: elapsed
             )
         }
         #endif
@@ -649,7 +619,7 @@ extension PlaybackManager {
             let bitrate = last.indicatedBitrate
             let stalls = last.numberOfStalls
             let startup = last.startupTime
-            let rtt = last.transferDuration > 0 ? last.indicatedBitrate / last.transferDuration : 0
+            let rtt = last.transferDuration > 0 ? last.indicatedBitrate / last.transferDuration: 0
             PerformanceLogger.logPlayback("HLS metrics: bitrate=\(Int(bitrate))bps stalls=\(stalls) startup=\(String(format: "%.2fs", startup)) rtt=\(String(format: "%.2f", rtt))")
 #if canImport(Sentry)
             let crumb = Breadcrumb()

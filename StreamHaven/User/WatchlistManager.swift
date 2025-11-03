@@ -5,9 +5,9 @@
 //  Created on October 25, 2025.
 //
 
-import Foundation
-import CoreData
 import Combine
+import CoreData
+import Foundation
 
 @MainActor
 class WatchlistManager: ObservableObject {
@@ -74,9 +74,7 @@ class WatchlistManager: ObservableObject {
     
     /// Create a new watchlist
     func createWatchlist(
-        name: String,
-        icon: String = "list.bullet",
-        profile: Profile
+        name: String, icon: String = "list.bullet", profile: Profile
     ) throws -> Watchlist {
         // Check limit
         let count = getWatchlistCount(for: profile)
@@ -132,8 +130,7 @@ class WatchlistManager: ObservableObject {
     
     /// Add content to a watchlist
     func addToWatchlist(
-        _ content: NSManagedObject,
-        watchlist: Watchlist
+        _ content: NSManagedObject, watchlist: Watchlist
     ) throws {
         // Validate content type
         guard content is Movie || content is Episode || content is Series else {
@@ -152,10 +149,7 @@ class WatchlistManager: ObservableObject {
         
         // Create item
         guard let _ = WatchlistItem.create(
-            for: content,
-            watchlist: watchlist,
-            position: position,
-            context: context
+            for: content, watchlist: watchlist, position: position, context: context
         ) else {
             throw WatchlistError.invalidContent
         }
@@ -176,9 +170,7 @@ class WatchlistManager: ObservableObject {
     
     /// Move item to new position (for drag-to-reorder)
     func moveItem(
-        _ item: WatchlistItem,
-        to newPosition: Int32,
-        in watchlist: Watchlist
+        _ item: WatchlistItem, to newPosition: Int32, in watchlist: Watchlist
     ) throws {
         let oldPosition = item.position
         
@@ -223,9 +215,7 @@ class WatchlistManager: ObservableObject {
         
         let request: NSFetchRequest<WatchlistItem> = WatchlistItem.fetchRequest()
         request.predicate = NSPredicate(
-            format: "contentID == %@ AND watchlist.profile == %@",
-            contentID,
-            profile
+            format: "contentID == %@ AND watchlist.profile == %@", contentID, profile
         )
         
         do {
@@ -243,9 +233,7 @@ class WatchlistManager: ObservableObject {
         
         let request: NSFetchRequest<Watchlist> = Watchlist.fetchRequest()
         request.predicate = NSPredicate(
-            format: "profile == %@ AND ANY items.contentID == %@",
-            profile,
-            contentID
+            format: "profile == %@ AND ANY items.contentID == %@", profile, contentID
         )
         request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         
@@ -293,9 +281,7 @@ class WatchlistManager: ObservableObject {
     func searchWatchlists(query: String, profile: Profile) -> [Watchlist] {
         let request: NSFetchRequest<Watchlist> = Watchlist.fetchRequest()
         request.predicate = NSPredicate(
-            format: "profile == %@ AND name CONTAINS[cd] %@",
-            profile,
-            query
+            format: "profile == %@ AND name CONTAINS[cd] %@", profile, query
         )
         request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         

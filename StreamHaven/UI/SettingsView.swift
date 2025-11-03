@@ -1,6 +1,6 @@
 #if os(iOS) || os(tvOS)
-import SwiftUI
 import AVKit
+import SwiftUI
 
 /// A view for managing user settings.
 public struct SettingsView: View {

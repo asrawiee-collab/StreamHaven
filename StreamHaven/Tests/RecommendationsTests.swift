@@ -5,8 +5,8 @@
 //  Tests for recommendations and trending functionality
 //
 
-import XCTest
 import CoreData
+import XCTest
 @testable import StreamHaven
 
 @MainActor
@@ -44,12 +44,7 @@ final class RecommendationsTests: XCTestCase {
     func testTMDbMovieStructure() {
         let json = """
         {
-            "id": 123,
-            "title": "Test Movie",
-            "overview": "A test movie overview",
-            "poster_path": "/test.jpg",
-            "release_date": "2025-01-01",
-            "vote_average": 8.5
+            "id": 123, "title": "Test Movie", "overview": "A test movie overview", "poster_path": "/test.jpg", "release_date": "2025-01-01", "vote_average": 8.5
         }
         """.data(using: .utf8)!
         
@@ -69,12 +64,7 @@ final class RecommendationsTests: XCTestCase {
     func testTMDbSeriesStructure() {
         let json = """
         {
-            "id": 456,
-            "name": "Test Series",
-            "overview": "A test series overview",
-            "poster_path": "/series.jpg",
-            "first_air_date": "2024-06-15",
-            "vote_average": 7.8
+            "id": 456, "name": "Test Series", "overview": "A test series overview", "poster_path": "/series.jpg", "first_air_date": "2024-06-15", "vote_average": 7.8
         }
         """.data(using: .utf8)!
         
@@ -96,20 +86,9 @@ final class RecommendationsTests: XCTestCase {
         {
             "results": [
                 {
-                    "id": 1,
-                    "title": "Movie 1",
-                    "overview": "Overview 1",
-                    "poster_path": "/poster1.jpg",
-                    "release_date": "2025-01-01",
-                    "vote_average": 8.0
-                },
-                {
-                    "id": 2,
-                    "title": "Movie 2",
-                    "overview": "Overview 2",
-                    "poster_path": "/poster2.jpg",
-                    "release_date": "2025-02-01",
-                    "vote_average": 7.5
+                    "id": 1, "title": "Movie 1", "overview": "Overview 1", "poster_path": "/poster1.jpg", "release_date": "2025-01-01", "vote_average": 8.0
+                }, {
+                    "id": 2, "title": "Movie 2", "overview": "Overview 2", "poster_path": "/poster2.jpg", "release_date": "2025-02-01", "vote_average": 7.5
                 }
             ]
         }
@@ -327,8 +306,7 @@ final class RecommendationsTests: XCTestCase {
         
         // Simulate TMDb trending response
         let tmdbMovies = [
-            TMDbMovie(id: 1, title: "The Shawshank Redemption", overview: "Hope", posterPath: "/shawshank.jpg", releaseDate: "1994", voteAverage: 9.3),
-            TMDbMovie(id: 2, title: "Unknown Movie", overview: "Not in library", posterPath: "/unknown.jpg", releaseDate: "2025", voteAverage: 7.0)
+            TMDbMovie(id: 1, title: "The Shawshank Redemption", overview: "Hope", posterPath: "/shawshank.jpg", releaseDate: "1994", voteAverage: 9.3), TMDbMovie(id: 2, title: "Unknown Movie", overview: "Not in library", posterPath: "/unknown.jpg", releaseDate: "2025", voteAverage: 7.0)
         ]
         
         // Match TMDb with local library

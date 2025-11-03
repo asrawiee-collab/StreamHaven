@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 /// Manages all data operations for the StreamHaven application, including importing playlists and managing the Core Data stack.
 @MainActor
@@ -23,10 +23,7 @@ public final class StreamHavenData: ObservableObject {
         self.backgroundContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
 
         NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(contextDidSave),
-            name: .NSManagedObjectContextDidSave,
-            object: backgroundContext
+            self, selector: #selector(contextDidSave), name: .NSManagedObjectContextDidSave, object: backgroundContext
         )
     }
 
@@ -69,8 +66,7 @@ public final class StreamHavenData: ObservableObject {
     ///   - progress: A closure that is called with per-playlist status updates.
     /// - Returns: A dictionary mapping URLs to their import results (success or error).
     public func importPlaylists(
-        from urls: [URL],
-        progress: @escaping (URL, String) -> Void
+        from urls: [URL], progress: @escaping (URL, String) -> Void
     ) async -> [URL: Result<Void, Error>] {
         // Limit concurrent imports to avoid overwhelming the system
         let maxConcurrentImports = min(urls.count, 3)

@@ -34,30 +34,16 @@ struct SourceModePromptView: View {
                 // Mode selection cards
                 VStack(spacing: 16) {
                     SourceModeCard(
-                        mode: .combined,
-                        isSelected: selectedMode == .combined,
-                        icon: "square.stack.3d.up",
-                        title: "Combined Mode",
-                        description: "Merge content from all active sources into a unified view. All movies, series, and channels appear together.",
-                        benefits: [
-                            "Browse all content at once",
-                            "Automatic fallback between sources",
-                            "Best quality selection"
+                        mode: .combined, isSelected: selectedMode == .combined, icon: "square.stack.3d.up", title: "Combined Mode", description: "Merge content from all active sources into a unified view. All movies, series, and channels appear together.", benefits: [
+                            "Browse all content at once", "Automatic fallback between sources", "Best quality selection"
                         ]
                     ) {
                         selectedMode = .combined
                     }
                     
                     SourceModeCard(
-                        mode: .single,
-                        isSelected: selectedMode == .single,
-                        icon: "square.on.square",
-                        title: "Single Mode",
-                        description: "View one source at a time. Switch between sources manually to browse different catalogs.",
-                        benefits: [
-                            "Clear source separation",
-                            "Easy source comparison",
-                            "Simple troubleshooting"
+                        mode: .single, isSelected: selectedMode == .single, icon: "square.on.square", title: "Single Mode", description: "View one source at a time. Switch between sources manually to browse different catalogs.", benefits: [
+                            "Clear source separation", "Easy source comparison", "Simple troubleshooting"
                         ]
                     ) {
                         selectedMode = .single
@@ -95,8 +81,7 @@ struct SourceModePromptView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .alert("Error", isPresented: Binding(
-                get: { errorMessage != nil },
-                set: { if !$0 { errorMessage = nil } }
+                get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } }
             )) {
                 Button("OK") { errorMessage = nil }
             } message: {
@@ -141,11 +126,11 @@ struct SourceModeCard: View {
                 HStack {
                     Image(systemName: icon)
                         .font(.title2)
-                        .foregroundColor(isSelected ? .white : .blue)
+                        .foregroundColor(isSelected ? .white: .blue)
                     
                     Text(title)
                         .font(.headline)
-                        .foregroundColor(isSelected ? .white : .primary)
+                        .foregroundColor(isSelected ? .white: .primary)
                     
                     Spacer()
                     
@@ -169,7 +154,7 @@ struct SourceModeCard: View {
                         HStack(spacing: 8) {
                             Image(systemName: "checkmark")
                                 .font(.caption)
-                                .foregroundColor(isSelected ? .white : .green)
+                                .foregroundColor(isSelected ? .white: .green)
                             Text(benefit)
                                 .font(.caption)
                                 .foregroundColor(isSelected ? .white.opacity(0.9) : .secondary)
@@ -180,11 +165,11 @@ struct SourceModeCard: View {
             .padding()
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(isSelected ? Color.blue : Color.secondary.opacity(0.1))
+                    .fill(isSelected ? Color.blue: Color.secondary.opacity(0.1))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(isSelected ? Color.blue : Color.gray.opacity(0.3), lineWidth: isSelected ? 2 : 1)
+                    .stroke(isSelected ? Color.blue: Color.gray.opacity(0.3), lineWidth: isSelected ? 2: 1)
             )
         }
         .buttonStyle(.plain)
@@ -194,8 +179,7 @@ struct SourceModeCard: View {
 #Preview {
     let profile = Profile()
     return SourceModePromptView(
-        profile: profile,
-        sourceManager: PlaylistSourceManager()
+        profile: profile, sourceManager: PlaylistSourceManager()
     )
 }
 

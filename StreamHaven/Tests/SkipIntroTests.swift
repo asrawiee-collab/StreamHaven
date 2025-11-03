@@ -5,9 +5,9 @@
 //  Tests for Skip Intro functionality
 //
 
-import XCTest
 import AVKit
 import CoreData
+import XCTest
 @testable import StreamHaven
 
 @MainActor
@@ -142,8 +142,7 @@ final class SkipIntroTests: XCTestCase {
     
     func testIntroSkipperManagerWithAPIKeys() {
         let manager = IntroSkipperManager(
-            tvdbAPIKey: "test_tvdb_key",
-            tmdbAPIKey: "test_tmdb_key"
+            tvdbAPIKey: "test_tvdb_key", tmdbAPIKey: "test_tmdb_key"
         )
         XCTAssertNotNil(manager, "IntroSkipperManager should initialize with API keys")
     }
@@ -221,11 +220,7 @@ final class SkipIntroTests: XCTestCase {
         
         // Manually set intro timing (e.g., from M3U metadata)
         await introSkipperManager.setIntroTiming(
-            introStart: 10.0,
-            introEnd: 80.0,
-            creditStart: 2000.0,
-            for: episode,
-            context: context
+            introStart: 10.0, introEnd: 80.0, creditStart: 2000.0, for: episode, context: context
         )
         
         // Verify timing was stored
@@ -328,19 +323,11 @@ final class SkipIntroTests: XCTestCase {
         
         // Set different timing for each episode
         await introSkipperManager.setIntroTiming(
-            introStart: 5.0,
-            introEnd: 85.0,
-            creditStart: nil,
-            for: episode1,
-            context: context
+            introStart: 5.0, introEnd: 85.0, creditStart: nil, for: episode1, context: context
         )
         
         await introSkipperManager.setIntroTiming(
-            introStart: 10.0,
-            introEnd: 95.0,
-            creditStart: 2000.0,
-            for: episode2,
-            context: context
+            introStart: 10.0, introEnd: 95.0, creditStart: 2000.0, for: episode2, context: context
         )
         
         // Verify each episode has its own timing
@@ -373,11 +360,7 @@ final class SkipIntroTests: XCTestCase {
         
         // Set timing with zero values (no intro)
         await introSkipperManager.setIntroTiming(
-            introStart: 0,
-            introEnd: 0,
-            creditStart: nil,
-            for: episode,
-            context: context
+            introStart: 0, introEnd: 0, creditStart: nil, for: episode, context: context
         )
         
         XCTAssertTrue(episode.hasIntroData, "Should mark as having data even with zeros")

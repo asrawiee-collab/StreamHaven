@@ -1,6 +1,6 @@
 
-import Foundation
 import CoreData
+import Foundation
 
 /// Represents a crew member from TMDb.
 /// This class is a Core Data managed object.

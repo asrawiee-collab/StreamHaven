@@ -12,8 +12,7 @@ enum FileBasedTestCoreDataModelBuilder {
     /// - Throws: Error if the persistent store fails to load.
     static func createTestContainer(withFTS: Bool = false) throws -> NSPersistentContainer {
         let container = NSPersistentContainer(
-            name: "StreamHavenTest",
-            managedObjectModel: TestCoreDataModelBuilder.sharedModel
+            name: "StreamHavenTest", managedObjectModel: TestCoreDataModelBuilder.sharedModel
         )
         
         // Create temporary directory for test database
@@ -33,19 +32,13 @@ enum FileBasedTestCoreDataModelBuilder {
         if withFTS {
             // FTS requires more standard SQLite settings
             pragmas = [
-                "journal_mode": "WAL",
-                "synchronous": "NORMAL",    // Can't be OFF with WAL for FTS
-                "temp_store": "MEMORY",
-                "cache_size": "10000"
+                "journal_mode": "WAL", "synchronous": "NORMAL", // Can't be OFF with WAL for FTS
+                "temp_store": "MEMORY", "cache_size": "10000"
             ]
         } else {
             // Maximum speed for non-FTS tests
             pragmas = [
-                "journal_mode": "MEMORY",
-                "synchronous": "OFF",
-                "temp_store": "MEMORY",
-                "cache_size": "10000",
-                "locking_mode": "EXCLUSIVE"
+                "journal_mode": "MEMORY", "synchronous": "OFF", "temp_store": "MEMORY", "cache_size": "10000", "locking_mode": "EXCLUSIVE"
             ]
         }
         

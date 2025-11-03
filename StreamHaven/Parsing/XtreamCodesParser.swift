@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 /// A parser for processing Xtream Codes playlists and importing their content into Core Data.
 public final class XtreamCodesParser {
@@ -77,9 +77,7 @@ public final class XtreamCodesParser {
 
             components.path = "/player_api.php"
             components.queryItems = [
-                URLQueryItem(name: "username", value: username),
-                URLQueryItem(name: "password", value: password),
-                URLQueryItem(name: "action", value: action)
+                URLQueryItem(name: "username", value: username), URLQueryItem(name: "password", value: password), URLQueryItem(name: "action", value: action)
             ]
 
             guard let actionURL = components.url else {
@@ -129,10 +127,7 @@ public final class XtreamCodesParser {
         let batchInsert = NSBatchInsertRequest(entityName: "Movie", objects: uniqueItems.map {
             let streamURL = buildStreamURL(baseURL: baseURL, type: "movie", username: username, password: password, id: $0.streamId, ext: $0.containerExtension ?? "mp4")
             var movieDict: [String: Any] = [
-                "title": $0.name,
-                "posterURL": $0.streamIcon ?? "",
-                "rating": $0.rating ?? "",
-                "streamURL": streamURL
+                "title": $0.name, "posterURL": $0.streamIcon ?? "", "rating": $0.rating ?? "", "streamURL": streamURL
             ]
             if let sourceID = sourceID {
                 movieDict["sourceID"] = sourceID
@@ -160,10 +155,7 @@ public final class XtreamCodesParser {
 
         let batchInsert = NSBatchInsertRequest(entityName: "Series", objects: uniqueItems.map {
             var seriesDict: [String: Any] = [
-                "title": $0.name,
-                "posterURL": $0.cover ?? "",
-                "summary": $0.plot ?? "",
-                "rating": $0.rating ?? ""
+                "title": $0.name, "posterURL": $0.cover ?? "", "summary": $0.plot ?? "", "rating": $0.rating ?? ""
             ]
             if let dateStr = $0.releaseDate, let date = dateFormatter.date(from: dateStr) {
                 seriesDict["releaseDate"] = date
@@ -198,8 +190,7 @@ public final class XtreamCodesParser {
         if !newChannels.isEmpty {
             let channelBatchInsert = NSBatchInsertRequest(entityName: "Channel", objects: newChannels.map { item in
                 var channelDict: [String: Any] = [
-                    "name": item.name,
-                    "logoURL": item.streamIcon ?? ""
+                    "name": item.name, "logoURL": item.streamIcon ?? ""
                 ]
                 if let sourceID = sourceID {
                     channelDict["sourceID"] = sourceID
@@ -233,9 +224,7 @@ public final class XtreamCodesParser {
                 if let channel = channelsByName[item.name] {
                     let streamURL = buildStreamURL(baseURL: baseURL, type: "live", username: username, password: password, id: item.streamId, ext: "m3u8")
                     var variantDict: [String: Any] = [
-                        "name": item.name,
-                        "streamURL": streamURL,
-                        "channel": channel
+                        "name": item.name, "streamURL": streamURL, "channel": channel
                     ]
                     if let sourceID = sourceID {
                         variantDict["sourceID"] = sourceID

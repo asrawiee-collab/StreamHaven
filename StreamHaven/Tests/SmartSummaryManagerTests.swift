@@ -5,8 +5,8 @@
 //  Tests for SmartSummaryManager functionality
 //
 
-import XCTest
 import NaturalLanguage
+import XCTest
 @testable import StreamHaven
 
 @MainActor

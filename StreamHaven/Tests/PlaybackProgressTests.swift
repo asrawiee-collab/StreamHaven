@@ -1,6 +1,6 @@
-import XCTest
-import CoreData
 import AVKit
+import CoreData
+import XCTest
 @testable import StreamHaven
 
 @MainActor
@@ -12,8 +12,7 @@ final class PlaybackProgressTests: XCTestCase {
 
     override func setUpWithError() throws {
         let container = NSPersistentContainer(
-            name: "PlaybackProgressTest",
-            managedObjectModel: TestCoreDataModelBuilder.sharedModel
+            name: "PlaybackProgressTest", managedObjectModel: TestCoreDataModelBuilder.sharedModel
         )
         let description = NSPersistentStoreDescription()
         description.type = NSInMemoryStoreType

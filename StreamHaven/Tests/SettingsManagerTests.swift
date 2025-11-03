@@ -1,5 +1,5 @@
-import XCTest
 import SwiftUI
+import XCTest
 @testable import StreamHaven
 
 @MainActor

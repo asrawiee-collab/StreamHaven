@@ -1,5 +1,5 @@
-import XCTest
 import CoreData
+import XCTest
 @testable import StreamHaven
 
 final class M3UPlaylistParserEdgeCasesTests: XCTestCase {
@@ -8,8 +8,7 @@ final class M3UPlaylistParserEdgeCasesTests: XCTestCase {
 
     override func setUpWithError() throws {
         let container = NSPersistentContainer(
-            name: "M3UEdgeCaseTesting",
-            managedObjectModel: TestCoreDataModelBuilder.sharedModel
+            name: "M3UEdgeCaseTesting", managedObjectModel: TestCoreDataModelBuilder.sharedModel
         )
         
         let description = NSPersistentStoreDescription()
@@ -33,8 +32,8 @@ final class M3UPlaylistParserEdgeCasesTests: XCTestCase {
         // Test that parser handles invalid M3U data gracefully
         let invalidM3U = """
         #EXTM3U
-        #EXTINF:-1,Missing URL line
-        #EXTINF:-1 tvg-id="" tvg-name="Channel" group-title="News",Channel Name
+        #EXTINF:-1, Missing URL line
+        #EXTINF:-1 tvg-id="" tvg-name="Channel" group-title="News", Channel Name
         http://
         random-garbage-line
         """.data(using: .utf8)!
@@ -61,9 +60,9 @@ final class M3UPlaylistParserEdgeCasesTests: XCTestCase {
         // Simulate a partial file that ends mid-entry
         let partial = """
         #EXTM3U
-        #EXTINF:-1 tvg-id="abc" tvg-name="A" group-title="News",A
+        #EXTINF:-1 tvg-id="abc" tvg-name="A" group-title="News", A
         http://example.com/stream
-        #EXTINF:-1 tvg-id="def" tvg-name="B" group-title="News",B
+        #EXTINF:-1 tvg-id="def" tvg-name="B" group-title="News", B
         """.data(using: .utf8)!
 
         // Should not insert incomplete second entry (no URL for entry B)

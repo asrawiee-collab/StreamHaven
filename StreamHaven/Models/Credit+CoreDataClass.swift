@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 /// Represents a credit linking an actor to a movie or series.
 /// This is a junction table for the many-to-many relationship.

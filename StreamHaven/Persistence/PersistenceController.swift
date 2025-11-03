@@ -69,8 +69,7 @@ public final class PersistenceController {
 
         for bundle in candidateBundles {
             if let url = bundle.url(forResource: "StreamHaven", withExtension: "momd") ??
-                bundle.url(forResource: "StreamHaven", withExtension: "mom"),
-               let model = NSManagedObjectModel(contentsOf: url) {
+                bundle.url(forResource: "StreamHaven", withExtension: "mom"), let model = NSManagedObjectModel(contentsOf: url) {
                 patchManagedObjectClasses(in: model)
                 let missingEntities = missingEntities(in: model)
                 if missingEntities.isEmpty {
@@ -135,23 +134,7 @@ private extension PersistenceController {
     }
 
     static let entityClassMap: [String: NSManagedObject.Type] = [
-        "Movie": Movie.self,
-        "Series": Series.self,
-        "Season": Season.self,
-        "Episode": Episode.self,
-        "Channel": Channel.self,
-        "ChannelVariant": ChannelVariant.self,
-        "Profile": Profile.self,
-        "WatchHistory": WatchHistory.self,
-        "Favorite": Favorite.self,
-        "StreamCache": StreamCache.self,
-        "PlaylistCache": PlaylistCache.self,
-        "PlaylistSource": PlaylistSource.self,
-        "Download": Download.self,
-        "UpNextQueueItem": UpNextQueueItem.self,
-        "Watchlist": Watchlist.self,
-        "WatchlistItem": WatchlistItem.self,
-        "EPGEntry": EPGEntry.self
+        "Movie": Movie.self, "Series": Series.self, "Season": Season.self, "Episode": Episode.self, "Channel": Channel.self, "ChannelVariant": ChannelVariant.self, "Profile": Profile.self, "WatchHistory": WatchHistory.self, "Favorite": Favorite.self, "StreamCache": StreamCache.self, "PlaylistCache": PlaylistCache.self, "PlaylistSource": PlaylistSource.self, "Download": Download.self, "UpNextQueueItem": UpNextQueueItem.self, "Watchlist": Watchlist.self, "WatchlistItem": WatchlistItem.self, "EPGEntry": EPGEntry.self
     ]
 }
 

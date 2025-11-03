@@ -1,5 +1,5 @@
-import XCTest
 import CoreData
+import XCTest
 @testable import StreamHaven
 
 /// Tests for the multi-source playlist system.
@@ -40,9 +40,7 @@ final class MultiSourceSystemTests: XCTestCase {
     
     func testAddM3USource() throws {
         let source = try sourceManager.addM3USource(
-            name: "Test M3U",
-            url: "https://example.com/playlist.m3u",
-            to: profile
+            name: "Test M3U", url: "https://example.com/playlist.m3u", to: profile
         )
         
         XCTAssertNotNil(source.sourceID)
@@ -55,11 +53,7 @@ final class MultiSourceSystemTests: XCTestCase {
     
     func testAddXtreamSource() throws {
         let source = try sourceManager.addXtreamSource(
-            name: "Test Xtream",
-            url: "https://example.com",
-            username: "user",
-            password: "pass",
-            to: profile
+            name: "Test Xtream", url: "https://example.com", username: "user", password: "pass", to: profile
         )
         
         XCTAssertNotNil(source.sourceID)
@@ -73,9 +67,7 @@ final class MultiSourceSystemTests: XCTestCase {
     
     func testRemoveSource() throws {
         let source = try sourceManager.addM3USource(
-            name: "Test",
-            url: "https://example.com/test.m3u",
-            to: profile
+            name: "Test", url: "https://example.com/test.m3u", to: profile
         )
         
         XCTAssertEqual(profile.allSources.count, 1)
@@ -87,9 +79,7 @@ final class MultiSourceSystemTests: XCTestCase {
     
     func testActivateDeactivateSource() throws {
         let source = try sourceManager.addM3USource(
-            name: "Test",
-            url: "https://example.com/test.m3u",
-            to: profile
+            name: "Test", url: "https://example.com/test.m3u", to: profile
         )
         
         XCTAssertTrue(source.isActive)
@@ -108,21 +98,15 @@ final class MultiSourceSystemTests: XCTestCase {
     
     func testReorderSources() throws {
         let source1 = try sourceManager.addM3USource(
-            name: "Source 1",
-            url: "https://example.com/1.m3u",
-            to: profile
+            name: "Source 1", url: "https://example.com/1.m3u", to: profile
         )
         
         let source2 = try sourceManager.addM3USource(
-            name: "Source 2",
-            url: "https://example.com/2.m3u",
-            to: profile
+            name: "Source 2", url: "https://example.com/2.m3u", to: profile
         )
         
         let source3 = try sourceManager.addM3USource(
-            name: "Source 3",
-            url: "https://example.com/3.m3u",
-            to: profile
+            name: "Source 3", url: "https://example.com/3.m3u", to: profile
         )
         
         XCTAssertEqual(profile.allSources[0].displayOrder, 0)
@@ -149,15 +133,11 @@ final class MultiSourceSystemTests: XCTestCase {
     func testGroupMoviesByCombinedMode() throws {
         // Create test sources
         let source1 = try sourceManager.addM3USource(
-            name: "Source 1",
-            url: "https://example.com/1.m3u",
-            to: profile
+            name: "Source 1", url: "https://example.com/1.m3u", to: profile
         )
         
         let source2 = try sourceManager.addM3USource(
-            name: "Source 2",
-            url: "https://example.com/2.m3u",
-            to: profile
+            name: "Source 2", url: "https://example.com/2.m3u", to: profile
         )
         
         // Create duplicate movies from different sources
@@ -193,15 +173,11 @@ final class MultiSourceSystemTests: XCTestCase {
     func testGroupMoviesBySingleMode() throws {
         // Create test sources
         let source1 = try sourceManager.addM3USource(
-            name: "Source 1",
-            url: "https://example.com/1.m3u",
-            to: profile
+            name: "Source 1", url: "https://example.com/1.m3u", to: profile
         )
         
         let source2 = try sourceManager.addM3USource(
-            name: "Source 2",
-            url: "https://example.com/2.m3u",
-            to: profile
+            name: "Source 2", url: "https://example.com/2.m3u", to: profile
         )
         
         // Create duplicate movies
@@ -246,9 +222,7 @@ final class MultiSourceSystemTests: XCTestCase {
     
     func testSelectBestItem() throws {
         let source = try sourceManager.addM3USource(
-            name: "Source 1",
-            url: "https://example.com/1.m3u",
-            to: profile
+            name: "Source 1", url: "https://example.com/1.m3u", to: profile
         )
         
         let movie1 = Movie(context: context)
@@ -270,9 +244,7 @@ final class MultiSourceSystemTests: XCTestCase {
         movie2.summary = ""
         
         let group = MultiSourceContentManager.ContentGroup(
-            primaryItem: movie1,
-            alternativeItems: [movie2],
-            sourceIDs: [source.sourceID].compactMap { $0 }
+            primaryItem: movie1, alternativeItems: [movie2], sourceIDs: [source.sourceID].compactMap { $0 }
         )
         
         let best = contentManager.selectBestItem(from: group)
@@ -285,9 +257,7 @@ final class MultiSourceSystemTests: XCTestCase {
     
     func testGetSourceMetadata() throws {
         let source = try sourceManager.addM3USource(
-            name: "Test Source",
-            url: "https://example.com/test.m3u",
-            to: profile
+            name: "Test Source", url: "https://example.com/test.m3u", to: profile
         )
         
         guard let sourceID = source.sourceID else {

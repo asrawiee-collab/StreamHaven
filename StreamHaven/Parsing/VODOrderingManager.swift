@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 /// A utility class for ordering Video on Demand (VOD) content.
 public final class VODOrderingManager {

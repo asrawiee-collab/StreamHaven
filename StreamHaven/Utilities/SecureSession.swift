@@ -30,16 +30,14 @@ public enum SecureSession {
         init(pinnedHosts: Set<String>, certificateNames: [String], publicKeyHashes: Set<String>) {
             self.pinnedHosts = pinnedHosts
             self.certificates = certificateNames.compactMap { name in
-                guard let url = Bundle.main.url(forResource: name, withExtension: "der"),
-                      let data = try? Data(contentsOf: url) else { return nil }
+                guard let url = Bundle.main.url(forResource: name, withExtension: "der"), let data = try? Data(contentsOf: url) else { return nil }
                 return data
             }
             self.publicKeyHashes = publicKeyHashes
         }
         
         func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-            guard let serverTrust = challenge.protectionSpace.serverTrust,
-                  pinnedHosts.contains(challenge.protectionSpace.host) else {
+            guard let serverTrust = challenge.protectionSpace.serverTrust, pinnedHosts.contains(challenge.protectionSpace.host) else {
                 completionHandler(.performDefaultHandling, nil)
                 return
             }

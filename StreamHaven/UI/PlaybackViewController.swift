@@ -71,25 +71,16 @@ public class CustomPlayerViewController: AVPlayerViewController {
         super.viewDidLoad()
 
         let subtitleSearchButton = UIBarButtonItem(
-            image: UIImage(systemName: "captions.bubble"),
-            style: .plain,
-            target: self,
-            action: #selector(searchForSubtitles)
+            image: UIImage(systemName: "captions.bubble"), style: .plain, target: self, action: #selector(searchForSubtitles)
         )
 
         let variantSelectorButton = UIBarButtonItem(
-            image: UIImage(systemName: "tv.and.hifispeaker.fill"),
-            style: .plain,
-            target: self,
-            action: #selector(selectVariant)
+            image: UIImage(systemName: "tv.and.hifispeaker.fill"), style: .plain, target: self, action: #selector(selectVariant)
         )
 
         #if os(iOS)
         let pipButton = UIBarButtonItem(
-            image: UIImage(systemName: "pip.enter"),
-            style: .plain,
-            target: self,
-            action: #selector(togglePiP)
+            image: UIImage(systemName: "pip.enter"), style: .plain, target: self, action: #selector(togglePiP)
         )
         
         // Add buttons to the navigation item (include PiP on iOS only)
@@ -119,8 +110,7 @@ public class CustomPlayerViewController: AVPlayerViewController {
                 epgLabel.translatesAutoresizingMaskIntoConstraints = false
                 view.addSubview(epgLabel)
                 NSLayoutConstraint.activate([
-                    epgLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-                    epgLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -60)
+                    epgLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16), epgLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -60)
                 ])
                 if let nextEntry = nextEntry {
                     let nextLabel = UILabel()
@@ -133,8 +123,7 @@ public class CustomPlayerViewController: AVPlayerViewController {
                     nextLabel.translatesAutoresizingMaskIntoConstraints = false
                     view.addSubview(nextLabel)
                     NSLayoutConstraint.activate([
-                        nextLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-                        nextLabel.bottomAnchor.constraint(equalTo: epgLabel.topAnchor, constant: -4)
+                        nextLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16), nextLabel.bottomAnchor.constraint(equalTo: epgLabel.topAnchor, constant: -4)
                     ])
                 }
             }
@@ -163,8 +152,7 @@ public class CustomPlayerViewController: AVPlayerViewController {
         
         view.addSubview(button)
         NSLayoutConstraint.activate([
-            button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            button.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100)
+            button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16), button.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100)
         ])
         
         skipIntroButton = button
@@ -172,9 +160,7 @@ public class CustomPlayerViewController: AVPlayerViewController {
     
     /// Sets up time observer to show/hide skip intro button.
     private func setupIntroTimeObserver() {
-        guard let episode = episode,
-              let settingsManager = settingsManager,
-              settingsManager.enableSkipIntro else { return }
+        guard let episode = episode, let settingsManager = settingsManager, settingsManager.enableSkipIntro else { return }
         
         // Initialize intro skipper manager
         let tvdbAPIKey = settingsManager.tvdbAPIKey
@@ -182,8 +168,7 @@ public class CustomPlayerViewController: AVPlayerViewController {
         
         // Fetch intro timing data
         Task {
-            guard let context = episode.managedObjectContext,
-                  let timing = await introSkipperManager?.getIntroTiming(for: episode, context: context) else {
+            guard let context = episode.managedObjectContext, let timing = await introSkipperManager?.getIntroTiming(for: episode, context: context) else {
                 return
             }
             
@@ -313,9 +298,7 @@ public class CustomPlayerViewController: AVPlayerViewController {
     /// Downloads and applies a subtitle.
     /// - Parameter subtitle: The `Subtitle` to download and apply.
     private func downloadAndApplySubtitle(_ subtitle: Subtitle) {
-        guard let fileID = subtitle.attributes.files.first?.fileId,
-              let subtitleManager = subtitleManager,
-              let audioSubtitleManager = audioSubtitleManager else {
+        guard let fileID = subtitle.attributes.files.first?.fileId, let subtitleManager = subtitleManager, let audioSubtitleManager = audioSubtitleManager else {
             return
         }
 

@@ -5,9 +5,7 @@ final class AdultContentDetectionTests: XCTestCase {
 
     func testDetectsExplicitKeywordsInTitle() {
         let explicitTitles = [
-            "XXX Movie",
-            "Adult Content",
-            "Explicit Material"
+            "XXX Movie", "Adult Content", "Explicit Material"
         ]
         
         for title in explicitTitles {
@@ -18,10 +16,7 @@ final class AdultContentDetectionTests: XCTestCase {
 
     func testDetectsAdultCategoryNames() {
         let adultCategories = [
-            "Adult",
-            "XXX",
-            "18+",
-            "Mature"
+            "Adult", "XXX", "18+", "Mature"
         ]
         
         for category in adultCategories {
@@ -32,10 +27,7 @@ final class AdultContentDetectionTests: XCTestCase {
 
     func testAllowsCleanContent() {
         let cleanTitles = [
-            "Toy Story",
-            "The Lion King",
-            "Finding Nemo",
-            "Frozen"
+            "Toy Story", "The Lion King", "Finding Nemo", "Frozen"
         ]
         
         for title in cleanTitles {
@@ -51,10 +43,7 @@ final class AdultContentDetectionTests: XCTestCase {
 
     func testCaseInsensitiveDetection() {
         let variations = [
-            "xxx movie",
-            "XXX MOVIE",
-            "Xxx Movie",
-            "XxX MoViE"
+            "xxx movie", "XXX MOVIE", "Xxx Movie", "XxX MoViE"
         ]
         
         for title in variations {
@@ -65,8 +54,8 @@ final class AdultContentDetectionTests: XCTestCase {
 
     func testPartialWordMatchesAreNotFlagged() {
         let safeTitles = [
-            "The Classics",  // Contains "ass" but shouldn't match
-            "Expression",     // Contains "xxx" but in different context
+            "The Classics", // Contains "ass" but shouldn't match
+            "Expression", // Contains "xxx" but in different context
             "Adulting 101"    // Contains "adult" but different meaning
         ]
         

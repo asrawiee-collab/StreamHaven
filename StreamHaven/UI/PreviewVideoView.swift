@@ -6,8 +6,8 @@
 //
 
 #if os(tvOS)
-import SwiftUI
 import AVKit
+import SwiftUI
 
 /// A view that displays a looping video preview with smooth transitions.
 struct PreviewVideoView: View {
@@ -64,9 +64,7 @@ struct HoverPreviewCard: View {
                 }
                 
                 // Video preview (shown on focus if available)
-                if isFocused,
-                   let player = previewManager.currentPlayer,
-                   previewManager.currentPreviewURL == contentID {
+                if isFocused, let player = previewManager.currentPlayer, previewManager.currentPreviewURL == contentID {
                     PreviewVideoView(player: player)
                 }
                 
@@ -82,9 +80,7 @@ struct HoverPreviewCard: View {
                                 .padding(8)
                                 .background(
                                     LinearGradient(
-                                        colors: [.clear, .black.opacity(0.8)],
-                                        startPoint: .top,
-                                        endPoint: .bottom
+                                        colors: [.clear, .black.opacity(0.8)], startPoint: .top, endPoint: .bottom
                                     )
                                 )
                             Spacer()
@@ -94,8 +90,8 @@ struct HoverPreviewCard: View {
             }
             .frame(width: 400, height: 225)
             .cornerRadius(12)
-            .shadow(radius: isFocused ? 10 : 5)
-            .scaleEffect(isFocused ? 1.05 : 1.0)
+            .shadow(radius: isFocused ? 10: 5)
+            .scaleEffect(isFocused ? 1.05: 1.0)
             .animation(.easeInOut(duration: 0.2), value: isFocused)
         }
         .buttonStyle(.plain)
@@ -120,11 +116,7 @@ struct MovieCardWithPreview: View {
     
     var body: some View {
         HoverPreviewCard(
-            contentID: movie.objectID.uriRepresentation().absoluteString,
-            previewURL: movie.previewURL,
-            posterURL: movie.posterURL,
-            title: movie.title ?? "Unknown Movie",
-            onSelect: onSelect
+            contentID: movie.objectID.uriRepresentation().absoluteString, previewURL: movie.previewURL, posterURL: movie.posterURL, title: movie.title ?? "Unknown Movie", onSelect: onSelect
         )
         .environmentObject(previewManager)
     }
@@ -140,11 +132,7 @@ struct SeriesCardWithPreview: View {
     
     var body: some View {
         HoverPreviewCard(
-            contentID: series.objectID.uriRepresentation().absoluteString,
-            previewURL: series.previewURL,
-            posterURL: series.posterURL,
-            title: series.title ?? "Unknown Series",
-            onSelect: onSelect
+            contentID: series.objectID.uriRepresentation().absoluteString, previewURL: series.previewURL, posterURL: series.posterURL, title: series.title ?? "Unknown Series", onSelect: onSelect
         )
         .environmentObject(previewManager)
     }

@@ -1,6 +1,6 @@
-import Foundation
 import AVFoundation
 import CoreData
+import Foundation
 import os.log
 
 #if !os(tvOS)
@@ -33,10 +33,10 @@ public class DownloadManager: NSObject, ObservableObject {
     
     /// Download quality preference
     public enum DownloadQuality: String {
-        case low = "low"       // ~720p
-        case medium = "medium" // ~1080p
-        case high = "high"     // ~4K
-        case auto = "auto"     // Best available
+        case low       // ~720p
+        case medium // ~1080p
+        case high     // ~4K
+        case auto     // Best available
     }
     public var preferredQuality: DownloadQuality = .medium
     
@@ -52,9 +52,7 @@ public class DownloadManager: NSObject, ObservableObject {
         calculateStorageUsed()
 
         contextObserver = NotificationCenter.default.addObserver(
-            forName: .NSManagedObjectContextObjectsDidChange,
-            object: context,
-            queue: nil
+            forName: .NSManagedObjectContextObjectsDidChange, object: context, queue: nil
         ) { [weak self] notification in
             guard let self else { return }
             if Thread.isMainThread {
@@ -81,9 +79,7 @@ public class DownloadManager: NSObject, ObservableObject {
         config.sessionSendsLaunchEvents = true
         
         downloadSession = AVAssetDownloadURLSession(
-            configuration: config,
-            assetDownloadDelegate: self,
-            delegateQueue: .main
+            configuration: config, assetDownloadDelegate: self, delegateQueue: .main
         )
     }
     
@@ -141,10 +137,7 @@ public class DownloadManager: NSObject, ObservableObject {
         // Start download task
         let options = createDownloadOptions()
         guard let task = downloadSession.makeAssetDownloadTask(
-            asset: asset,
-            assetTitle: title,
-            assetArtworkData: nil,
-            options: options
+            asset: asset, assetTitle: title, assetArtworkData: nil, options: options
         ) else {
             download.downloadStatus = .failed
             try context.save()
@@ -204,8 +197,7 @@ public class DownloadManager: NSObject, ObservableObject {
     
     /// Cancels and deletes a download.
     public func cancelDownload(_ download: Download) {
-        if let streamURL = download.streamURL,
-           let task = activeDownloadTasks[streamURL] {
+        if let streamURL = download.streamURL, let task = activeDownloadTasks[streamURL] {
             task.cancel()
             activeDownloadTasks.removeValue(forKey: streamURL)
         }
@@ -239,8 +231,7 @@ public class DownloadManager: NSObject, ObservableObject {
     
     /// Gets the local file path for downloaded content.
     public func getLocalFilePath(for item: NSManagedObject) -> String? {
-        guard let download = findDownload(for: item),
-              download.isAvailableOffline else {
+        guard let download = findDownload(for: item), download.isAvailableOffline else {
             return nil
         }
         return download.filePath
@@ -287,13 +278,10 @@ public class DownloadManager: NSObject, ObservableObject {
             
             for download in downloads where download.downloadStatus == .completed {
                 // Check if fully watched
-                if let movie = download.movie,
-                   movie.hasBeenWatched {
+                if let movie = download.movie, movie.hasBeenWatched {
                     deleteDownload(download)
                     deletedCount += 1
-                } else if let episode = download.episode,
-                          let history = episode.watchHistory,
-                          history.progress >= 0.9 { // 90% watched
+                } else if let episode = download.episode, let history = episode.watchHistory, history.progress >= 0.9 { // 90% watched
                     deleteDownload(download)
                     deletedCount += 1
                 }
@@ -368,8 +356,7 @@ public class DownloadManager: NSObject, ObservableObject {
 
         download.expiresAt = Calendar.current.date(byAdding: .day, value: 30, to: Date())
 
-        if let attributes = try? FileManager.default.attributesOfItem(atPath: location.path),
-           let size = attributes[.size] as? Int64 {
+        if let attributes = try? FileManager.default.attributesOfItem(atPath: location.path), let size = attributes[.size] as? Int64 {
             download.fileSize = size
         }
 

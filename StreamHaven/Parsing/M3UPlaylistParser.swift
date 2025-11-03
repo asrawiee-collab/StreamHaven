@@ -20,7 +20,7 @@ public final class M3UPlaylistParser {
 
     // This regex handles attributes with double quotes, single quotes, or no quotes.
     private static let attributeRegex: NSRegularExpression? = {
-        let pattern = "([\\w-]+)=(\"[^\"]*\"|'[^']*'|[^,\\s]+)"
+        let pattern = "([\\w-]+)=(\"[^\"]*\"|'[^']*'|[^, \\s]+)"
         do {
             return try NSRegularExpression(pattern: pattern, options: .caseInsensitive)
         } catch {
@@ -207,8 +207,7 @@ public final class M3UPlaylistParser {
         }
 
         let range = NSRange(line.startIndex..., in: line)
-        guard let match = headerRegex.firstMatch(in: line, range: range),
-              let valueRange = Range(match.range(at: 1), in: line) else {
+        guard let match = headerRegex.firstMatch(in: line, range: range), let valueRange = Range(match.range(at: 1), in: line) else {
             return nil
         }
 
@@ -223,7 +222,7 @@ public final class M3UPlaylistParser {
         let infoString = String(line.dropFirst("#EXTINF:".count))
         let attributePortion: String
 
-        if let commaIndex = infoString.firstIndex(of: ",") {
+        if let commaIndex = infoString.firstIndex(of: ", ") {
             attributePortion = String(infoString[..<commaIndex])
             let title = infoString[infoString.index(after: commaIndex)...].trimmingCharacters(in: .whitespaces)
             if !title.isEmpty {
@@ -237,8 +236,7 @@ public final class M3UPlaylistParser {
         let matches = attributeRegex.matches(in: attributePortion, range: NSRange(attributePortion.startIndex..., in: attributePortion))
 
         for match in matches {
-            guard let keyRange = Range(match.range(at: 1), in: attributePortion),
-                  let valueRange = Range(match.range(at: 2), in: attributePortion) else { continue }
+            guard let keyRange = Range(match.range(at: 1), in: attributePortion), let valueRange = Range(match.range(at: 2), in: attributePortion) else { continue }
 
             let key = String(attributePortion[keyRange])
             let value = stripQuotes(String(attributePortion[valueRange]))
@@ -264,11 +262,7 @@ public final class M3UPlaylistParser {
         }
 
         return M3UChannel(
-            title: title,
-            logoURL: info["tvg-logo"],
-            group: info["group-title"],
-            url: line,
-            tvgID: info["tvg-id"]
+            title: title, logoURL: info["tvg-logo"], group: info["group-title"], url: line, tvgID: info["tvg-id"]
         )
     }
 
@@ -304,9 +298,7 @@ public final class M3UPlaylistParser {
 
         let batchInsertRequest = NSBatchInsertRequest(entityName: "Movie", objects: uniqueItems.map { item in
             var movieDict: [String: Any] = [
-                "title": item.title,
-                "posterURL": item.logoURL ?? "",
-                "streamURL": item.url
+                "title": item.title, "posterURL": item.logoURL ?? "", "streamURL": item.url
             ]
             if let sourceID = sourceID {
                 movieDict["sourceID"] = sourceID
@@ -345,9 +337,7 @@ public final class M3UPlaylistParser {
         if !newChannels.isEmpty {
             let channelBatchInsert = NSBatchInsertRequest(entityName: "Channel", objects: newChannels.map { item in
                 var channelDict: [String: Any] = [
-                    "name": item.title,
-                    "logoURL": item.logoURL ?? "",
-                    "tvgID": item.tvgID ?? ""
+                    "name": item.title, "logoURL": item.logoURL ?? "", "tvgID": item.tvgID ?? ""
                 ]
                 if let sourceID = sourceID {
                     channelDict["sourceID"] = sourceID
@@ -373,9 +363,7 @@ public final class M3UPlaylistParser {
             for item in newVariants {
                 if let channel = channelsByName[item.title] {
                     var variantDict: [String: Any] = [
-                        "name": item.title,
-                        "streamURL": item.url,
-                        "channel": channel
+                        "name": item.title, "streamURL": item.url, "channel": channel
                     ]
                     if let sourceID = sourceID {
                         variantDict["sourceID"] = sourceID

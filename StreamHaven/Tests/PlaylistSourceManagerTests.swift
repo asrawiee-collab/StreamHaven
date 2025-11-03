@@ -1,5 +1,5 @@
-import XCTest
 import CoreData
+import XCTest
 @testable import StreamHaven
 
 /// Tests for PlaylistSourceManager.
@@ -45,9 +45,7 @@ final class PlaylistSourceManagerTests: XCTestCase {
     
     func testAddM3USource() throws {
         let source = try sourceManager.addM3USource(
-            name: "My IPTV",
-            url: "https://example.com/playlist.m3u",
-            to: profile
+            name: "My IPTV", url: "https://example.com/playlist.m3u", to: profile
         )
         
         XCTAssertNotNil(source, "Source should be created")
@@ -83,11 +81,7 @@ final class PlaylistSourceManagerTests: XCTestCase {
     
     func testAddXtreamSource() throws {
         let source = try sourceManager.addXtreamSource(
-            name: "Xtream Server",
-            url: "https://example.com",
-            username: "user123",
-            password: "pass456",
-            to: profile
+            name: "Xtream Server", url: "https://example.com", username: "user123", password: "pass456", to: profile
         )
         
         XCTAssertNotNil(source, "Source should be created")
@@ -187,11 +181,7 @@ final class PlaylistSourceManagerTests: XCTestCase {
     
     func testUpdateXtreamCredentials() throws {
         let source = try sourceManager.addXtreamSource(
-            name: "Xtream",
-            url: "https://example.com",
-            username: "olduser",
-            password: "oldpass",
-            to: profile
+            name: "Xtream", url: "https://example.com", username: "olduser", password: "oldpass", to: profile
         )
         
         try sourceManager.updateSource(source, name: nil, url: nil, username: "newuser", password: "newpass")

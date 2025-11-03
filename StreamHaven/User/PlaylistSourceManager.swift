@@ -1,6 +1,6 @@
-import Foundation
-import CoreData
 import Combine
+import CoreData
+import Foundation
 
 /// Manages playlist sources for user profiles.
 /// Handles adding, removing, activating, and ordering sources.

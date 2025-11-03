@@ -5,8 +5,8 @@
 //  Created on October 25, 2025.
 //
 
-import XCTest
 import CoreData
+import XCTest
 @testable import StreamHaven
 
 @MainActor
@@ -339,7 +339,7 @@ class WatchlistTests: XCTestCase {
             movie.releaseDate = Date()
             movie.streamURL = "https://example.com/stream\(i)"
             try context.save()
-            try watchlistManager.addToWatchlist(movie, watchlist: i <= 2 ? watchlist1 : watchlist2)
+            try watchlistManager.addToWatchlist(movie, watchlist: i <= 2 ? watchlist1: watchlist2)
         }
         
         // When
