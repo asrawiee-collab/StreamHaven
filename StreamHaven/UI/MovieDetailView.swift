@@ -243,7 +243,7 @@ public struct MovieDetailView: View {
             WatchlistPickerSheet(content: movie, isPresented: $showingWatchlistPicker)
                 .environmentObject(watchlistManager)
                 .environmentObject(profileManager)
-                .onDisappear {
+        }
         .onAppear(perform: {
             setup()
             fetchIMDbID()
@@ -257,6 +257,7 @@ public struct MovieDetailView: View {
         .onReceive(downloadManager.$completedDownloads) { _ in
             isDownloaded = downloadManager.isDownloaded(movie)
         }
+    }
 
     /// The detail view for tvOS.
     private var tvOSDetailView: some View {
@@ -443,9 +444,6 @@ public struct MovieDetailView: View {
                     }
                 }
             }
-        }
-    }
-    
         }
     }
     

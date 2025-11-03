@@ -193,35 +193,6 @@ public final class TMDbManager: ObservableObject, TMDbManaging {
         }
 
         do {
-
-    /// Fetches full details for a person (actor) from TMDb.
-    /// - Parameter tmdbID: The TMDb ID of the person.
-    /// - Returns: A `TMDbPersonDetail` object if found, otherwise `nil`.
-    public func fetchPersonDetails(tmdbID: Int) async throws -> TMDbPersonDetail? {
-        guard let actualApiKey = apiKey else {
-            throw TMDbError.missingAPIKey
-        }
-
-        let urlString = "\(apiBaseURL)/person/\(tmdbID)?api_key=\(actualApiKey)"
-        guard let url = URL(string: urlString) else {
-            throw TMDbError.invalidURL
-        }
-
-        await rateLimiter.acquire()
-        let (data, response) = try await URLSession.shared.data(from: url)
-
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            PerformanceLogger.logNetwork("TMDb: Failed to fetch person details for TMDb ID \(tmdbID). Status code: \((response as? HTTPURLResponse)?.statusCode ?? 0)")
-            return nil
-        }
-
-        let personDetail = try JSONDecoder().decode(TMDbPersonDetail.self, from: data)
-        PerformanceLogger.logNetwork("TMDb: Fetched details for person \(personDetail.name) (TMDb ID \(tmdbID))")
-        return personDetail
-    }
-
-
-
             // 1. Search for the movie by title to get the TMDb ID
             let searchQuery = title.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
             let searchURLString = "\(apiBaseURL)/search/movie?api_key=\(apiKey)&query=\(searchQuery)"
@@ -255,6 +226,32 @@ public final class TMDbManager: ObservableObject, TMDbManaging {
         } catch {
             PerformanceLogger.logNetwork("TMDb error: Failed to fetch IMDb ID for \(title): \(error)")
         }
+    }
+    
+    /// Fetches full details for a person (actor) from TMDb.
+    /// - Parameter tmdbID: The TMDb ID of the person.
+    /// - Returns: A `TMDbPersonDetail` object if found, otherwise `nil`.
+    public func fetchPersonDetails(tmdbID: Int) async throws -> TMDbPersonDetail? {
+        guard let actualApiKey = apiKey else {
+            throw TMDbError.missingAPIKey
+        }
+
+        let urlString = "\(apiBaseURL)/person/\(tmdbID)?api_key=\(actualApiKey)"
+        guard let url = URL(string: urlString) else {
+            throw TMDbError.invalidURL
+        }
+
+        await rateLimiter.acquire()
+        let (data, response) = try await URLSession.shared.data(from: url)
+
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            PerformanceLogger.logNetwork("TMDb: Failed to fetch person details for TMDb ID \(tmdbID). Status code: \((response as? HTTPURLResponse)?.statusCode ?? 0)")
+            return nil
+        }
+
+        let personDetail = try JSONDecoder().decode(TMDbPersonDetail.self, from: data)
+        PerformanceLogger.logNetwork("TMDb: Fetched details for person \(personDetail.name) (TMDb ID \(tmdbID))")
+        return personDetail
     }
     
     /// Fetches similar movies from TMDb based on a movie's TMDb ID.
