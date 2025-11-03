@@ -62,7 +62,7 @@ final class AccessibilityModeTests: XCTestCase {
         settingsManager.accessibilityModeEnabled = true
         
         // In CardView, when accessibility mode is enabled and focused:
-        // .stroke(isFocused && settingsManager.accessibilityModeEnabled ? Color.yellow : Color.clear, lineWidth: 4)
+        // .stroke(isFocused && settingsManager.accessibilityModeEnabled ? Color.yellow: Color.clear, lineWidth: 4)
         
         // Simulate focused state
         let isFocused = true
@@ -83,16 +83,16 @@ final class AccessibilityModeTests: XCTestCase {
         settingsManager.accessibilityModeEnabled = true
         
         // In CardView, when accessibility mode is enabled and focused:
-        // .scaleEffect(isFocused ? (settingsManager.accessibilityModeEnabled ? 1.15 : 1.1) : 1.0)
+        // .scaleEffect(isFocused ? (settingsManager.accessibilityModeEnabled ? 1.15: 1.1) : 1.0)
         
         let isFocused = true
-        let expectedScale = isFocused ? (settingsManager.accessibilityModeEnabled ? 1.15 : 1.1) : 1.0
+        let expectedScale = isFocused ? (settingsManager.accessibilityModeEnabled ? 1.15: 1.1) : 1.0
         
         XCTAssertEqual(expectedScale, 1.15, accuracy: 0.01, "Scale should be 1.15 when accessibility mode is enabled and focused")
         
         // Without accessibility mode
         settingsManager.accessibilityModeEnabled = false
-        let expectedScaleWithoutAccessibility = isFocused ? (settingsManager.accessibilityModeEnabled ? 1.15 : 1.1) : 1.0
+        let expectedScaleWithoutAccessibility = isFocused ? (settingsManager.accessibilityModeEnabled ? 1.15: 1.1) : 1.0
         
         XCTAssertEqual(expectedScaleWithoutAccessibility, 1.1, accuracy: 0.01, "Scale should be 1.1 when accessibility mode is disabled and focused")
         #endif
@@ -102,14 +102,14 @@ final class AccessibilityModeTests: XCTestCase {
         settingsManager.accessibilityModeEnabled = true
         
         // In HomeView, card spacing is determined by:
-        // HStack(spacing: settingsManager.accessibilityModeEnabled ? 30 : 20)
+        // HStack(spacing: settingsManager.accessibilityModeEnabled ? 30: 20)
         
-        let expectedSpacing = settingsManager.accessibilityModeEnabled ? 30 : 20
+        let expectedSpacing = settingsManager.accessibilityModeEnabled ? 30: 20
         XCTAssertEqual(expectedSpacing, 30, "Card spacing should be 30 when accessibility mode is enabled")
         
         // Without accessibility mode
         settingsManager.accessibilityModeEnabled = false
-        let expectedSpacingWithoutAccessibility = settingsManager.accessibilityModeEnabled ? 30 : 20
+        let expectedSpacingWithoutAccessibility = settingsManager.accessibilityModeEnabled ? 30: 20
         XCTAssertEqual(expectedSpacingWithoutAccessibility, 20, "Card spacing should be 20 when accessibility mode is disabled")
     }
     
@@ -123,12 +123,12 @@ final class AccessibilityModeTests: XCTestCase {
         
         #if os(tvOS)
         // Enhanced focus scale: 1.15 instead of 1.1
-        let focusScale = settingsManager.accessibilityModeEnabled ? 1.15 : 1.1
+        let focusScale = settingsManager.accessibilityModeEnabled ? 1.15: 1.1
         XCTAssertEqual(focusScale, 1.15, accuracy: 0.01, "Focus scale should be enhanced")
         #endif
         
         // Increased card spacing: 30 instead of 20
-        let cardSpacing = settingsManager.accessibilityModeEnabled ? 30 : 20
+        let cardSpacing = settingsManager.accessibilityModeEnabled ? 30: 20
         XCTAssertEqual(cardSpacing, 30, "Card spacing should be increased")
     }
     
@@ -140,12 +140,12 @@ final class AccessibilityModeTests: XCTestCase {
         
         #if os(tvOS)
         // Standard focus scale: 1.1
-        let focusScale = settingsManager.accessibilityModeEnabled ? 1.15 : 1.1
+        let focusScale = settingsManager.accessibilityModeEnabled ? 1.15: 1.1
         XCTAssertEqual(focusScale, 1.1, accuracy: 0.01, "Focus scale should be standard")
         #endif
         
         // Standard card spacing: 20
-        let cardSpacing = settingsManager.accessibilityModeEnabled ? 30 : 20
+        let cardSpacing = settingsManager.accessibilityModeEnabled ? 30: 20
         XCTAssertEqual(cardSpacing, 20, "Card spacing should be standard")
     }
     
@@ -161,12 +161,12 @@ final class AccessibilityModeTests: XCTestCase {
         settingsManager.accessibilityModeEnabled = true
         
         // Verify larger spacing for easier dwell targeting
-        let spacing = settingsManager.accessibilityModeEnabled ? 30 : 20
+        let spacing = settingsManager.accessibilityModeEnabled ? 30: 20
         XCTAssertEqual(spacing, 30, "Increased spacing supports Dwell Control targeting")
         
         #if os(tvOS)
         // Verify enhanced focus scale for better visual feedback
-        let scale = settingsManager.accessibilityModeEnabled ? 1.15 : 1.1
+        let scale = settingsManager.accessibilityModeEnabled ? 1.15: 1.1
         XCTAssertEqual(scale, 1.15, accuracy: 0.01, "Enhanced scale supports Dwell Control feedback")
         #endif
     }

@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 /// A struct representing a movie search result from the TMDb API.
 public struct TMDbMovieSearchResult: Decodable {

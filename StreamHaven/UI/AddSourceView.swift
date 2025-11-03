@@ -85,8 +85,7 @@ struct AddSourceView: View {
                 }
             }
             .alert("Error", isPresented: Binding(
-                get: { errorMessage != nil },
-                set: { if !$0 { errorMessage = nil } }
+                get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } }
             )) {
                 Button("OK") { errorMessage = nil }
             } message: {
@@ -112,17 +111,11 @@ struct AddSourceView: View {
                 
                 if sourceType == .m3u {
                     try sourceManager.addM3USource(
-                        name: trimmedName,
-                        url: trimmedURL,
-                        to: profile
+                        name: trimmedName, url: trimmedURL, to: profile
                     )
                 } else {
                     try sourceManager.addXtreamSource(
-                        name: trimmedName,
-                        url: trimmedURL,
-                        username: username,
-                        password: password,
-                        to: profile
+                        name: trimmedName, url: trimmedURL, username: username, password: password, to: profile
                     )
                 }
                 
@@ -137,8 +130,7 @@ struct AddSourceView: View {
 
 #Preview {
     AddSourceView(
-        profile: Profile(),
-        sourceManager: PlaylistSourceManager()
+        profile: Profile(), sourceManager: PlaylistSourceManager()
     )
 }
 

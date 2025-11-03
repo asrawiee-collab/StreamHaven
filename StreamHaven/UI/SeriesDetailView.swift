@@ -128,7 +128,7 @@ public struct SeriesDetailView: View {
                         .font(.headline)
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(isInWatchlist ? Color.green : Color.indigo)
+                        .background(isInWatchlist ? Color.green: Color.indigo)
                         .foregroundColor(.white)
                         .cornerRadius(10)
                 }
@@ -204,7 +204,7 @@ public struct SeriesDetailView: View {
                                 .font(.title2)
                                 .padding(.horizontal, 24)
                                 .padding(.vertical, 12)
-                                .background(isInWatchlist ? Color.green : Color.indigo)
+                                .background(isInWatchlist ? Color.green: Color.indigo)
                                 .foregroundColor(.white)
                                 .clipShape(Capsule())
                         }

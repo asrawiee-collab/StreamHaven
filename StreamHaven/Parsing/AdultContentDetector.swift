@@ -30,8 +30,7 @@ public final class AdultContentDetector {
             return true
         }
 
-        if let category = normalizedCategory,
-           containsAdultKeyword(in: category, keywords: adultCategoryKeywords) {
+        if let category = normalizedCategory, containsAdultKeyword(in: category, keywords: adultCategoryKeywords) {
             return true
         }
 

@@ -1,13 +1,12 @@
-import Foundation
 import CoreData
+import Foundation
 
 /// A class for performing searches across the Core Data store.
 public final class SearchIndexSync {
 
     // Note: FTS5 is not directly supported by Core Data.
     // The search functionality is implemented using standard Core Data queries.
-    // For optimal performance, the 'title' and 'name' attributes of the Movie, Series,
-    // and Channel entities should be indexed in the Xcode Data Model Editor.
+    // For optimal performance, the 'title' and 'name' attributes of the Movie, Series, // and Channel entities should be indexed in the Xcode Data Model Editor.
 
     /// Searches for movies, series, and channels that match a given query.
     ///

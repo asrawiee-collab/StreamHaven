@@ -130,220 +130,79 @@ enum LightweightCoreDataModelBuilder {
         let creditSeries = makeToOneRelationship("series", deleteRule: .nullifyDeleteRule)
 
         profile.properties = [
-            makeStringAttribute("name"),
-            makeBoolAttribute("isAdult"),
-            makeStringAttribute("cloudKitRecordName"),
-            makeDateAttribute("modifiedAt"),
-            makeStringAttribute("sourceMode"),
-            profileFavorites,
-            profileWatchHistory,
-            profilePlaylistSources
+            makeStringAttribute("name"), makeBoolAttribute("isAdult"), makeStringAttribute("cloudKitRecordName"), makeDateAttribute("modifiedAt"), makeStringAttribute("sourceMode"), profileFavorites, profileWatchHistory, profilePlaylistSources
         ]
 
         favorite.properties = [
-            makeDateAttribute("favoritedDate"),
-            makeStringAttribute("cloudKitRecordName"),
-            makeDateAttribute("modifiedAt"),
-            favoriteProfile,
-            favoriteMovie,
-            favoriteSeries,
-            favoriteChannel
+            makeDateAttribute("favoritedDate"), makeStringAttribute("cloudKitRecordName"), makeDateAttribute("modifiedAt"), favoriteProfile, favoriteMovie, favoriteSeries, favoriteChannel
         ]
 
         watchHistory.properties = [
-            makeFloatAttribute("progress"),
-            makeDateAttribute("watchedDate"),
-            makeStringAttribute("cloudKitRecordName"),
-            makeDateAttribute("modifiedAt"),
-            watchHistoryProfile,
-            watchHistoryMovie,
-            watchHistoryEpisode
+            makeFloatAttribute("progress"), makeDateAttribute("watchedDate"), makeStringAttribute("cloudKitRecordName"), makeDateAttribute("modifiedAt"), watchHistoryProfile, watchHistoryMovie, watchHistoryEpisode
         ]
 
         movie.properties = [
-            makeStringAttribute("posterURL"),
-            makeStringAttribute("rating"),
-            makeDateAttribute("releaseDate"),
-            makeStringAttribute("summary"),
-            makeStringAttribute("genres"),
-            makeStringAttribute("streamURL"),
-            makeStringAttribute("previewURL"),
-            makeStringAttribute("title"),
-            makeStringAttribute("imdbID"),
-            makeStringAttribute("stableID"),
-            makeUUIDAttribute("sourceID"),
-            makeInt16Attribute("releaseYearValue"),
-            makeBoolAttribute("hasBeenWatched"),
-            makeInt16Attribute("watchProgressPercent", isOptional: false, defaultValue: 0),
-            makeBoolAttribute("isFavorite"),
-            makeDateAttribute("lastWatchedDate"),
-            movieWatchHistory,
-            movieFavorite,
-            movieCredits
+            makeStringAttribute("posterURL"), makeStringAttribute("rating"), makeDateAttribute("releaseDate"), makeStringAttribute("summary"), makeStringAttribute("genres"), makeStringAttribute("streamURL"), makeStringAttribute("previewURL"), makeStringAttribute("title"), makeStringAttribute("imdbID"), makeStringAttribute("stableID"), makeUUIDAttribute("sourceID"), makeInt16Attribute("releaseYearValue"), makeBoolAttribute("hasBeenWatched"), makeInt16Attribute("watchProgressPercent", isOptional: false, defaultValue: 0), makeBoolAttribute("isFavorite"), makeDateAttribute("lastWatchedDate"), movieWatchHistory, movieFavorite, movieCredits
         ]
 
         series.properties = [
-            makeStringAttribute("posterURL"),
-            makeStringAttribute("rating"),
-            makeDateAttribute("releaseDate"),
-            makeStringAttribute("summary"),
-            makeStringAttribute("genres"),
-            makeStringAttribute("title"),
-            makeStringAttribute("previewURL"),
-            makeStringAttribute("stableID"),
-            makeUUIDAttribute("sourceID"),
-            makeInt16Attribute("releaseYearValue"),
-            makeInt32Attribute("totalEpisodeCount"),
-            makeInt16Attribute("seasonCount", isOptional: false, defaultValue: 0),
-            makeBoolAttribute("isFavorite"),
-            makeInt32Attribute("unwatchedEpisodeCount"),
-            seriesSeasons,
-            seriesFavorite,
-            seriesCredits
+            makeStringAttribute("posterURL"), makeStringAttribute("rating"), makeDateAttribute("releaseDate"), makeStringAttribute("summary"), makeStringAttribute("genres"), makeStringAttribute("title"), makeStringAttribute("previewURL"), makeStringAttribute("stableID"), makeUUIDAttribute("sourceID"), makeInt16Attribute("releaseYearValue"), makeInt32Attribute("totalEpisodeCount"), makeInt16Attribute("seasonCount", isOptional: false, defaultValue: 0), makeBoolAttribute("isFavorite"), makeInt32Attribute("unwatchedEpisodeCount"), seriesSeasons, seriesFavorite, seriesCredits
         ]
 
         season.properties = [
-            makeInt16Attribute("seasonNumber", isOptional: false, defaultValue: 0),
-            makeStringAttribute("summary"),
-            seasonEpisodes,
-            seasonSeries
+            makeInt16Attribute("seasonNumber", isOptional: false, defaultValue: 0), makeStringAttribute("summary"), seasonEpisodes, seasonSeries
         ]
 
         episode.properties = [
-            makeInt16Attribute("episodeNumber", isOptional: false, defaultValue: 0),
-            makeStringAttribute("summary"),
-            makeStringAttribute("title"),
-            makeStringAttribute("streamURL"),
-            makeDoubleAttribute("introStartTime"),
-            makeDoubleAttribute("introEndTime"),
-            makeDoubleAttribute("creditStartTime"),
-            makeBoolAttribute("hasIntroData"),
-            episodeSeason,
-            episodeWatchHistory
+            makeInt16Attribute("episodeNumber", isOptional: false, defaultValue: 0), makeStringAttribute("summary"), makeStringAttribute("title"), makeStringAttribute("streamURL"), makeDoubleAttribute("introStartTime"), makeDoubleAttribute("introEndTime"), makeDoubleAttribute("creditStartTime"), makeBoolAttribute("hasIntroData"), episodeSeason, episodeWatchHistory
         ]
 
         channel.properties = [
-            makeStringAttribute("logoURL"),
-            makeStringAttribute("name"),
-            makeStringAttribute("tvgID"),
-            makeStringAttribute("stableID"),
-            makeUUIDAttribute("sourceID"),
-            makeInt32Attribute("variantCount"),
-            makeBoolAttribute("hasEPG"),
-            makeStringAttribute("currentProgramTitle"),
-            makeDateAttribute("epgLastUpdated"),
-            channelFavorite,
-            channelVariants,
-            channelEPGEntries
+            makeStringAttribute("logoURL"), makeStringAttribute("name"), makeStringAttribute("tvgID"), makeStringAttribute("stableID"), makeUUIDAttribute("sourceID"), makeInt32Attribute("variantCount"), makeBoolAttribute("hasEPG"), makeStringAttribute("currentProgramTitle"), makeDateAttribute("epgLastUpdated"), channelFavorite, channelVariants, channelEPGEntries
         ]
 
         channelVariant.properties = [
-            makeStringAttribute("name"),
-            makeStringAttribute("streamURL"),
-            makeUUIDAttribute("sourceID"),
-            channelVariantChannel
+            makeStringAttribute("name"), makeStringAttribute("streamURL"), makeUUIDAttribute("sourceID"), channelVariantChannel
         ]
 
         epgEntry.properties = [
-            makeStringAttribute("category"),
-            makeStringAttribute("descriptionText"),
-            makeDateAttribute("endTime"),
-            makeDateAttribute("startTime"),
-            makeStringAttribute("title"),
-            epgEntryChannel
+            makeStringAttribute("category"), makeStringAttribute("descriptionText"), makeDateAttribute("endTime"), makeDateAttribute("startTime"), makeStringAttribute("title"), epgEntryChannel
         ]
 
         playlistSource.properties = [
-            makeUUIDAttribute("sourceID"),
-            makeStringAttribute("name"),
-            makeStringAttribute("sourceType"),
-            makeStringAttribute("url"),
-            makeStringAttribute("username"),
-            makeStringAttribute("password"),
-            makeBoolAttribute("isActive"),
-            makeInt32Attribute("displayOrder"),
-            makeDateAttribute("createdAt"),
-            makeDateAttribute("lastRefreshed"),
-            makeStringAttribute("lastError"),
-            makeStringAttribute("metadata"),
-            playlistSourceProfile
+            makeUUIDAttribute("sourceID"), makeStringAttribute("name"), makeStringAttribute("sourceType"), makeStringAttribute("url"), makeStringAttribute("username"), makeStringAttribute("password"), makeBoolAttribute("isActive"), makeInt32Attribute("displayOrder"), makeDateAttribute("createdAt"), makeDateAttribute("lastRefreshed"), makeStringAttribute("lastError"), makeStringAttribute("metadata"), playlistSourceProfile
         ]
 
         download.properties = [
-            makeStringAttribute("streamURL"),
-            makeStringAttribute("contentTitle"),
-            makeStringAttribute("contentType"),
-            makeStringAttribute("status"),
-            makeFloatAttribute("progress"),
-            makeStringAttribute("filePath"),
-            makeInt64Attribute("fileSize", isOptional: false, defaultValue: 0),
-            makeDateAttribute("downloadedAt"),
-            makeDateAttribute("expiresAt"),
-            makeStringAttribute("thumbnailURL"),
-            makeStringAttribute("imdbID"),
-            downloadMovie,
-            downloadEpisode
+            makeStringAttribute("streamURL"), makeStringAttribute("contentTitle"), makeStringAttribute("contentType"), makeStringAttribute("status"), makeFloatAttribute("progress"), makeStringAttribute("filePath"), makeInt64Attribute("fileSize", isOptional: false, defaultValue: 0), makeDateAttribute("downloadedAt"), makeDateAttribute("expiresAt"), makeStringAttribute("thumbnailURL"), makeStringAttribute("imdbID"), downloadMovie, downloadEpisode
         ]
 
         streamCache.properties = [
-            makeStringAttribute("streamURL", isOptional: false),
-            makeDateAttribute("cachedAt", isOptional: false),
-            makeDateAttribute("lastAccessed", isOptional: false),
-            makeDateAttribute("expiresAt", isOptional: false),
-            makeStringAttribute("cacheIdentifier", isOptional: false)
+            makeStringAttribute("streamURL", isOptional: false), makeDateAttribute("cachedAt", isOptional: false), makeDateAttribute("lastAccessed", isOptional: false), makeDateAttribute("expiresAt", isOptional: false), makeStringAttribute("cacheIdentifier", isOptional: false)
         ]
 
         playlistCache.properties = [
-            makeStringAttribute("filePath"),
-            makeDateAttribute("lastRefreshed"),
-            makeStringAttribute("url"),
-            makeStringAttribute("epgURL"),
-            makeUUIDAttribute("sourceID")
+            makeStringAttribute("filePath"), makeDateAttribute("lastRefreshed"), makeStringAttribute("url"), makeStringAttribute("epgURL"), makeUUIDAttribute("sourceID")
         ]
 
         upNextQueueItem.properties = [
-            makeStringAttribute("contentID", isOptional: false),
-            makeStringAttribute("contentType", isOptional: false),
-            makeDateAttribute("addedAt", isOptional: false),
-            makeInt32Attribute("position"),
-            makeBoolAttribute("autoAdded"),
-            upNextQueueItemProfile
+            makeStringAttribute("contentID", isOptional: false), makeStringAttribute("contentType", isOptional: false), makeDateAttribute("addedAt", isOptional: false), makeInt32Attribute("position"), makeBoolAttribute("autoAdded"), upNextQueueItemProfile
         ]
 
         watchlist.properties = [
-            makeStringAttribute("name", isOptional: false),
-            makeDateAttribute("createdAt", isOptional: false),
-            makeDateAttribute("updatedAt", isOptional: false),
-            makeStringAttribute("icon", isOptional: false),
-            watchlistItems,
-            watchlistProfile
+            makeStringAttribute("name", isOptional: false), makeDateAttribute("createdAt", isOptional: false), makeDateAttribute("updatedAt", isOptional: false), makeStringAttribute("icon", isOptional: false), watchlistItems, watchlistProfile
         ]
 
         watchlistItem.properties = [
-            makeStringAttribute("contentID", isOptional: false),
-            makeStringAttribute("contentType", isOptional: false),
-            makeDateAttribute("addedAt", isOptional: false),
-            makeInt32Attribute("position"),
-            watchlistItemWatchlist
+            makeStringAttribute("contentID", isOptional: false), makeStringAttribute("contentType", isOptional: false), makeDateAttribute("addedAt", isOptional: false), makeInt32Attribute("position"), watchlistItemWatchlist
         ]
 
         actor.properties = [
-            makeInt64Attribute("tmdbID", isOptional: false, defaultValue: 0),
-            makeStringAttribute("name"),
-            makeStringAttribute("photoURL"),
-            makeStringAttribute("biography"),
-            makeDoubleAttribute("popularity"),
-            actorCredits
+            makeInt64Attribute("tmdbID", isOptional: false, defaultValue: 0), makeStringAttribute("name"), makeStringAttribute("photoURL"), makeStringAttribute("biography"), makeDoubleAttribute("popularity"), actorCredits
         ]
 
         credit.properties = [
-            makeStringAttribute("character"),
-            makeInt16Attribute("order", isOptional: false, defaultValue: 0),
-            makeStringAttribute("creditType"),
-            makeStringAttribute("job"),
-            creditActor,
-            creditMovie,
-            creditSeries
+            makeStringAttribute("character"), makeInt16Attribute("order", isOptional: false, defaultValue: 0), makeStringAttribute("creditType"), makeStringAttribute("job"), creditActor, creditMovie, creditSeries
         ]
 
         profileFavorites.destinationEntity = favorite
@@ -432,25 +291,7 @@ enum LightweightCoreDataModelBuilder {
         creditSeries.inverseRelationship = seriesCredits
 
         model.entities = [
-            profile,
-            favorite,
-            watchHistory,
-            movie,
-            series,
-            season,
-            episode,
-            channel,
-            channelVariant,
-            epgEntry,
-            playlistSource,
-            download,
-            streamCache,
-            playlistCache,
-            upNextQueueItem,
-            watchlist,
-            watchlistItem,
-            actor,
-            credit
+            profile, favorite, watchHistory, movie, series, season, episode, channel, channelVariant, epgEntry, playlistSource, download, streamCache, playlistCache, upNextQueueItem, watchlist, watchlistItem, actor, credit
         ]
 
         return model
@@ -543,7 +384,7 @@ enum LightweightCoreDataModelBuilder {
         relationship.name = name
         relationship.deleteRule = deleteRule
         relationship.isOptional = isOptional
-        relationship.minCount = isOptional ? 0 : 1
+        relationship.minCount = isOptional ? 0: 1
         relationship.maxCount = 1
         return relationship
     }

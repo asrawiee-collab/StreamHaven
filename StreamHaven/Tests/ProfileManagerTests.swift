@@ -1,5 +1,5 @@
-import XCTest
 import CoreData
+import XCTest
 @testable import StreamHaven
 
 /// Tests for ProfileManager.
@@ -14,8 +14,7 @@ final class ProfileManagerTests: XCTestCase {
         
         // Create in-memory Core Data stack
         let container = NSPersistentContainer(
-            name: "StreamHavenTest",
-            managedObjectModel: TestCoreDataModelBuilder.sharedModel
+            name: "StreamHavenTest", managedObjectModel: TestCoreDataModelBuilder.sharedModel
         )
         
         let description = NSPersistentStoreDescription()

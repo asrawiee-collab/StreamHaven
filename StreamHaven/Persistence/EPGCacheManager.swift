@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 /// Manages the caching and refreshing of EPG (Electronic Program Guide) data.
 public final class EPGCacheManager {
@@ -59,8 +59,7 @@ public final class EPGCacheManager {
             print("Found \(playlists.count) playlist(s) with EPG URLs.")
             
             for playlist in playlists {
-                guard let epgURLString = playlist.epgURL,
-                      let epgURL = URL(string: epgURLString) else {
+                guard let epgURLString = playlist.epgURL, let epgURL = URL(string: epgURLString) else {
                     continue
                 }
                 
@@ -117,8 +116,7 @@ public final class EPGCacheManager {
     public static func getProgrammes(for channel: Channel, from startDate: Date, to endDate: Date, context: NSManagedObjectContext) -> [EPGEntry] {
         let fetchRequest: NSFetchRequest<EPGEntry> = EPGEntry.fetchRequest()
         fetchRequest.predicate = NSPredicate(
-            format: "channel == %@ AND endTime >= %@ AND startTime <= %@",
-            channel, startDate as CVarArg, endDate as CVarArg
+            format: "channel == %@ AND endTime >= %@ AND startTime <= %@", channel, startDate as CVarArg, endDate as CVarArg
         )
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \EPGEntry.startTime, ascending: true)]
         

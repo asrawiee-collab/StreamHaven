@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 /// Represents a television channel in the application.
 /// This class is a Core Data managed object.

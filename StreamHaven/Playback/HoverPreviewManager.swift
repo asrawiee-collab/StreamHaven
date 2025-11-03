@@ -6,9 +6,9 @@
 //
 
 #if os(tvOS)
-import Foundation
 import AVKit
 import Combine
+import Foundation
 
 /// Manages hover preview video playback for tvOS content cards.
 /// Loads and plays short preview clips when users focus on content items.
@@ -148,9 +148,7 @@ public class HoverPreviewManager: ObservableObject {
     /// Sets up observer to loop video playback
     private func setupLoopObserver(for player: AVPlayer) {
         loopObserver = NotificationCenter.default.addObserver(
-            forName: .AVPlayerItemDidPlayToEndTime,
-            object: player.currentItem,
-            queue: .main
+            forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main
         ) { [weak self, weak player] _ in
             guard let player = player else { return }
             player.seek(to: .zero)

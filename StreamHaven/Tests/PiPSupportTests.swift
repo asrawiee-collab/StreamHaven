@@ -5,9 +5,9 @@
 //  Tests for Picture-in-Picture functionality
 //
 
-import XCTest
 import AVKit
 import CoreData
+import XCTest
 @testable import StreamHaven
 
 @MainActor
@@ -43,9 +43,7 @@ final class PiPSupportTests: XCTestCase {
         settingsManager = SettingsManager()
         watchHistoryManager = WatchHistoryManager(context: context, profile: profile)
         playbackManager = PlaybackManager(
-            context: context,
-            settingsManager: settingsManager,
-            watchHistoryManager: watchHistoryManager
+            context: context, settingsManager: settingsManager, watchHistoryManager: watchHistoryManager
         )
     }
     

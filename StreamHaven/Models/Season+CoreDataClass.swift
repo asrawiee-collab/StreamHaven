@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 /// Represents a season of a television series.
 /// This class is a Core Data managed object.

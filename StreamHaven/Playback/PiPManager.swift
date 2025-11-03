@@ -1,7 +1,7 @@
 #if os(iOS)
-import Foundation
-import AVKit
 import AVFoundation
+import AVKit
+import Foundation
 
 /// Manages Picture in Picture independently of PlaybackManager to reduce complexity.
 @MainActor

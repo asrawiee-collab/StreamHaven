@@ -1,5 +1,5 @@
-import XCTest
 import CoreData
+import XCTest
 @testable import StreamHaven
 
 /// Tests for MultiSourceContentManager.
@@ -15,8 +15,7 @@ final class MultiSourceContentManagerTests: XCTestCase {
         
         // Create in-memory Core Data stack
         let container = NSPersistentContainer(
-            name: "StreamHavenTest",
-            managedObjectModel: TestCoreDataModelBuilder.sharedModel
+            name: "StreamHavenTest", managedObjectModel: TestCoreDataModelBuilder.sharedModel
         )
         
         let description = NSPersistentStoreDescription()
@@ -463,9 +462,7 @@ final class MultiSourceContentManagerTests: XCTestCase {
         movie2.title = "Movie 2"
         
         let group = MultiSourceContentManager.ContentGroup(
-            primaryItem: movie1,
-            alternativeItems: [movie2],
-            sourceIDs: [UUID(), UUID()]
+            primaryItem: movie1, alternativeItems: [movie2], sourceIDs: [UUID(), UUID()]
         )
         
         XCTAssertEqual(group.allItems.count, 2, "All items should include primary and alternatives")
@@ -477,9 +474,7 @@ final class MultiSourceContentManagerTests: XCTestCase {
         movie.title = "Movie"
         
         let group = MultiSourceContentManager.ContentGroup(
-            primaryItem: movie,
-            alternativeItems: [],
-            sourceIDs: [UUID()]
+            primaryItem: movie, alternativeItems: [], sourceIDs: [UUID()]
         )
         
         XCTAssertEqual(group.itemCount, 1, "Item count should be 1 with no alternatives")

@@ -1,5 +1,5 @@
-import XCTest
 import CoreData
+import XCTest
 @testable import StreamHaven
 
 final class DenormalizationTests: XCTestCase {
@@ -11,8 +11,7 @@ final class DenormalizationTests: XCTestCase {
 
     override func setUpWithError() throws {
         container = NSPersistentContainer(
-            name: "DenormalizationTesting",
-            managedObjectModel: TestCoreDataModelBuilder.sharedModel
+            name: "DenormalizationTesting", managedObjectModel: TestCoreDataModelBuilder.sharedModel
         )
 
         let description = NSPersistentStoreDescription()
@@ -179,9 +178,7 @@ final class DenormalizationTests: XCTestCase {
 
         // Mark one episode as watched
         try context.performAndWait {
-            guard let season = series.seasons?.anyObject() as? Season,
-                  let episodes = season.episodes?.allObjects as? [Episode],
-                  let firstEpisode = episodes.first else {
+            guard let season = series.seasons?.anyObject() as? Season, let episodes = season.episodes?.allObjects as? [Episode], let firstEpisode = episodes.first else {
                 XCTFail("Failed to get episodes")
                 return
             }

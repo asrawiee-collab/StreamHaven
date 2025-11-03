@@ -73,8 +73,7 @@ public struct UpNextView: View {
             }
         }
         .sheet(isPresented: $showingPlayer) {
-            if let player = playbackManager.player,
-               let content = selectedContent {
+            if let player = playbackManager.player, let content = selectedContent {
                 if let movie = content as? Movie {
                     PlaybackViewController(player: player, imdbID: movie.imdbID)
                 } else if let episode = content as? Episode {
@@ -123,8 +122,7 @@ public struct UpNextView: View {
     // MARK: - Actions
     
     private func playQueueItem(_ item: UpNextQueueItem) {
-        guard let profile = profileManager.currentProfile,
-              let content = item.fetchContent(context: context) else {
+        guard let profile = profileManager.currentProfile, let content = item.fetchContent(context: context) else {
             return
         }
         
@@ -149,8 +147,7 @@ public struct UpNextView: View {
     }
     
     private func moveItems(from source: IndexSet, to destination: Int) {
-        guard let profile = profileManager.currentProfile,
-              let sourceIndex = source.first else { return }
+        guard let profile = profileManager.currentProfile, let sourceIndex = source.first else { return }
         
         let item = queueManager.queueItems[sourceIndex]
         queueManager.moveItem(item, to: destination, profile: profile)
@@ -363,8 +360,7 @@ struct UpNextPreviewCard: View {
             loadContentInfo()
         }
         .sheet(isPresented: $showingPlayer) {
-            if let player = playbackManager.player,
-               let content = content {
+            if let player = playbackManager.player, let content = content {
                 if let movie = content as? Movie {
                     PlaybackViewController(player: player, imdbID: movie.imdbID)
                 } else if let episode = content as? Episode {
@@ -388,8 +384,7 @@ struct UpNextPreviewCard: View {
     }
     
     private func play() {
-        guard let profile = profileManager.currentProfile,
-              let content = content else { return }
+        guard let profile = profileManager.currentProfile, let content = content else { return }
         
         if let movie = content as? Movie {
             playbackManager.loadMedia(for: movie, profile: profile)

@@ -29,8 +29,7 @@ public final class AudioSubtitleManager: ObservableObject {
     /// Retrieves the available audio tracks for the current player item.
     /// - Returns: An array of `AVMediaSelectionOption` objects representing the available audio tracks.
     public func getAvailableAudioTracks() async -> [AVMediaSelectionOption] {
-        guard let playerItem = player?.currentItem,
-              let group = try? await playerItem.asset.loadMediaSelectionGroup(for: .audible) else {
+        guard let playerItem = player?.currentItem, let group = try? await playerItem.asset.loadMediaSelectionGroup(for: .audible) else {
             return []
         }
         return group.options
@@ -40,8 +39,7 @@ public final class AudioSubtitleManager: ObservableObject {
     /// - Parameter track: The `AVMediaSelectionOption` of the audio track to select.
     @MainActor
     public func selectAudioTrack(_ track: AVMediaSelectionOption) async {
-        guard let playerItem = player?.currentItem,
-              let group = try? await playerItem.asset.loadMediaSelectionGroup(for: .audible) else {
+        guard let playerItem = player?.currentItem, let group = try? await playerItem.asset.loadMediaSelectionGroup(for: .audible) else {
             return
         }
         playerItem.select(track, in: group)
@@ -51,8 +49,7 @@ public final class AudioSubtitleManager: ObservableObject {
     /// - Returns: The `AVMediaSelectionOption` of the currently selected audio track, or `nil` if no track is selected.
     @MainActor
     public func getCurrentAudioTrack() async -> AVMediaSelectionOption? {
-        guard let playerItem = player?.currentItem,
-                                let group = try? await playerItem.asset.loadMediaSelectionGroup(for: .audible) else {
+        guard let playerItem = player?.currentItem, let group = try? await playerItem.asset.loadMediaSelectionGroup(for: .audible) else {
                               return nil
                           }
                           return await MainActor.run {
@@ -62,8 +59,7 @@ public final class AudioSubtitleManager: ObservableObject {
     /// Retrieves the available subtitle tracks for the current player item.
     /// - Returns: An array of `AVMediaSelectionOption` objects representing the available subtitle tracks.
     public func getAvailableSubtitleTracks() async -> [AVMediaSelectionOption] {
-        guard let playerItem = player?.currentItem,
-              let group = try? await playerItem.asset.loadMediaSelectionGroup(for: .legible) else {
+        guard let playerItem = player?.currentItem, let group = try? await playerItem.asset.loadMediaSelectionGroup(for: .legible) else {
             return []
         }
         return group.options
@@ -73,8 +69,7 @@ public final class AudioSubtitleManager: ObservableObject {
     /// - Parameter track: The `AVMediaSelectionOption` of the subtitle track to select.
     @MainActor
     public func selectSubtitleTrack(_ track: AVMediaSelectionOption?) async {
-        guard let playerItem = player?.currentItem,
-              let group = try? await playerItem.asset.loadMediaSelectionGroup(for: .legible) else {
+        guard let playerItem = player?.currentItem, let group = try? await playerItem.asset.loadMediaSelectionGroup(for: .legible) else {
             return
         }
         playerItem.select(track, in: group)
@@ -84,8 +79,7 @@ public final class AudioSubtitleManager: ObservableObject {
     /// - Returns: The `AVMediaSelectionOption` of the currently selected subtitle track, or `nil` if no track is selected.
     @MainActor
     public func getCurrentSubtitleTrack() async -> AVMediaSelectionOption? {
-        guard let playerItem = player?.currentItem,
-              let group = try? await playerItem.asset.loadMediaSelectionGroup(for: .legible) else {
+        guard let playerItem = player?.currentItem, let group = try? await playerItem.asset.loadMediaSelectionGroup(for: .legible) else {
             return nil
         }
         return await MainActor.run {

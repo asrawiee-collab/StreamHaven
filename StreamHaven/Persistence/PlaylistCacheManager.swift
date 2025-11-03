@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 /// A class for managing the caching of playlist data.
 public final class PlaylistCacheManager {
@@ -87,8 +87,7 @@ public final class PlaylistCacheManager {
         
         let fetchRequest: NSFetchRequest<PlaylistCache> = PlaylistCache.fetchRequest()
         var predicates: [NSPredicate] = [
-            NSPredicate(format: "url == %@", url.absoluteString),
-            NSPredicate(format: "lastRefreshed > %@", Date().addingTimeInterval(-24 * 60 * 60) as NSDate)
+            NSPredicate(format: "url == %@", url.absoluteString), NSPredicate(format: "lastRefreshed > %@", Date().addingTimeInterval(-24 * 60 * 60) as NSDate)
         ]
         if let sourceID = sourceID {
             predicates.append(NSPredicate(format: "sourceID == %@", sourceID as CVarArg))

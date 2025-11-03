@@ -1,5 +1,5 @@
-import XCTest
 import CoreData
+import XCTest
 @testable import StreamHaven
 
 final class EPGCacheManagerTests: XCTestCase {
@@ -9,8 +9,7 @@ final class EPGCacheManagerTests: XCTestCase {
 
     override func setUpWithError() throws {
         container = NSPersistentContainer(
-            name: "EPGCacheManagerTesting",
-            managedObjectModel: TestCoreDataModelBuilder.sharedModel
+            name: "EPGCacheManagerTesting", managedObjectModel: TestCoreDataModelBuilder.sharedModel
         )
 
         let description = NSPersistentStoreDescription()
@@ -143,10 +142,7 @@ final class EPGCacheManagerTests: XCTestCase {
         }
         
         let programmes = EPGCacheManager.getProgrammes(
-            for: channel,
-            from: start,
-            to: end,
-            context: context
+            for: channel, from: start, to: end, context: context
         )
         
         XCTAssertEqual(programmes.count, 2)
@@ -258,10 +254,7 @@ final class EPGCacheManagerTests: XCTestCase {
             return
         }
         let programmes = EPGCacheManager.getProgrammes(
-            for: channel,
-            from: Date(),
-            to: Date().addingTimeInterval(3600),
-            context: context
+            for: channel, from: Date(), to: Date().addingTimeInterval(3600), context: context
         )
         
         XCTAssertTrue(programmes.isEmpty)

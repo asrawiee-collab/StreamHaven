@@ -1,5 +1,5 @@
-import XCTest
 import CoreData
+import XCTest
 @testable import StreamHaven
 
 /// Tests for WatchHistoryManager.
@@ -15,8 +15,7 @@ final class WatchHistoryManagerTests: XCTestCase {
         
         // Create in-memory Core Data stack
         let container = NSPersistentContainer(
-            name: "StreamHavenTest",
-            managedObjectModel: TestCoreDataModelBuilder.sharedModel
+            name: "StreamHavenTest", managedObjectModel: TestCoreDataModelBuilder.sharedModel
         )
         
         let description = NSPersistentStoreDescription()
@@ -395,8 +394,7 @@ final class WatchHistoryManagerTests: XCTestCase {
         // Count history records for this movie and profile
         let fetchRequest: NSFetchRequest<WatchHistory> = WatchHistory.fetchRequest()
         fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-            NSPredicate(format: "movie == %@", movie),
-            NSPredicate(format: "profile == %@", profile)
+            NSPredicate(format: "movie == %@", movie), NSPredicate(format: "profile == %@", profile)
         ])
         
         let count = try? context.count(for: fetchRequest)

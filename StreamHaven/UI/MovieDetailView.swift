@@ -211,7 +211,7 @@ public struct MovieDetailView: View {
                         .font(.headline)
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(isInQueue ? Color.green : Color.orange)
+                        .background(isInQueue ? Color.green: Color.orange)
                         .foregroundColor(.white)
                         .cornerRadius(10)
                 }
@@ -224,7 +224,7 @@ public struct MovieDetailView: View {
                         .font(.headline)
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(isInWatchlist ? Color.green : Color.indigo)
+                        .background(isInWatchlist ? Color.green: Color.indigo)
                         .foregroundColor(.white)
                         .cornerRadius(10)
                 }
@@ -367,9 +367,7 @@ public struct MovieDetailView: View {
     private func startDownload() {
         do {
             try downloadManager.startDownload(
-                for: movie,
-                title: movie.title ?? "Unknown Movie",
-                thumbnailURL: movie.posterURL
+                for: movie, title: movie.title ?? "Unknown Movie", thumbnailURL: movie.posterURL
             )
             isDownloaded = false
         } catch {
@@ -534,11 +532,7 @@ struct WatchlistPickerSheet: View {
                 } else {
                     ForEach(watchlistManager.watchlists, id: \.objectID) { watchlist in
                         WatchlistPickerRow(
-                            watchlist: watchlist,
-                            content: content,
-                            isPresented: $isPresented,
-                            showError: $showError,
-                            errorMessage: $errorMessage
+                            watchlist: watchlist, content: content, isPresented: $isPresented, showError: $showError, errorMessage: $errorMessage
                         )
                         .environmentObject(watchlistManager)
                         .environmentObject(profileManager)

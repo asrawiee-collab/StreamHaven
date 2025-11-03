@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 @objc(UpNextQueueItem)
 public class UpNextQueueItem: NSManagedObject {
@@ -18,9 +18,9 @@ public class UpNextQueueItem: NSManagedObject {
     
     /// Content type enum for type-safe content identification.
     public enum ContentType: String {
-        case movie = "movie"
-        case episode = "episode"
-        case series = "series"
+        case movie
+        case episode
+        case series
     }
     
     /// Typed content type getter/setter.
@@ -64,11 +64,7 @@ public class UpNextQueueItem: NSManagedObject {
     ///   - context: The managed object context.
     /// - Returns: The created UpNextQueueItem, or nil if content type is unsupported.
     public static func create(
-        for content: NSManagedObject,
-        profile: Profile,
-        position: Int32,
-        autoAdded: Bool,
-        context: NSManagedObjectContext
+        for content: NSManagedObject, profile: Profile, position: Int32, autoAdded: Bool, context: NSManagedObjectContext
     ) -> UpNextQueueItem? {
         let item = UpNextQueueItem(context: context)
         item.profile = profile

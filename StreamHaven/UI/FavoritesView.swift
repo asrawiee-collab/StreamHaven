@@ -1,5 +1,5 @@
-import SwiftUI
 import CoreData
+import SwiftUI
 
 #if os(iOS) || os(tvOS)
 
@@ -24,9 +24,7 @@ public struct FavoritesView: View {
         }
 
         _favorites = FetchRequest<Favorite>(
-            sortDescriptors: [NSSortDescriptor(keyPath: \Favorite.favoritedDate, ascending: false)],
-            predicate: predicate,
-            animation: .default
+            sortDescriptors: [NSSortDescriptor(keyPath: \Favorite.favoritedDate, ascending: false)], predicate: predicate, animation: .default
         )
     }
 
@@ -34,8 +32,7 @@ public struct FavoritesView: View {
         Group {
             if favorites.isEmpty {
                 EmptyStateView(
-                    title: NSLocalizedString("No Favorites Yet", comment: "Empty favorites title"),
-                    message: NSLocalizedString("Tap the heart icon on any movie or series to add it to your favorites.", comment: "Empty favorites message")
+                    title: NSLocalizedString("No Favorites Yet", comment: "Empty favorites title"), message: NSLocalizedString("Tap the heart icon on any movie or series to add it to your favorites.", comment: "Empty favorites message")
                 )
             } else {
                 ScrollView {

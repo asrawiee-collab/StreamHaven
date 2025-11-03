@@ -1,7 +1,7 @@
 #if os(iOS) || os(tvOS)
-import SwiftUI
-import CoreData
 import Combine
+import CoreData
+import SwiftUI
 
 /// A view for searching for movies, series, and channels.
 public struct SearchView: View {
@@ -171,9 +171,9 @@ public struct SearchView: View {
             if !selectedGenres.isEmpty {
                 var itemGenres: [String] = []
                 if let movie = item as? Movie {
-                    itemGenres = movie.genres?.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) } ?? []
+                    itemGenres = movie.genres?.components(separatedBy: ", ").map { $0.trimmingCharacters(in: .whitespaces) } ?? []
                 } else if let series = item as? Series {
-                    itemGenres = series.genres?.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) } ?? []
+                    itemGenres = series.genres?.components(separatedBy: ", ").map { $0.trimmingCharacters(in: .whitespaces) } ?? []
                 } else {
                     return true // Channels not filtered by genre
                 }
@@ -382,8 +382,7 @@ struct FilterSheet: View {
                     selectedGenres.removeAll()
                     selectedYearRange = .all
                     selectedRatings.removeAll()
-                },
-                trailing: Button("Apply") {
+                }, trailing: Button("Apply") {
                     onApply()
                 }
             )

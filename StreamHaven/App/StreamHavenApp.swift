@@ -1,5 +1,5 @@
-import SwiftUI
 import Foundation
+import SwiftUI
 #if canImport(Sentry)
 import Sentry
 #endif
@@ -35,8 +35,7 @@ public struct StreamHavenApp: App {
         
         // Initialize performance tooling
 #if canImport(Sentry)
-        if let dsn = ProcessInfo.processInfo.environment["SENTRY_DSN"] ?? (Bundle.main.object(forInfoDictionaryKey: "SentryDSN") as? String),
-           !dsn.isEmpty {
+        if let dsn = ProcessInfo.processInfo.environment["SENTRY_DSN"] ?? (Bundle.main.object(forInfoDictionaryKey: "SentryDSN") as? String), !dsn.isEmpty {
             SentrySDK.start { options in
                 options.dsn = dsn
                 options.enableAppHangTracking = true

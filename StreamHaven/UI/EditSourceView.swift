@@ -71,7 +71,7 @@ struct EditSourceView: View {
                             .foregroundColor(.secondary)
                         Spacer()
                         Text(source.isActive ? "Active" : "Inactive")
-                            .foregroundColor(source.isActive ? .green : .orange)
+                            .foregroundColor(source.isActive ? .green: .orange)
                     }
                     
                     if let lastRefreshed = source.lastRefreshed {
@@ -127,8 +127,7 @@ struct EditSourceView: View {
                 }
             }
             .alert("Error", isPresented: Binding(
-                get: { errorMessage != nil },
-                set: { if !$0 { errorMessage = nil } }
+                get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } }
             )) {
                 Button("OK") { errorMessage = nil }
             } message: {
@@ -157,11 +156,7 @@ struct EditSourceView: View {
         Task { @MainActor in
             do {
                 try sourceManager.updateSource(
-                    source,
-                    name: name.trimmingCharacters(in: .whitespaces),
-                    url: url.trimmingCharacters(in: .whitespaces),
-                    username: source.isXtream ? username : nil,
-                    password: source.isXtream ? password : nil
+                    source, name: name.trimmingCharacters(in: .whitespaces), url: url.trimmingCharacters(in: .whitespaces), username: source.isXtream ? username: nil, password: source.isXtream ? password: nil
                 )
                 
                 dismiss()
@@ -182,7 +177,6 @@ struct EditSourceView: View {
     source.isActive = true
     
     return EditSourceView(
-        source: source,
-        sourceManager: PlaylistSourceManager()
+        source: source, sourceManager: PlaylistSourceManager()
     )
 }

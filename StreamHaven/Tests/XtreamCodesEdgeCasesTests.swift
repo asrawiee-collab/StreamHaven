@@ -1,5 +1,5 @@
-import XCTest
 import CoreData
+import XCTest
 @testable import StreamHaven
 
 final class XtreamCodesEdgeCasesTests: XCTestCase {

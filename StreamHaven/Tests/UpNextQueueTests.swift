@@ -1,5 +1,5 @@
-import XCTest
 import CoreData
+import XCTest
 @testable import StreamHaven
 
 /// Tests for the Up Next Queue Manager.
@@ -286,11 +286,7 @@ final class UpNextQueueTests: XCTestCase {
     
     func testQueueItemCreation() throws {
         let item = UpNextQueueItem.create(
-            for: testMovie1,
-            profile: testProfile,
-            position: 0,
-            autoAdded: false,
-            context: context
+            for: testMovie1, profile: testProfile, position: 0, autoAdded: false, context: context
         )
         
         guard let item = item else {
@@ -305,11 +301,7 @@ final class UpNextQueueTests: XCTestCase {
     
     func testQueueItemFetchContent() throws {
         let item = UpNextQueueItem.create(
-            for: testMovie1,
-            profile: testProfile,
-            position: 0,
-            autoAdded: false,
-            context: context
+            for: testMovie1, profile: testProfile, position: 0, autoAdded: false, context: context
         )
         
         guard let item = item else {

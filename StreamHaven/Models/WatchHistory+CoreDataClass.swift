@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 /// Represents the watch history for a movie or episode.
 /// This class is a Core Data managed object.

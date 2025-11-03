@@ -1,6 +1,6 @@
-import Foundation
 import CloudKit
 import CoreData
+import Foundation
 import os.log
 
 /// Manages synchronization of Core Data entities with CloudKit.
@@ -510,35 +510,29 @@ public final class CloudKitSyncManager: ObservableObject {
     // MARK: - Change Token Persistence
     
     private func loadChangeTokens() {
-        if let data = UserDefaults.standard.data(forKey: "cloudkit.profileChangeToken"),
-           let token = try? NSKeyedUnarchiver.unarchivedObject(ofClass: CKServerChangeToken.self, from: data) {
+        if let data = UserDefaults.standard.data(forKey: "cloudkit.profileChangeToken"), let token = try? NSKeyedUnarchiver.unarchivedObject(ofClass: CKServerChangeToken.self, from: data) {
             profileChangeToken = token
         }
         
-        if let data = UserDefaults.standard.data(forKey: "cloudkit.favoriteChangeToken"),
-           let token = try? NSKeyedUnarchiver.unarchivedObject(ofClass: CKServerChangeToken.self, from: data) {
+        if let data = UserDefaults.standard.data(forKey: "cloudkit.favoriteChangeToken"), let token = try? NSKeyedUnarchiver.unarchivedObject(ofClass: CKServerChangeToken.self, from: data) {
             favoriteChangeToken = token
         }
         
-        if let data = UserDefaults.standard.data(forKey: "cloudkit.watchHistoryChangeToken"),
-           let token = try? NSKeyedUnarchiver.unarchivedObject(ofClass: CKServerChangeToken.self, from: data) {
+        if let data = UserDefaults.standard.data(forKey: "cloudkit.watchHistoryChangeToken"), let token = try? NSKeyedUnarchiver.unarchivedObject(ofClass: CKServerChangeToken.self, from: data) {
             watchHistoryChangeToken = token
         }
     }
     
     private func saveChangeTokens() {
-        if let token = profileChangeToken,
-           let data = try? NSKeyedArchiver.archivedData(withRootObject: token, requiringSecureCoding: true) {
+        if let token = profileChangeToken, let data = try? NSKeyedArchiver.archivedData(withRootObject: token, requiringSecureCoding: true) {
             UserDefaults.standard.set(data, forKey: "cloudkit.profileChangeToken")
         }
         
-        if let token = favoriteChangeToken,
-           let data = try? NSKeyedArchiver.archivedData(withRootObject: token, requiringSecureCoding: true) {
+        if let token = favoriteChangeToken, let data = try? NSKeyedArchiver.archivedData(withRootObject: token, requiringSecureCoding: true) {
             UserDefaults.standard.set(data, forKey: "cloudkit.favoriteChangeToken")
         }
         
-        if let token = watchHistoryChangeToken,
-           let data = try? NSKeyedArchiver.archivedData(withRootObject: token, requiringSecureCoding: true) {
+        if let token = watchHistoryChangeToken, let data = try? NSKeyedArchiver.archivedData(withRootObject: token, requiringSecureCoding: true) {
             UserDefaults.standard.set(data, forKey: "cloudkit.watchHistoryChangeToken")
         }
     }
@@ -550,8 +544,7 @@ public final class CloudKitSyncManager: ObservableObject {
     }
     
     private func loadPendingOperations() {
-        if let data = UserDefaults.standard.data(forKey: "cloudkit.pendingOperations"),
-           let operations = try? JSONDecoder().decode([SyncOperation].self, from: data) {
+        if let data = UserDefaults.standard.data(forKey: "cloudkit.pendingOperations"), let operations = try? JSONDecoder().decode([SyncOperation].self, from: data) {
             pendingOperations = operations
         }
     }

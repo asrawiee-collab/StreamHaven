@@ -1,5 +1,5 @@
-import SwiftUI
 import CoreData
+import SwiftUI
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -18,11 +18,7 @@ public struct EPGTimelineRow: View {
     @State private var programmes: [EPGEntry] = []
     
     public init(
-        channel: Channel,
-        startTime: Date,
-        endTime: Date,
-        timeSlotWidth: CGFloat = 200,
-        rowHeight: CGFloat = 80
+        channel: Channel, startTime: Date, endTime: Date, timeSlotWidth: CGFloat = 200, rowHeight: CGFloat = 80
     ) {
         self.channel = channel
         self.startTime = startTime
@@ -121,8 +117,7 @@ public struct EPGTimelineRow: View {
     }
     
     private func programBlockView(for programme: EPGEntry) -> some View {
-        guard let progStart = programme.startTime,
-              let progEnd = programme.endTime else {
+        guard let progStart = programme.startTime, let progEnd = programme.endTime else {
             return AnyView(EmptyView())
         }
         
@@ -158,7 +153,7 @@ public struct EPGTimelineRow: View {
             .cornerRadius(4)
             .overlay(
                 RoundedRectangle(cornerRadius: 4)
-                    .stroke(isNowPlaying(programme) ? Color.accentColor : Color.blue.opacity(0.5), lineWidth: 1)
+                    .stroke(isNowPlaying(programme) ? Color.accentColor: Color.blue.opacity(0.5), lineWidth: 1)
             )
             .offset(x: xOffset)
         )
@@ -182,8 +177,7 @@ public struct EPGTimelineRow: View {
     }
     
     private func isNowPlaying(_ programme: EPGEntry) -> Bool {
-        guard let progStart = programme.startTime,
-              let progEnd = programme.endTime else {
+        guard let progStart = programme.startTime, let progEnd = programme.endTime else {
             return false
         }
         let now = Date()
@@ -194,10 +188,7 @@ public struct EPGTimelineRow: View {
         guard let context = channel.managedObjectContext else { return }
         
         programmes = EPGCacheManager.getProgrammes(
-            for: channel,
-            from: startTime,
-            to: endTime,
-            context: context
+            for: channel, from: startTime, to: endTime, context: context
         )
     }
 
@@ -232,9 +223,7 @@ struct EPGTimelineRow_Previews: PreviewProvider {
         }
         
         return EPGTimelineRow(
-            channel: channel,
-            startTime: now,
-            endTime: now.addingTimeInterval(6 * 3600)
+            channel: channel, startTime: now, endTime: now.addingTimeInterval(6 * 3600)
         )
         .environment(\.managedObjectContext, context)
         .previewLayout(.sizeThatFits)

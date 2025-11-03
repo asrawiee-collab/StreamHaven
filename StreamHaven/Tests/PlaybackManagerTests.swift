@@ -1,6 +1,6 @@
-import XCTest
-import CoreData
 import Combine
+import CoreData
+import XCTest
 @testable import StreamHaven
 
 @MainActor

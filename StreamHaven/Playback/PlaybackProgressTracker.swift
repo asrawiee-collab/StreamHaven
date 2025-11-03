@@ -90,11 +90,7 @@ public final class PlaybackProgressTracker {
     /// Checks if it's time to pre-buffer the next episode.
     /// - Parameter currentTime: The current playback time.
     private func checkPreBufferTiming(currentTime: CMTime) {
-        guard !hasTriggeredPreBuffer,
-              let player,
-              let duration = player.currentItem?.duration,
-              duration.isValid,
-              !duration.isIndefinite else { return }
+        guard !hasTriggeredPreBuffer, let player, let duration = player.currentItem?.duration, duration.isValid, !duration.isIndefinite else { return }
 
         let currentSeconds = CMTimeGetSeconds(currentTime)
         let totalSeconds = CMTimeGetSeconds(duration)

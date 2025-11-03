@@ -1,5 +1,5 @@
-import XCTest
 import CoreData
+import XCTest
 @testable import StreamHaven
 
 /// Tests for the adult content filtering functionality.
@@ -264,17 +264,7 @@ private extension AdultContentFilterTests {
         entity.name = "Movie"
         entity.managedObjectClassName = NSStringFromClass(AdultContentMovie.self)
         entity.properties = [
-            makeStringAttribute(named: "title"),
-            makeStringAttribute(named: "rating"),
-            makeStringAttribute(named: "streamURL"),
-            makeStringAttribute(named: "summary"),
-            makeStringAttribute(named: "posterURL"),
-            makeStringAttribute(named: "previewURL"),
-            makeStringAttribute(named: "imdbID"),
-            makeStringAttribute(named: "stableID"),
-            makeUUIDAttribute(named: "sourceID"),
-            makeDateAttribute(named: "releaseDate"),
-            makeInt16Attribute(named: "releaseYearValue")
+            makeStringAttribute(named: "title"), makeStringAttribute(named: "rating"), makeStringAttribute(named: "streamURL"), makeStringAttribute(named: "summary"), makeStringAttribute(named: "posterURL"), makeStringAttribute(named: "previewURL"), makeStringAttribute(named: "imdbID"), makeStringAttribute(named: "stableID"), makeUUIDAttribute(named: "sourceID"), makeDateAttribute(named: "releaseDate"), makeInt16Attribute(named: "releaseYearValue")
         ]
         return entity
     }
@@ -284,10 +274,7 @@ private extension AdultContentFilterTests {
         entity.name = "Profile"
         entity.managedObjectClassName = NSStringFromClass(AdultContentProfile.self)
         entity.properties = [
-            makeStringAttribute(named: "name"),
-            makeBooleanAttribute(named: "isAdult"),
-            makeDateAttribute(named: "modifiedAt"),
-            makeStringAttribute(named: "cloudKitRecordName")
+            makeStringAttribute(named: "name"), makeBooleanAttribute(named: "isAdult"), makeDateAttribute(named: "modifiedAt"), makeStringAttribute(named: "cloudKitRecordName")
         ]
         return entity
     }

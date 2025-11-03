@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 /// Represents a favorite item (movie, series, or channel) for a user profile.
 /// This class is a Core Data managed object.

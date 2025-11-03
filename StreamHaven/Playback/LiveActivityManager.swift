@@ -1,5 +1,5 @@
-import Foundation
 import ActivityKit
+import Foundation
 import SwiftUI
 
 #if os(iOS)
@@ -69,12 +69,7 @@ public class LiveActivityManager: ObservableObject {
     ///   - seriesInfo: Optional series/season info for episodes
     ///   - duration: Total duration in seconds
     public func startActivity(
-        title: String,
-        contentType: String,
-        streamIdentifier: String,
-        thumbnailURL: String? = nil,
-        seriesInfo: String? = nil,
-        duration: TimeInterval
+        title: String, contentType: String, streamIdentifier: String, thumbnailURL: String? = nil, seriesInfo: String? = nil, duration: TimeInterval
     ) async throws {
         // End any existing activity first
         await endActivity()
@@ -85,21 +80,12 @@ public class LiveActivityManager: ObservableObject {
         
         let attributes = StreamHavenActivityAttributes(streamIdentifier: streamIdentifier)
         let initialState = StreamHavenActivityAttributes.ContentState(
-            contentTitle: title,
-            progress: 0.0,
-            isPlaying: true,
-            elapsedSeconds: 0,
-            totalSeconds: duration,
-            thumbnailURL: thumbnailURL,
-            contentType: contentType,
-            seriesInfo: seriesInfo
+            contentTitle: title, progress: 0.0, isPlaying: true, elapsedSeconds: 0, totalSeconds: duration, thumbnailURL: thumbnailURL, contentType: contentType, seriesInfo: seriesInfo
         )
         
         do {
             let activity = try Activity<StreamHavenActivityAttributes>.request(
-                attributes: attributes,
-                content: .init(state: initialState, staleDate: nil),
-                pushType: nil
+                attributes: attributes, content: .init(state: initialState, staleDate: nil), pushType: nil
             )
             
             currentActivity = activity
@@ -122,9 +108,7 @@ public class LiveActivityManager: ObservableObject {
     ///   - isPlaying: Whether playback is active
     ///   - elapsedSeconds: Elapsed time in seconds
     public func updateActivity(
-        progress: Double,
-        isPlaying: Bool,
-        elapsedSeconds: TimeInterval
+        progress: Double, isPlaying: Bool, elapsedSeconds: TimeInterval
     ) async {
         guard let activity = currentActivity else {
             print("⚠️ No active Live Activity to update")
@@ -132,25 +116,15 @@ public class LiveActivityManager: ObservableObject {
         }
         
         let updatedState = StreamHavenActivityAttributes.ContentState(
-            contentTitle: activity.content.state.contentTitle,
-            progress: progress,
-            isPlaying: isPlaying,
-            elapsedSeconds: elapsedSeconds,
-            totalSeconds: activity.content.state.totalSeconds,
-            thumbnailURL: activity.content.state.thumbnailURL,
-            contentType: activity.content.state.contentType,
-            seriesInfo: activity.content.state.seriesInfo
+            contentTitle: activity.content.state.contentTitle, progress: progress, isPlaying: isPlaying, elapsedSeconds: elapsedSeconds, totalSeconds: activity.content.state.totalSeconds, thumbnailURL: activity.content.state.thumbnailURL, contentType: activity.content.state.contentType, seriesInfo: activity.content.state.seriesInfo
         )
         
         let alertConfiguration = AlertConfiguration(
-            title: isPlaying ? "Playing" : "Paused",
-            body: activity.content.state.contentTitle,
-            sound: .default
+            title: isPlaying ? "Playing" : "Paused", body: activity.content.state.contentTitle, sound: .default
         )
         
         await activity.update(
-            .init(state: updatedState, staleDate: nil),
-            alertConfiguration: alertConfiguration
+            .init(state: updatedState, staleDate: nil), alertConfiguration: alertConfiguration
         )
     }
     
@@ -163,8 +137,7 @@ public class LiveActivityManager: ObservableObject {
         let finalState = activity.content.state
         
         await activity.end(
-            .init(state: finalState, staleDate: nil),
-            dismissalPolicy: .immediate
+            .init(state: finalState, staleDate: nil), dismissalPolicy: .immediate
         )
         
         currentActivity = nil
@@ -178,9 +151,7 @@ public class LiveActivityManager: ObservableObject {
         guard let activity = currentActivity else { return }
         
         await updateActivity(
-            progress: activity.content.state.progress,
-            isPlaying: false,
-            elapsedSeconds: activity.content.state.elapsedSeconds
+            progress: activity.content.state.progress, isPlaying: false, elapsedSeconds: activity.content.state.elapsedSeconds
         )
     }
     
@@ -189,9 +160,7 @@ public class LiveActivityManager: ObservableObject {
         guard let activity = currentActivity else { return }
         
         await updateActivity(
-            progress: activity.content.state.progress,
-            isPlaying: true,
-            elapsedSeconds: activity.content.state.elapsedSeconds
+            progress: activity.content.state.progress, isPlaying: true, elapsedSeconds: activity.content.state.elapsedSeconds
         )
     }
     
@@ -260,20 +229,13 @@ public class LiveActivityManager: ObservableObject {
     public init() {}
     
     public func startActivity(
-        title: String,
-        contentType: String,
-        streamIdentifier: String,
-        thumbnailURL: String? = nil,
-        seriesInfo: String? = nil,
-        duration: TimeInterval
+        title: String, contentType: String, streamIdentifier: String, thumbnailURL: String? = nil, seriesInfo: String? = nil, duration: TimeInterval
     ) async throws {
         // No-op on non-iOS platforms
     }
     
     public func updateActivity(
-        progress: Double,
-        isPlaying: Bool,
-        elapsedSeconds: TimeInterval
+        progress: Double, isPlaying: Bool, elapsedSeconds: TimeInterval
     ) async {
         // No-op on non-iOS platforms
     }

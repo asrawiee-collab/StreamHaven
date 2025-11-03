@@ -1,5 +1,5 @@
-import XCTest
 import AVKit
+import XCTest
 @testable import StreamHaven
 
 final class AudioSubtitleManagerTests: XCTestCase {
@@ -44,8 +44,7 @@ final class AudioSubtitleManagerTests: XCTestCase {
         // Should not crash when no player item
         // Create a mock option - in real scenario would come from getAvailableAudioTracks()
         let asset = AVURLAsset(url: URL(string: "https://example.com/video.m3u8")!)
-        if let group = try? await asset.loadMediaSelectionGroup(for: .audible),
-           let option = group.options.first {
+        if let group = try? await asset.loadMediaSelectionGroup(for: .audible), let option = group.options.first {
             await manager.selectAudioTrack(option)
         }
     }

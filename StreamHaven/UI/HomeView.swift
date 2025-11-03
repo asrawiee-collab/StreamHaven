@@ -1,5 +1,5 @@
-import SwiftUI
 import CoreData
+import SwiftUI
 
 #if os(iOS)
 /// A view that displays the user's library of movies, series, and channels.
@@ -53,18 +53,13 @@ public struct HomeView: View {
         }
 
         _movies = FetchRequest<Movie>(
-            sortDescriptors: [NSSortDescriptor(keyPath: \Movie.releaseDate, ascending: false)],
-            predicate: moviePredicate,
-            animation: .default)
+            sortDescriptors: [NSSortDescriptor(keyPath: \Movie.releaseDate, ascending: false)], predicate: moviePredicate, animation: .default)
 
         _series = FetchRequest<Series>(
-            sortDescriptors: [NSSortDescriptor(keyPath: \Series.releaseDate, ascending: false)],
-            predicate: seriesPredicate,
-            animation: .default)
+            sortDescriptors: [NSSortDescriptor(keyPath: \Series.releaseDate, ascending: false)], predicate: seriesPredicate, animation: .default)
 
         _channels = FetchRequest<Channel>(
-            sortDescriptors: [NSSortDescriptor(keyPath: \Channel.name, ascending: true)],
-            animation: .default)
+            sortDescriptors: [NSSortDescriptor(keyPath: \Channel.name, ascending: true)], animation: .default)
 
         var watchHistoryPredicate = NSPredicate(value: false)
         if let profile = profileManager.currentProfile {
@@ -72,9 +67,7 @@ public struct HomeView: View {
         }
 
         _watchHistory = FetchRequest<WatchHistory>(
-            sortDescriptors: [NSSortDescriptor(keyPath: \WatchHistory.watchedDate, ascending: false)],
-            predicate: watchHistoryPredicate,
-            animation: .default)
+            sortDescriptors: [NSSortDescriptor(keyPath: \WatchHistory.watchedDate, ascending: false)], predicate: watchHistoryPredicate, animation: .default)
     }
 
     @State private var franchiseGroups: [String: [Movie]] = [:]
@@ -89,10 +82,7 @@ public struct HomeView: View {
         Group {
             if movies.isEmpty && series.isEmpty && channels.isEmpty {
                 EmptyStateView(
-                    title: NSLocalizedString("Your Library is Empty", comment: "Empty state title"),
-                    message: NSLocalizedString("Add a playlist to get started.", comment: "Empty state message"),
-                    actionTitle: NSLocalizedString("Add Playlist", comment: "Empty state action button title"),
-                    action: {
+                    title: NSLocalizedString("Your Library is Empty", comment: "Empty state title"), message: NSLocalizedString("Add a playlist to get started.", comment: "Empty state message"), actionTitle: NSLocalizedString("Add Playlist", comment: "Empty state action button title"), action: {
                         showingAddPlaylist = true
                     }
                 )
@@ -108,7 +98,7 @@ public struct HomeView: View {
                         .padding()
 
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: settingsManager.accessibilityModeEnabled ? 30 : 20) {
+                        HStack(spacing: settingsManager.accessibilityModeEnabled ? 30: 20) {
                             ForEach(watchHistory) { history in
                                 if let movie = history.movie {
                                         Button(action: { handleSelection(.movieDetail(movie)) }) {
@@ -134,7 +124,7 @@ public struct HomeView: View {
                         .padding()
 
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: settingsManager.accessibilityModeEnabled ? 30 : 20) {
+                        HStack(spacing: settingsManager.accessibilityModeEnabled ? 30: 20) {
                             ForEach(trendingMovies) { movie in
                                 Button(action: { handleSelection(.movieDetail(movie)) }) {
                                     CardView(url: URL(string: movie.posterURL ?? ""), title: movie.title ?? "No Title")
@@ -159,7 +149,7 @@ public struct HomeView: View {
                         .padding()
 
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: settingsManager.accessibilityModeEnabled ? 30 : 20) {
+                        HStack(spacing: settingsManager.accessibilityModeEnabled ? 30: 20) {
                             ForEach(recommendedMovies) { movie in
                                 Button(action: { handleSelection(.movieDetail(movie)) }) {
                                     CardView(url: URL(string: movie.posterURL ?? ""), title: movie.title ?? "No Title")
@@ -177,7 +167,7 @@ public struct HomeView: View {
                         .padding()
 
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: settingsManager.accessibilityModeEnabled ? 30 : 20) {
+                        HStack(spacing: settingsManager.accessibilityModeEnabled ? 30: 20) {
                             ForEach(franchiseGroups[franchiseName] ?? []) { movie in
                                     Button(action: { handleSelection(.movieDetail(movie)) }) {
                                     CardView(url: URL(string: movie.posterURL ?? ""), title: movie.title ?? "No Title")
@@ -194,7 +184,7 @@ public struct HomeView: View {
                     .padding()
 
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: settingsManager.accessibilityModeEnabled ? 30 : 20) {
+                    HStack(spacing: settingsManager.accessibilityModeEnabled ? 30: 20) {
                         ForEach(moviesNotInFranchise) { movie in
                                 Button(action: { handleSelection(.movieDetail(movie)) }) {
                                 CardView(url: URL(string: movie.posterURL ?? ""), title: movie.title ?? "No Title")
@@ -210,7 +200,7 @@ public struct HomeView: View {
                     .padding()
 
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: settingsManager.accessibilityModeEnabled ? 30 : 20) {
+                    HStack(spacing: settingsManager.accessibilityModeEnabled ? 30: 20) {
                         ForEach(series) { seriesItem in
                                 Button(action: { handleSelection(.seriesDetail(seriesItem)) }) {
                                 CardView(url: URL(string: seriesItem.posterURL ?? ""), title: seriesItem.title ?? "No Title")
@@ -226,17 +216,14 @@ public struct HomeView: View {
                     .padding()
 
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: settingsManager.accessibilityModeEnabled ? 30 : 20) {
+                    HStack(spacing: settingsManager.accessibilityModeEnabled ? 30: 20) {
                         ForEach(channels) { channel in
                             let epgEntries = (channel.epgEntries as? Set<EPGEntry>)?.sorted { ($0.startTime ?? .distantPast) < ($1.startTime ?? .distantPast) } ?? []
                             let now = Date()
                             let nowEntry = epgEntries.first(where: { ($0.startTime ?? .distantPast) <= now && ($0.endTime ?? .distantFuture) > now })
                             let nextEntry = epgEntries.first(where: { ($0.startTime ?? .distantPast) > now })
                             CardView(
-                                url: URL(string: channel.logoURL ?? ""),
-                                title: channel.name ?? "No Name",
-                                nowProgram: nowEntry?.title,
-                                nextProgram: nextEntry?.title
+                                url: URL(string: channel.logoURL ?? ""), title: channel.name ?? "No Name", nowProgram: nowEntry?.title, nextProgram: nextEntry?.title
                             )
                         }
                     }

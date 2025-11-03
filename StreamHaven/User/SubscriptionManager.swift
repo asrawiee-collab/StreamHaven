@@ -1,5 +1,5 @@
-import Foundation
 import Combine
+import Foundation
 
 /// Represents the current subscription plan.
 public enum SubscriptionPlan: String, Codable, CaseIterable {
@@ -78,7 +78,7 @@ public final class SubscriptionManager: ObservableObject {
         let isMonthly = ids.contains(MonetizationConfig.ProductID.plusMonthly)
         let isYearly = ids.contains(MonetizationConfig.ProductID.plusYearly)
         
-        let newPlan: SubscriptionPlan = isYearly ? .plusYearly : (isMonthly ? .plusMonthly : .none)
+        let newPlan: SubscriptionPlan = isYearly ? .plusYearly: (isMonthly ? .plusMonthly: .none)
         let newSubscribed = newPlan != .none
         
         currentPlan = newPlan

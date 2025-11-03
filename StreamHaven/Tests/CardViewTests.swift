@@ -1,5 +1,5 @@
-import XCTest
 import SwiftUI
+import XCTest
 @testable import StreamHaven
 
 final class CardViewTests: XCTestCase {
@@ -19,10 +19,7 @@ final class CardViewTests: XCTestCase {
 
     func testCardViewWithEPGData() {
         let card = CardView(
-            url: URL(string: "https://example.com/channel.jpg"),
-            title: "Channel",
-            nowProgram: "Current Show",
-            nextProgram: "Next Show"
+            url: URL(string: "https://example.com/channel.jpg"), title: "Channel", nowProgram: "Current Show", nextProgram: "Next Show"
         )
         
         XCTAssertNotNil(card)
@@ -30,10 +27,7 @@ final class CardViewTests: XCTestCase {
 
     func testCardViewWithOnlyNowProgram() {
         let card = CardView(
-            url: URL(string: "https://example.com/channel.jpg"),
-            title: "Channel",
-            nowProgram: "Current Show",
-            nextProgram: nil
+            url: URL(string: "https://example.com/channel.jpg"), title: "Channel", nowProgram: "Current Show", nextProgram: nil
         )
         
         XCTAssertNotNil(card)
@@ -54,8 +48,7 @@ final class CardViewTests: XCTestCase {
 
     func testCardViewWithSpecialCharactersInTitle() {
         let card = CardView(
-            url: nil,
-            title: "Test & Movie: The \"Special\" Edition™"
+            url: nil, title: "Test & Movie: The \"Special\" Edition™"
         )
         
         XCTAssertNotNil(card)
@@ -83,8 +76,7 @@ final class CardViewTests: XCTestCase {
 
     func testCardViewWithUnicodeTitle() {
         let card = CardView(
-            url: nil,
-            title: "电影 🎬 Película फ़िल्म"
+            url: nil, title: "电影 🎬 Película फ़िल्म"
         )
         
         XCTAssertNotNil(card)
@@ -98,10 +90,7 @@ final class CardViewTests: XCTestCase {
 
     func testCardViewEPGOverlayWithSpecialCharacters() {
         let card = CardView(
-            url: nil,
-            title: "Channel",
-            nowProgram: "Show & Tell",
-            nextProgram: "Next \"Episode\""
+            url: nil, title: "Channel", nowProgram: "Show & Tell", nextProgram: "Next \"Episode\""
         )
         
         _ = card.body
@@ -111,8 +100,7 @@ final class CardViewTests: XCTestCase {
     func testMultipleCardViewInstances() {
         let cards = (1...100).map { i in
             CardView(
-                url: URL(string: "https://example.com/image\(i).jpg"),
-                title: "Card \(i)"
+                url: URL(string: "https://example.com/image\(i).jpg"), title: "Card \(i)"
             )
         }
         

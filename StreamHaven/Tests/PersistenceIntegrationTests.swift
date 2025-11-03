@@ -1,5 +1,5 @@
-import XCTest
 import CoreData
+import XCTest
 @testable import StreamHaven
 
 @MainActor
@@ -12,8 +12,7 @@ class PersistenceIntegrationTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         container = NSPersistentContainer(
-            name: "StreamHavenTest",
-            managedObjectModel: TestCoreDataModelBuilder.sharedModel
+            name: "StreamHavenTest", managedObjectModel: TestCoreDataModelBuilder.sharedModel
         )
         let description = NSPersistentStoreDescription()
         description.type = NSInMemoryStoreType
@@ -46,7 +45,7 @@ class PersistenceIntegrationTests: XCTestCase {
     func testParseSaveFetchRoundtrip() {
         let m3uString = """
         #EXTM3U
-        #EXTINF:-1 tvg-id="channel1" tvg-name="Channel 1" tvg-logo="http://logo.url/1.png" group-title="Group A",Channel 1
+        #EXTINF:-1 tvg-id="channel1" tvg-name="Channel 1" tvg-logo="http://logo.url/1.png" group-title="Group A", Channel 1
         http://stream.url/1
         """
         guard let data = m3uString.data(using: .utf8) else { XCTFail("UTF8 conversion failed"); return }

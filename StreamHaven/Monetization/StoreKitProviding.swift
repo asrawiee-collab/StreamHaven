@@ -79,12 +79,7 @@ public final class AppleStoreKitProvider: StoreKitProviding {
             }
             let value: Int? = period?.value
             return ProductInfo(
-                id: p.id,
-                displayName: p.displayName,
-                displayPrice: p.displayPrice,
-                isSubscription: p.type == .autoRenewable,
-                subscriptionPeriodUnit: unit,
-                subscriptionPeriodValue: value
+                id: p.id, displayName: p.displayName, displayPrice: p.displayPrice, isSubscription: p.type == .autoRenewable, subscriptionPeriodUnit: unit, subscriptionPeriodValue: value
             )
         }
     }

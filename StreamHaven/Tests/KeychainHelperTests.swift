@@ -13,9 +13,7 @@ final class KeychainHelperTests: XCTestCase {
 
     func testSaveAndRetrievePassword() {
         KeychainHelper.savePassword(
-            password: testPassword,
-            for: testAccount,
-            service: testService
+            password: testPassword, for: testAccount, service: testService
         )
         
         let retrieved = KeychainHelper.getPassword(for: testAccount, service: testService)
@@ -25,17 +23,13 @@ final class KeychainHelperTests: XCTestCase {
     func testUpdateExistingPassword() {
         // Save initial password
         KeychainHelper.savePassword(
-            password: testPassword,
-            for: testAccount,
-            service: testService
+            password: testPassword, for: testAccount, service: testService
         )
         
         // Update with new password
         let newPassword = "NewPassword456"
         KeychainHelper.savePassword(
-            password: newPassword,
-            for: testAccount,
-            service: testService
+            password: newPassword, for: testAccount, service: testService
         )
         
         let retrieved = KeychainHelper.getPassword(for: testAccount, service: testService)
@@ -45,9 +39,7 @@ final class KeychainHelperTests: XCTestCase {
     func testDeletePassword() {
         // Save password
         KeychainHelper.savePassword(
-            password: testPassword,
-            for: testAccount,
-            service: testService
+            password: testPassword, for: testAccount, service: testService
         )
         
         // Delete it
@@ -60,25 +52,21 @@ final class KeychainHelperTests: XCTestCase {
 
     func testRetrieveNonexistentPassword() {
         let retrieved = KeychainHelper.getPassword(
-            for: "NonexistentAccount",
-            service: testService
+            for: "NonexistentAccount", service: testService
         )
         XCTAssertNil(retrieved, "Should return nil for nonexistent password")
     }
 
     func testDeleteNonexistentPassword() {
         KeychainHelper.deletePassword(
-            for: "NonexistentAccount",
-            service: testService
+            for: "NonexistentAccount", service: testService
         )
         // Deleting nonexistent item should not cause an error
     }
 
     func testSaveEmptyPassword() {
         KeychainHelper.savePassword(
-            password: "",
-            for: testAccount,
-            service: testService
+            password: "", for: testAccount, service: testService
         )
         
         let retrieved = KeychainHelper.getPassword(for: testAccount, service: testService)
@@ -88,9 +76,7 @@ final class KeychainHelperTests: XCTestCase {
     func testSaveLongPassword() {
         let longPassword = String(repeating: "A", count: 1000)
         KeychainHelper.savePassword(
-            password: longPassword,
-            for: testAccount,
-            service: testService
+            password: longPassword, for: testAccount, service: testService
         )
         
         let retrieved = KeychainHelper.getPassword(for: testAccount, service: testService)
@@ -100,9 +86,7 @@ final class KeychainHelperTests: XCTestCase {
     func testSavePasswordWithSpecialCharacters() {
         let specialPassword = "P@ssw0rd!#$%^&*()"
         KeychainHelper.savePassword(
-            password: specialPassword,
-            for: testAccount,
-            service: testService
+            password: specialPassword, for: testAccount, service: testService
         )
         
         let retrieved = KeychainHelper.getPassword(for: testAccount, service: testService)

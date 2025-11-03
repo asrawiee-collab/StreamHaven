@@ -1,6 +1,6 @@
-import XCTest
 import AVKit
 import CoreData
+import XCTest
 @testable import StreamHaven
 
 /// Comprehensive tests for Live Activities functionality.
@@ -15,8 +15,7 @@ final class LiveActivityTests: XCTestCase {
         
         // Create in-memory Core Data stack for testing
         let container = NSPersistentContainer(
-            name: "LiveActivityTesting",
-            managedObjectModel: TestCoreDataModelBuilder.sharedModel
+            name: "LiveActivityTesting", managedObjectModel: TestCoreDataModelBuilder.sharedModel
         )
         let description = NSPersistentStoreDescription()
         description.type = NSInMemoryStoreType
@@ -86,14 +85,7 @@ final class LiveActivityTests: XCTestCase {
     @available(iOS 16.1, *)
     func testActivityAttributesStructure() {
         let state = StreamHavenActivityAttributes.ContentState(
-            contentTitle: "Test Movie",
-            progress: 0.5,
-            isPlaying: true,
-            elapsedSeconds: 1800,
-            totalSeconds: 3600,
-            thumbnailURL: "https://example.com/poster.jpg",
-            contentType: "movie",
-            seriesInfo: nil
+            contentTitle: "Test Movie", progress: 0.5, isPlaying: true, elapsedSeconds: 1800, totalSeconds: 3600, thumbnailURL: "https://example.com/poster.jpg", contentType: "movie", seriesInfo: nil
         )
         
         XCTAssertEqual(state.contentTitle, "Test Movie")
@@ -108,14 +100,7 @@ final class LiveActivityTests: XCTestCase {
     @available(iOS 16.1, *)
     func testActivityAttributesWithSeriesInfo() {
         let state = StreamHavenActivityAttributes.ContentState(
-            contentTitle: "The Pilot",
-            progress: 0.25,
-            isPlaying: false,
-            elapsedSeconds: 600,
-            totalSeconds: 2400,
-            thumbnailURL: "https://example.com/series.jpg",
-            contentType: "episode",
-            seriesInfo: "Breaking Bad S1E1"
+            contentTitle: "The Pilot", progress: 0.25, isPlaying: false, elapsedSeconds: 600, totalSeconds: 2400, thumbnailURL: "https://example.com/series.jpg", contentType: "episode", seriesInfo: "Breaking Bad S1E1"
         )
         
         XCTAssertEqual(state.contentTitle, "The Pilot")
@@ -135,9 +120,7 @@ final class LiveActivityTests: XCTestCase {
         let watchHistoryManager = WatchHistoryManager(context: context, profile: profile)
         
         let playbackManager = PlaybackManager(
-            context: context,
-            settingsManager: settingsManager,
-            watchHistoryManager: watchHistoryManager
+            context: context, settingsManager: settingsManager, watchHistoryManager: watchHistoryManager
         )
         
         XCTAssertNotNil(playbackManager, "PlaybackManager should initialize with LiveActivityManager")
@@ -151,9 +134,7 @@ final class LiveActivityTests: XCTestCase {
         let watchHistoryManager = WatchHistoryManager(context: context, profile: profile)
         
         let playbackManager = PlaybackManager(
-            context: context,
-            settingsManager: settingsManager,
-            watchHistoryManager: watchHistoryManager
+            context: context, settingsManager: settingsManager, watchHistoryManager: watchHistoryManager
         )
         
         XCTAssertNotNil(playbackManager, "PlaybackManager should work without LiveActivityManager")
@@ -316,16 +297,11 @@ final class LiveActivityTests: XCTestCase {
         
         Task {
             try? await manager.startActivity(
-                title: "Test",
-                contentType: "movie",
-                streamIdentifier: "test",
-                duration: 3600
+                title: "Test", contentType: "movie", streamIdentifier: "test", duration: 3600
             )
             
             await manager.updateActivity(
-                progress: 0.5,
-                isPlaying: true,
-                elapsedSeconds: 1800
+                progress: 0.5, isPlaying: true, elapsedSeconds: 1800
             )
             
             await manager.endActivity()
@@ -352,9 +328,7 @@ final class LiveActivityTests: XCTestCase {
         // Attempting to update without active activity should not crash
         Task {
             await liveActivityManager.updateActivity(
-                progress: 0.5,
-                isPlaying: true,
-                elapsedSeconds: 1800
+                progress: 0.5, isPlaying: true, elapsedSeconds: 1800
             )
         }
         
@@ -404,9 +378,7 @@ final class LiveActivityTests: XCTestCase {
         
         let watchHistoryManager = WatchHistoryManager(context: context, profile: profile)
         let playbackManager = PlaybackManager(
-            context: context,
-            settingsManager: settingsManager,
-            watchHistoryManager: watchHistoryManager
+            context: context, settingsManager: settingsManager, watchHistoryManager: watchHistoryManager
         )
         
         XCTAssertNotNil(playbackManager)

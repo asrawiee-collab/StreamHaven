@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 /// Extensions providing optimized fetch requests that leverage denormalized fields.
 /// These eliminate expensive joins and computations for hot code paths.
@@ -75,8 +75,7 @@ extension NSManagedObjectContext {
         let request: NSFetchRequest<Series> = Series.fetchRequest()
         request.predicate = NSPredicate(format: "unwatchedEpisodeCount > 0")
         request.sortDescriptors = [
-            NSSortDescriptor(key: "unwatchedEpisodeCount", ascending: false),
-            NSSortDescriptor(key: "title", ascending: true)
+            NSSortDescriptor(key: "unwatchedEpisodeCount", ascending: false), NSSortDescriptor(key: "title", ascending: true)
         ]
         return try fetch(request)
     }
@@ -141,12 +140,7 @@ extension NSManagedObjectContext {
         let favSeriesCount = try count(for: favSeriesRequest)
         
         return ContentStatistics(
-            totalMovies: movieCount,
-            totalSeries: seriesCount,
-            totalEpisodes: totalEpisodes,
-            totalChannels: channelCount,
-            favoriteMovies: favMovieCount,
-            favoriteSeries: favSeriesCount
+            totalMovies: movieCount, totalSeries: seriesCount, totalEpisodes: totalEpisodes, totalChannels: channelCount, favoriteMovies: favMovieCount, favoriteSeries: favSeriesCount
         )
     }
 }

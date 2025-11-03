@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 /// An enumeration of the supported playlist types.
 public enum PlaylistType {
@@ -20,10 +20,7 @@ public final class PlaylistParser {
     public static func detectPlaylistType(from url: URL) -> PlaylistType {
         if url.pathExtension.lowercased() == "m3u" || url.pathExtension.lowercased() == "m3u8" {
             return .m3u
-        } else if let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-                  let queryItems = components.queryItems,
-                  queryItems.contains(where: { $0.name == "username" && ($0.value?.isEmpty == false) }),
-                  queryItems.contains(where: { $0.name == "password" && ($0.value?.isEmpty == false) }) {
+        } else if let components = URLComponents(url: url, resolvingAgainstBaseURL: false), let queryItems = components.queryItems, queryItems.contains(where: { $0.name == "username" && ($0.value?.isEmpty == false) }), queryItems.contains(where: { $0.name == "password" && ($0.value?.isEmpty == false) }) {
             return .xtreamCodes
         }
         return .unknown
@@ -60,9 +57,7 @@ public final class PlaylistParser {
                 throw parseError
             }
         case .xtreamCodes:
-            guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-                  let username = components.queryItems?.first(where: { $0.name == "username" })?.value,
-                  let password = components.queryItems?.first(where: { $0.name == "password" })?.value else {
+            guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false), let username = components.queryItems?.first(where: { $0.name == "username" })?.value, let password = components.queryItems?.first(where: { $0.name == "password" })?.value else {
                 throw PlaylistImportError.invalidURL
             }
 

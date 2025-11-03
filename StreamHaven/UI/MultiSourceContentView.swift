@@ -12,10 +12,7 @@ struct MultiSourceContentView<T: NSManagedObject>: View {
     @State private var selectedItem: T
     
     init(
-        group: MultiSourceContentManager.ContentGroup<T>,
-        profile: Profile,
-        contentManager: MultiSourceContentManager,
-        onSelect: @escaping (T) -> Void
+        group: MultiSourceContentManager.ContentGroup<T>, profile: Profile, contentManager: MultiSourceContentManager, onSelect: @escaping (T) -> Void
     ) {
         self.group = group
         self.profile = profile
@@ -59,10 +56,7 @@ struct MultiSourceContentView<T: NSManagedObject>: View {
         }
         .sheet(isPresented: $showSourcePicker) {
             SourcePickerSheet(
-                group: group,
-                profile: profile,
-                contentManager: contentManager,
-                selectedItem: $selectedItem
+                group: group, profile: profile, contentManager: contentManager, selectedItem: $selectedItem
             )
         }
     }
@@ -95,10 +89,7 @@ struct SourcePickerSheet<T: NSManagedObject>: View {
                 Section {
                     ForEach(Array(group.allItems.enumerated()), id: \.offset) { index, item in
                         SourceItemRow(
-                            item: item,
-                            profile: profile,
-                            contentManager: contentManager,
-                            isSelected: isSelected(item)
+                            item: item, profile: profile, contentManager: contentManager, isSelected: isSelected(item)
                         ) {
                             selectedItem = item
                             dismiss()
@@ -327,4 +318,3 @@ struct ChannelRowView: View {
         .padding(.horizontal, 16)
     }
 }
-

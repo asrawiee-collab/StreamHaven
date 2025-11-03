@@ -1,6 +1,6 @@
 #if os(iOS)
-import Foundation
 import ActivityKit
+import Foundation
 
 /// Manages Live Activities for Now Playing or ongoing playback.
 /// Separated from PlaybackManager for testability and modularity.
