@@ -1,67 +1,68 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model lastSavedToolsVersion="16700" userDefinedModelVersionIdentifier="v2_denormalization" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" minimumToolsVersion="1.0">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23051" systemVersion="23J126" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="v2_denormalization">
     <entity name="Channel" representedClassName="Channel" syncable="YES">
         <attribute name="stableID" optional="YES" attributeType="String"/>
-        <attribute name="logoURL" type="String"/>
-        <attribute name="name" type="String" userInfo="spotlight=true"/>
+        <attribute name="logoURL" attributeType="String"/>
+        <attribute name="name" attributeType="String" userInfo="spotlight=true"/>
         <attribute name="tvgID" optional="YES" attributeType="String"/>
-            <attribute name="variantCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-            <attribute name="hasEPG" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-            <attribute name="currentProgramTitle" optional="YES" attributeType="String"/>
-            <attribute name="epgLastUpdated" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-            <attribute name="sourceID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <relationship name="variants" toMany="YES" destination="ChannelVariant" inverseName="channel"/>
-        <relationship name="favorite" toMany="NO" toOne="YES" destination="Favorite" inverseName="channel"/>
-        <relationship name="epgEntries" optional="YES" toMany="YES" deletionRule="Cascade" destination="EPGEntry" inverseName="channel"/>
+        <attribute name="variantCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="hasEPG" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="currentProgramTitle" optional="YES" attributeType="String"/>
+        <attribute name="epgLastUpdated" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="sourceID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="variants" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ChannelVariant" inverseName="channel" inverseEntity="ChannelVariant"/>
+        <relationship name="favorite" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Favorite" inverseName="channel" inverseEntity="Favorite"/>
+        <relationship name="epgEntries" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="EPGEntry" inverseName="channel" inverseEntity="EPGEntry"/>
     </entity>
     <entity name="ChannelVariant" representedClassName="ChannelVariant" syncable="YES">
-        <attribute name="name" type="String"/>
-        <attribute name="streamURL" type="String"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="streamURL" attributeType="String"/>
         <attribute name="sourceID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <relationship name="channel" toMany="NO" toOne="YES" destination="Channel" inverseName="variants"/>
+        <relationship name="channel" maxCount="1" deletionRule="Nullify" destinationEntity="Channel" inverseName="variants" inverseEntity="Channel"/>
     </entity>
     <entity name="Episode" representedClassName="Episode" syncable="YES">
-        <attribute name="episodeNumber" type="Integer 16"/>
-        <attribute name="summary" type="String"/>
-        <attribute name="title" type="String" userInfo="spotlight=true"/>
-        <attribute name="streamURL" type="String"/>
+        <attribute name="episodeNumber" attributeType="Integer 16" usesScalarValueType="YES"/>
+        <attribute name="summary" attributeType="String"/>
+        <attribute name="title" attributeType="String" userInfo="spotlight=true"/>
+        <attribute name="streamURL" attributeType="String"/>
         <attribute name="introStartTime" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="introEndTime" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="creditStartTime" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="hasIntroData" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-        <relationship name="season" toMany="NO" toOne="YES" destination="Season" inverseName="episodes"/>
-        <relationship name="watchHistory" toMany="NO" toOne="YES" destination="WatchHistory" inverseName="episode"/>
-        <relationship name="download" optional="YES" maxCount="1" deletionRule="Cascade" destination="Download" inverseName="episode"/>
+        <relationship name="season" maxCount="1" deletionRule="Nullify" destinationEntity="Season" inverseName="episodes" inverseEntity="Season"/>
+        <relationship name="watchHistory" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WatchHistory" inverseName="episode" inverseEntity="WatchHistory"/>
+        <relationship name="download" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Download" inverseName="episode" inverseEntity="Download"/>
     </entity>
     <entity name="Favorite" representedClassName="Favorite" syncable="YES">
-        <attribute name="favoritedDate" type="Date"/>
+        <attribute name="favoritedDate" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="cloudKitRecordName" optional="YES" attributeType="String"/>
         <attribute name="modifiedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="profile" toMany="NO" toOne="YES" destination="Profile" inverseName="favorites"/>
-        <relationship name="movie" toMany="NO" toOne="YES" destination="Movie" inverseName="favorite"/>
-        <relationship name="series" toMany="NO" toOne="YES" destination="Series" inverseName="favorite"/>
-        <relationship name="channel" toMany="NO" toOne="YES" destination="Channel" inverseName="favorite"/>
+        <relationship name="profile" maxCount="1" deletionRule="Nullify" destinationEntity="Profile" inverseName="favorites" inverseEntity="Profile"/>
+        <relationship name="movie" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Movie" inverseName="favorite" inverseEntity="Movie"/>
+        <relationship name="series" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Series" inverseName="favorite" inverseEntity="Series"/>
+        <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Channel" inverseName="favorite" inverseEntity="Channel"/>
     </entity>
     <entity name="Movie" representedClassName="Movie" syncable="YES">
         <attribute name="stableID" optional="YES" attributeType="String"/>
         <attribute name="imdbID" optional="YES" attributeType="String"/>
-        <attribute name="posterURL" type="String"/>
-        <attribute name="rating" type="String"/>
-        <attribute name="releaseDate" type="Date"/>
-        <attribute name="summary" type="String"/>
-        <attribute name="streamURL" type="String"/>
-        <attribute name="title" type="String" userInfo="spotlight=true"/>
-            <attribute name="genres" optional="YES" attributeType="String"/>
-            <attribute name="releaseYearValue" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
-            <attribute name="hasBeenWatched" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-            <attribute name="watchProgressPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-            <attribute name="isFavorite" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-            <attribute name="lastWatchedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-            <attribute name="previewURL" optional="YES" attributeType="String"/>
-            <attribute name="sourceID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <relationship name="watchHistory" toMany="NO" toOne="YES" destination="WatchHistory" inverseName="movie"/>
-        <relationship name="favorite" toMany="NO" toOne="YES" destination="Favorite" inverseName="movie"/>
-        <relationship name="download" optional="YES" maxCount="1" deletionRule="Cascade" destination="Download" inverseName="movie"/>
+        <attribute name="posterURL" attributeType="String"/>
+        <attribute name="rating" attributeType="String"/>
+        <attribute name="releaseDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="summary" attributeType="String"/>
+        <attribute name="streamURL" attributeType="String"/>
+        <attribute name="title" attributeType="String" userInfo="spotlight=true"/>
+        <attribute name="genres" optional="YES" attributeType="String"/>
+        <attribute name="releaseYearValue" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
+        <attribute name="hasBeenWatched" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="watchProgressPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="isFavorite" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="lastWatchedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="previewURL" optional="YES" attributeType="String"/>
+        <attribute name="sourceID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="watchHistory" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WatchHistory" inverseName="movie" inverseEntity="WatchHistory"/>
+        <relationship name="favorite" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Favorite" inverseName="movie" inverseEntity="Favorite"/>
+        <relationship name="download" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Download" inverseName="movie" inverseEntity="Download"/>
+        <relationship name="credits" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Credit" inverseName="movie" inverseEntity="Credit"/>
     </entity>
     <entity name="EPGEntry" representedClassName="EPGEntry" syncable="YES">
         <attribute name="category" optional="YES" attributeType="String"/>
@@ -69,13 +70,13 @@
         <attribute name="endTime" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="startTime" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="title" attributeType="String"/>
-        <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destination="Channel" inverseName="epgEntries"/>
+        <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Channel" inverseName="epgEntries" inverseEntity="Channel"/>
     </entity>
     <entity name="PlaylistCache" representedClassName="PlaylistCache" syncable="YES">
         <attribute name="epgURL" optional="YES" attributeType="String"/>
-        <attribute name="filePath" type="String"/>
-        <attribute name="lastRefreshed" type="Date"/>
-        <attribute name="url" type="String"/>
+        <attribute name="filePath" attributeType="String"/>
+        <attribute name="lastRefreshed" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="url" attributeType="String"/>
         <attribute name="sourceID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
     </entity>
     <entity name="StreamCache" representedClassName="StreamCache" syncable="YES">
@@ -97,8 +98,8 @@
         <attribute name="expiresAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="thumbnailURL" optional="YES" attributeType="String"/>
         <attribute name="imdbID" optional="YES" attributeType="String"/>
-        <relationship name="movie" optional="YES" maxCount="1" deletionRule="Nullify" destination="Movie" inverseName="download"/>
-        <relationship name="episode" optional="YES" maxCount="1" deletionRule="Nullify" destination="Episode" inverseName="download"/>
+        <relationship name="movie" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Movie" inverseName="download" inverseEntity="Movie"/>
+        <relationship name="episode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Episode" inverseName="download" inverseEntity="Episode"/>
     </entity>
     <entity name="PlaylistSource" representedClassName="PlaylistSource" syncable="YES">
         <attribute name="sourceID" attributeType="UUID" usesScalarValueType="NO"/>
@@ -113,34 +114,34 @@
         <attribute name="lastRefreshed" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="lastError" optional="YES" attributeType="String"/>
         <attribute name="metadata" optional="YES" attributeType="String"/>
-        <relationship name="profile" maxCount="1" deletionRule="Nullify" destination="Profile" inverseName="playlistSources"/>
+        <relationship name="profile" maxCount="1" deletionRule="Nullify" destinationEntity="Profile" inverseName="playlistSources" inverseEntity="Profile"/>
     </entity>
     <entity name="Profile" representedClassName="Profile" syncable="YES">
-        <attribute name="isAdult" type="Boolean"/>
-        <attribute name="name" type="String"/>
+        <attribute name="isAdult" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String"/>
         <attribute name="cloudKitRecordName" optional="YES" attributeType="String"/>
         <attribute name="modifiedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="sourceMode" optional="YES" attributeType="String" defaultValueString="combined"/>
-        <relationship name="favorites" toMany="YES" destination="Favorite" inverseName="profile"/>
-        <relationship name="watchHistory" toMany="YES" destination="WatchHistory" inverseName="profile"/>
-        <relationship name="upNextQueue" optional="YES" toMany="YES" deletionRule="Cascade" destination="UpNextQueueItem" inverseName="profile"/>
-        <relationship name="watchlists" optional="YES" toMany="YES" deletionRule="Cascade" destination="Watchlist" inverseName="profile"/>
-        <relationship name="playlistSources" optional="YES" toMany="YES" deletionRule="Cascade" destination="PlaylistSource" inverseName="profile"/>
+        <relationship name="favorites" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Favorite" inverseName="profile" inverseEntity="Favorite"/>
+        <relationship name="watchHistory" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="WatchHistory" inverseName="profile" inverseEntity="WatchHistory"/>
+        <relationship name="upNextQueue" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="UpNextQueueItem" inverseName="profile" inverseEntity="UpNextQueueItem"/>
+        <relationship name="watchlists" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Watchlist" inverseName="profile" inverseEntity="Watchlist"/>
+        <relationship name="playlistSources" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="PlaylistSource" inverseName="profile" inverseEntity="PlaylistSource"/>
     </entity>
     <entity name="Watchlist" representedClassName="Watchlist" syncable="YES">
         <attribute name="name" attributeType="String"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="icon" attributeType="String" defaultValueString="list.bullet"/>
-        <relationship name="profile" maxCount="1" deletionRule="Nullify" destination="Profile" inverseName="watchlists"/>
-        <relationship name="items" optional="YES" toMany="YES" deletionRule="Cascade" destination="WatchlistItem" inverseName="watchlist"/>
+        <relationship name="profile" maxCount="1" deletionRule="Nullify" destinationEntity="Profile" inverseName="watchlists" inverseEntity="Profile"/>
+        <relationship name="items" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="WatchlistItem" inverseName="watchlist" inverseEntity="WatchlistItem"/>
     </entity>
     <entity name="WatchlistItem" representedClassName="WatchlistItem" syncable="YES">
         <attribute name="contentID" attributeType="String"/>
         <attribute name="contentType" attributeType="String"/>
         <attribute name="addedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="position" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="watchlist" maxCount="1" deletionRule="Nullify" destination="Watchlist" inverseName="items"/>
+        <relationship name="watchlist" maxCount="1" deletionRule="Nullify" destinationEntity="Watchlist" inverseName="items" inverseEntity="Watchlist"/>
     </entity>
     <entity name="UpNextQueueItem" representedClassName="UpNextQueueItem" syncable="YES">
         <attribute name="contentID" attributeType="String"/>
@@ -148,39 +149,65 @@
         <attribute name="addedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="position" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="autoAdded" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-        <relationship name="profile" maxCount="1" deletionRule="Nullify" destination="Profile" inverseName="upNextQueue"/>
+        <relationship name="profile" maxCount="1" deletionRule="Nullify" destinationEntity="Profile" inverseName="upNextQueue" inverseEntity="Profile"/>
     </entity>
     <entity name="Season" representedClassName="Season" syncable="YES">
-        <attribute name="seasonNumber" type="Integer 16"/>
-        <attribute name="summary" type="String"/>
-        <relationship name="episodes" toMany="YES" destination="Episode" inverseName="season"/>
-        <relationship name="series" toMany="NO" toOne="YES" destination="Series" inverseName="seasons"/>
+        <attribute name="seasonNumber" attributeType="Integer 16" usesScalarValueType="YES"/>
+        <attribute name="summary" attributeType="String"/>
+        <relationship name="episodes" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Episode" inverseName="season" inverseEntity="Episode"/>
+        <relationship name="series" maxCount="1" deletionRule="Nullify" destinationEntity="Series" inverseName="seasons" inverseEntity="Series"/>
     </entity>
     <entity name="Series" representedClassName="Series" syncable="YES">
         <attribute name="stableID" optional="YES" attributeType="String"/>
-        <attribute name="posterURL" type="String"/>
-        <attribute name="rating" type="String"/>
-        <attribute name="releaseDate" type="Date"/>
-        <attribute name="summary" type="String"/>
-        <attribute name="title" type="String" userInfo="spotlight=true"/>
-            <attribute name="genres" optional="YES" attributeType="String"/>
-            <attribute name="releaseYearValue" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
-            <attribute name="totalEpisodeCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-            <attribute name="seasonCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-            <attribute name="isFavorite" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-            <attribute name="unwatchedEpisodeCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-            <attribute name="previewURL" optional="YES" attributeType="String"/>
-            <attribute name="sourceID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <relationship name="seasons" toMany="YES" destination="Season" inverseName="series"/>
-        <relationship name="favorite" toMany="NO" toOne="YES" destination="Favorite" inverseName="series"/>
+        <attribute name="posterURL" attributeType="String"/>
+        <attribute name="rating" attributeType="String"/>
+        <attribute name="releaseDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="summary" attributeType="String"/>
+        <attribute name="title" attributeType="String" userInfo="spotlight=true"/>
+        <attribute name="genres" optional="YES" attributeType="String"/>
+        <attribute name="releaseYearValue" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
+        <attribute name="totalEpisodeCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="seasonCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="isFavorite" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="unwatchedEpisodeCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="previewURL" optional="YES" attributeType="String"/>
+        <attribute name="sourceID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="seasons" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Season" inverseName="series" inverseEntity="Season"/>
+        <relationship name="favorite" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Favorite" inverseName="series" inverseEntity="Favorite"/>
+        <relationship name="credits" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Credit" inverseName="series" inverseEntity="Credit"/>
     </entity>
     <entity name="WatchHistory" representedClassName="WatchHistory" syncable="YES">
-        <attribute name="progress" type="Float"/>
-        <attribute name="watchedDate" type="Date"/>
+        <attribute name="progress" attributeType="Float" usesScalarValueType="YES"/>
+        <attribute name="watchedDate" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="cloudKitRecordName" optional="YES" attributeType="String"/>
         <attribute name="modifiedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="profile" toMany="NO" toOne="YES" destination="Profile" inverseName="watchHistory"/>
-        <relationship name="movie" toMany="NO" toOne="YES" destination="Movie" inverseName="watchHistory"/>
-        <relationship name="episode" toMany="NO" toOne="YES" destination="Episode" inverseName="watchHistory"/>
+        <relationship name="profile" maxCount="1" deletionRule="Nullify" destinationEntity="Profile" inverseName="watchHistory" inverseEntity="Profile"/>
+        <relationship name="movie" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Movie" inverseName="watchHistory" inverseEntity="Movie"/>
+        <relationship name="episode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Episode" inverseName="watchHistory" inverseEntity="Episode"/>
+    </entity>
+    <entity name="Actor" representedClassName="Actor" syncable="YES">
+        <attribute name="tmdbID" attributeType="Integer 64" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="photoURL" optional="YES" attributeType="String"/>
+        <attribute name="biography" optional="YES" attributeType="String"/>
+        <attribute name="popularity" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="credits" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Credit" inverseName="actor" inverseEntity="Credit"/>
+    </entity>
+    <entity name="Credit" representedClassName="Credit" syncable="YES">
+        <attribute name="creditID" attributeType="String"/>
+        <attribute name="character" optional="YES" attributeType="String"/>
+        <attribute name="order" optional="YES" attributeType="Integer 32" usesScalarValueType="YES"/>
+        <attribute name="creditType" optional="YES" attributeType="String"/>
+        <attribute name="job" optional="YES" attributeType="String"/>
+        <relationship name="actor" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Actor" inverseName="credits" inverseEntity="Actor"/>
+        <relationship name="movie" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Movie" inverseName="credits" inverseEntity="Movie"/>
+        <relationship name="series" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Series" inverseName="credits" inverseEntity="Series"/>
+    </entity>
+    <entity name="Crew" representedClassName="Crew" syncable="YES">
+        <attribute name="tmdbID" attributeType="Integer 64" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="photoURL" optional="YES" attributeType="String"/>
+        <attribute name="job" optional="YES" attributeType="String"/>
+        <attribute name="department" optional="YES" attributeType="String"/>
     </entity>
 </model>

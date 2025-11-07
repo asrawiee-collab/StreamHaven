@@ -151,7 +151,10 @@ private extension PersistenceController {
         "UpNextQueueItem": UpNextQueueItem.self,
         "Watchlist": Watchlist.self,
         "WatchlistItem": WatchlistItem.self,
-        "EPGEntry": EPGEntry.self
+        "EPGEntry": EPGEntry.self,
+        "Actor": Actor.self,
+        "Credit": Credit.self,
+        "Crew": Crew.self
     ]
 }
 

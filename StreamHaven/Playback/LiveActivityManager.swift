@@ -1,5 +1,7 @@
 import Foundation
+#if canImport(ActivityKit)
 import ActivityKit
+#endif
 import SwiftUI
 
 #if os(iOS)
